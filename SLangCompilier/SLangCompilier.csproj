@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="FrontEnd\FirstStep\" />
+    <Folder Include="FrontEnd\SecondStep\" />
+    <Folder Include="BackEnd\" />
+    <Folder Include="ConsoleService\" />
+  </ItemGroup>
+
+</Project>
