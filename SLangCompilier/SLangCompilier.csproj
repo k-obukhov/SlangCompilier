@@ -10,6 +10,11 @@
     <Folder Include="FrontEnd\SecondStep\" />
     <Folder Include="BackEnd\" />
     <Folder Include="ConsoleService\" />
+    <Folder Include="Lib\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
   </ItemGroup>
 
 </Project>
