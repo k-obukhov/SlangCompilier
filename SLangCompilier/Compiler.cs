@@ -3,16 +3,33 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using SLangCompiler.FileServices;
+using System.Threading.Tasks;
 
 namespace SLangCompiler
 {
     public class Compiler
     {
-        public Compiler(string path)
+        /// <summary>
+        /// Input path (SL code)
+        /// </summary>
+        public string InputPath { get; set; }
+        /// <summary>
+        /// Output path (C++ code)
+        /// </summary>
+        public string OutputPath { get; set; }
+
+        public Compiler(string inputPath, string outputPath)
         {
-            DirectoryInfo directory = new DirectoryInfo(path);
+            InputPath = inputPath;
+            OutputPath = outputPath;
+        }
+
+        public async Task Translate()
+        {
+            DirectoryInfo directory = new DirectoryInfo(InputPath);
             ProjectManager manager = new ProjectManager();
-            manager.LoadCode(directory);
+            await Task.Run(() => manager.LoadCode(directory));
+            // TODO Front-End
         }
 
     }
