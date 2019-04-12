@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SLangCompilier.Exceptions
+namespace SLangCompiler.Exceptions
 {
     /// <summary>
     /// Exception throws when module name contains in system modules

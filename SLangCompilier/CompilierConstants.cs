@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace SLangCompilier.FileServices
+namespace SLangCompiler.FileServices
 {
-    static class CompilierConstants
+    static class CompilerConstants
     {
         /// <summary>
         /// File extension for the source code (.sl)

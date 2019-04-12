@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace SLangCompilier.FileServices
+namespace SLangCompiler.FileServices
 {
     public class ModuleData
     {
@@ -35,6 +35,6 @@ namespace SLangCompilier.FileServices
         /// Check module name equals to main module name
         /// </summary>
         /// <returns></returns>
-        bool IsMain() => CompilierConstants.MainModuleNameWithExt == File.Name;
+        bool IsMain() => CompilerConstants.MainModuleNameWithExt == File.Name;
     }
 }

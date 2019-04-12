@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.IO;
 
-namespace SLangCompilier.FileServices
+namespace SLangCompiler.FileServices
 {
     public class FileLoader
     {

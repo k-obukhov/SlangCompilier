@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using SLangCompilier.FileServices;
+using SLangCompiler.FileServices;
 
-namespace SLangCompilier
+namespace SLangCompiler
 {
-    public class Compilier
+    public class Compiler
     {
-        public Compilier(string path)
+        public Compiler(string path)
         {
             DirectoryInfo directory = new DirectoryInfo(path);
             ProjectManager manager = new ProjectManager();

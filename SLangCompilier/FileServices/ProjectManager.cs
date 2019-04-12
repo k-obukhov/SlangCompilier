@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SLangCompilier.Exceptions;
+using SLangCompiler.Exceptions;
 
-namespace SLangCompilier.FileServices
+namespace SLangCompiler.FileServices
 {
     /// <summary>
     /// Loads source code
@@ -30,7 +30,7 @@ namespace SLangCompilier.FileServices
             await LoadLibrary();
 
             IEnumerable<FileInfo> inputFiles =
-                directory.GetFiles(CompilierConstants.FileMask, SearchOption.TopDirectoryOnly);
+                directory.GetFiles(CompilerConstants.FileMask, SearchOption.TopDirectoryOnly);
 
             foreach (FileInfo inputFile in inputFiles.AsParallel())
             {
@@ -48,17 +48,17 @@ namespace SLangCompilier.FileServices
         /// Check main module contains in project
         /// </summary>
         /// <returns></returns>
-        public bool ContainsMainModule() => FileModules.ContainsKey(CompilierConstants.MainModuleName);
+        public bool ContainsMainModule() => FileModules.ContainsKey(CompilerConstants.MainModuleName);
         /// <summary>
         /// Load code from Lib folder
         /// </summary>
         /// <returns></returns>
         public async Task LoadLibrary()
         {
-            DirectoryInfo inputDirectory = new DirectoryInfo(CompilierConstants.LibPath);
+            DirectoryInfo inputDirectory = new DirectoryInfo(CompilerConstants.LibPath);
 
             IEnumerable<FileInfo> inputFiles =
-                inputDirectory.GetFiles(CompilierConstants.FileMask, SearchOption.TopDirectoryOnly);
+                inputDirectory.GetFiles(CompilerConstants.FileMask, SearchOption.TopDirectoryOnly);
 
             foreach (FileInfo inputFile in inputFiles.AsParallel())
             {

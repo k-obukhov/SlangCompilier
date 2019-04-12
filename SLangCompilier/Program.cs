@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SLangCompilier
+namespace SLangCompiler
 {
     class Program
     {
