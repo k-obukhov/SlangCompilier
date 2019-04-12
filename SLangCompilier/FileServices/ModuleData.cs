@@ -32,9 +32,9 @@ namespace SLangCompilier.FileServices
             IsLib = isLib;
         }
         /// <summary>
-        /// Check modulr name equals to main module name
+        /// Check module name equals to main module name
         /// </summary>
         /// <returns></returns>
-        bool IsMain() => CompilierConstants.MainModuleName == File.Name;
+        bool IsMain() => CompilierConstants.MainModuleNameWithExt == File.Name;
     }
 }

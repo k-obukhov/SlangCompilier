@@ -45,6 +45,11 @@ namespace SLangCompilier.FileServices
             }
         }
         /// <summary>
+        /// Check main module contains in project
+        /// </summary>
+        /// <returns></returns>
+        public bool ContainsMainModule() => FileModules.ContainsKey(CompilierConstants.MainModuleName);
+        /// <summary>
         /// Load code from Lib folder
         /// </summary>
         /// <returns></returns>
