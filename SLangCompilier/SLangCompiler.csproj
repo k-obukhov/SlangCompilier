@@ -6,10 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="FrontEnd\FirstStep\" />
-    <Folder Include="FrontEnd\SecondStep\" />
     <Folder Include="BackEnd\" />
     <Folder Include="ConsoleService\" />
+    <Folder Include="FrontEnd\NameTables\" />
     <Folder Include="Lib\" />
   </ItemGroup>
 

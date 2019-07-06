@@ -60,7 +60,6 @@ End: 'end';
 
 Function: 'function';
 Procedure: 'procedure';
-Using: 'using';
 
 // круглые и квадратные скобки
 LBrace: '(';
@@ -138,7 +137,7 @@ classDeclare: AccessModifier base_head Class Id inherit_head classStatements End
 classStatements: (methodDeclare | raw | fieldDeclare)*;
 methodDeclare: methodFuncDeclare | methodProcDeclare | methodFuncAbstract | methodProcAbstract;
 
-thisHeader: LBrace functionalDeclareArg  RBrace;
+thisHeader: LBrace typeName Id  RBrace;
 
 methodFuncAbstract: AccessModifier Abstract thisHeader Function functionalDeclareArgList Colon typeName Id Semicolon;
 methodProcAbstract: AccessModifier Abstract thisHeader Procedure functionalDeclareArgList Id Semicolon;
@@ -163,7 +162,7 @@ statementSeq: (statement | raw)*;
 
 statement: simpleStatement | complexStatement;
 
-simpleStatement: (declare | let | input | output | return_val | call | using) Semicolon; // Операторы
+simpleStatement: (declare | let | input | output | return_val | call) Semicolon; // Операторы
 complexStatement: if_cond | while_cond | repeat;
 
 declare: constDeclare | varDeclare; // Определение констант и переменных
@@ -187,7 +186,6 @@ arrayLenProperty: id Point Length LBrace IntValue RBrace;
 let: Let (simpleLet | arrayLet);
 simpleLet : id AssignToken mathExpression | id AssignToken boolExpression | id AssignToken let;
 arrayLet: arrayElement AssignToken mathExpression | arrayElement AssignToken boolExpression | arrayElement AssignToken let;
-using: Using id AssignToken id;
 
 return_val: Return (exp)?;
 input: Input id (Comma id)*;

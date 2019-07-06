@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace SLangCompiler.FileServices
+namespace SLangCompiler
 {
     static class CompilerConstants
     {
@@ -27,5 +27,12 @@ namespace SLangCompiler.FileServices
         /// slang file mask
         /// </summary>
         public static string FileMask => $"*{SourceCodeFileExt}";
+
+        public static string RealType => "real";
+        public static string IntegerType => "integer";
+        public static string CharacterType => "character";
+        public static string BooleanType => "boolean";
+
+        public static string ObjectClassName => "Object";
     }
 }

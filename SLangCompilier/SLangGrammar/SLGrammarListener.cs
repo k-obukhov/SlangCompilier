@@ -19,7 +19,7 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
-namespace SemanticLanguageGrammar {
+namespace SLangGrammar {
 using Antlr4.Runtime.Misc;
 using IParseTreeListener = Antlr4.Runtime.Tree.IParseTreeListener;
 using IToken = Antlr4.Runtime.IToken;
@@ -985,17 +985,6 @@ public interface ISLGrammarListener : IParseTreeListener {
 	void ExitArrayLet([NotNull] SLGrammarParser.ArrayLetContext context);
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLGrammarParser.using"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterUsing([NotNull] SLGrammarParser.UsingContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLGrammarParser.using"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitUsing([NotNull] SLGrammarParser.UsingContext context);
-
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLGrammarParser.return_val"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -1292,4 +1281,4 @@ public interface ISLGrammarListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitAny([NotNull] SLGrammarParser.AnyContext context);
 }
-} // namespace SemanticLanguageGrammar
+} // namespace SLangGrammar
