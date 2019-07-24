@@ -4,43 +4,25 @@ using System.Text;
 
 namespace SLangCompiler.FrontEnd.Types
 {
-    public class SlangSimpleType: SlangBaseType
+    /// <summary>
+    /// Simple types -- int, float, char, bool
+    /// </summary>
+    public class SlangSimpleType: SlangType
     {
-        public static readonly SlangSimpleType Integer = new SlangSimpleType(CompilerConstants.IntegerType);
-        public static readonly SlangSimpleType Real = new SlangSimpleType(CompilerConstants.RealType);
-        public static readonly SlangSimpleType Boolean = new SlangSimpleType(CompilerConstants.BooleanType);
-        public static readonly SlangSimpleType Character = new SlangSimpleType(CompilerConstants.CharacterType);
+        public static SlangSimpleType Int => new SlangSimpleType(CompilerConstants.IntegerType);
+        public static SlangSimpleType Real => new SlangSimpleType(CompilerConstants.RealType);
+        public static SlangSimpleType Character => new SlangSimpleType(CompilerConstants.CharacterType);
+        public static SlangSimpleType Boolean => new SlangSimpleType(CompilerConstants.BooleanType);
 
-        public string TypeName { get; }
-
-        public SlangSimpleType(string typeName)
+        public SlangSimpleType(string name)
         {
-            TypeName = typeName;
+            Name = name;
         }
 
-        public override bool Equals(SlangBaseType other)
-        {
-            return other is SlangSimpleType type && string.Equals(TypeName, type.TypeName);
-        }
+        public string Name { get; set; }
 
-        public override bool IsAssignable(SlangBaseType other)
-        {
-            // типы совпадают
-            if (Equals(other))
-            {
-                return true;
-            }
-            // тип == не является простым
-            if (!(other is SlangSimpleType otherType))
-            {
-                return false;
-            }
-            // преобразование float -> integer
-            return TypeName == CompilerConstants.RealType && otherType.TypeName == CompilerConstants.IntegerType;
-        }
+        public override string ToString() => Name;
 
-        public override int GetHashCode() => TypeName?.GetHashCode() ?? 0;
-
-        public override string ToString() => TypeName;
+        public override bool Equals(SlangType other) => other is SlangSimpleType s && s.Name == Name;
     }
 }

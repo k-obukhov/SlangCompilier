@@ -8,7 +8,6 @@
   <ItemGroup>
     <Folder Include="BackEnd\" />
     <Folder Include="ConsoleService\" />
-    <Folder Include="FrontEnd\NameTables\" />
     <Folder Include="Lib\" />
   </ItemGroup>
 

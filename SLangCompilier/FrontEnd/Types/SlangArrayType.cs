@@ -4,42 +4,27 @@ using System.Text;
 
 namespace SLangCompiler.FrontEnd.Types
 {
-    public class SlangArrayType : SlangBaseType
+    /// <summary>
+    /// Base class for arrays
+    /// </summary>
+    class SlangArrayType: SlangType
     {
-        // скольки мерный массив
-        public int Dimensions { get; }
-        public SlangBaseType Type { get; }
-        public SlangArrayType(int dimensions, SlangBaseType type)
+        public SlangType Type { get; set; }
+        public int Dimension { get; set; }
+
+        public SlangArrayType(SlangType type, int dimension)
         {
-            Dimensions = dimensions;
             Type = type;
+            Dimension = dimension;
         }
 
-        public override bool Equals(SlangBaseType other)
-        {
-            return IsAssignable(other);
-        }
-
-        public override bool IsAssignable(SlangBaseType other)
-        {
-            if (!(other is SlangArrayType arrType))
-            {
-                return false;
-            }
-            return arrType.Dimensions == Dimensions && Type.Equals(arrType.Type);
-        }
-
-        public override int GetHashCode()
-        {
-            // maybe fix that
-            return base.GetHashCode();
-        }
+        public override bool Equals(SlangType other) => other is SlangArrayType arr && arr.Type.Equals(Type) && (arr.Dimension == Dimension);
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("array ");
-            for (int i = 0; i < Dimensions; ++i)
+            for (int i = 0; i < Dimension; ++i)
             {
                 sb.Append("[]");
             }

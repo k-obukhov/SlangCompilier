@@ -4,11 +4,12 @@ using System.Text;
 
 namespace SLangCompiler.FrontEnd.Types
 {
-    public abstract class SlangBaseType : IEquatable<SlangBaseType>
+    /// <summary>
+    /// Base type infrastructure
+    /// </summary>
+    public abstract class SlangType
     {
-        public abstract bool Equals(SlangBaseType other);
-        public abstract bool IsAssignable(SlangBaseType other);
-
+        public abstract bool Equals(SlangType other);
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
@@ -26,7 +27,7 @@ namespace SLangCompiler.FrontEnd.Types
                 return false;
             }
 
-            return Equals((SlangBaseType)obj);
+            return Equals((SlangType)obj);
         }
 
         public override int GetHashCode()

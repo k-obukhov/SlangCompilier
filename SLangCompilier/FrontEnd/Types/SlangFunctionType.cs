@@ -5,27 +5,15 @@ using System.Text;
 
 namespace SLangCompiler.FrontEnd.Types
 {
-    public class SlangFunctionType : SlangRoutineType
+    class SlangFunctionType: SlangRoutineType
     {
-        public SlangBaseType ReturnType { get; }
-        public SlangFunctionType(SlangBaseType returnType, IList<SlangRoutineArgType> args) : base(args)
+        public SlangType ReturnType { get; set; }
+        public SlangFunctionType(IList<SlangRoutineTypeArg> args, SlangType returnType): base(args) 
         {
             ReturnType = returnType;
         }
 
-        public override bool IsAssignable(SlangBaseType other)
-        {
-            if (!(other is SlangFunctionType functionType))
-            {
-                return false;
-            }
-            return ReturnType.Equals(functionType) && Args.SequenceEqual(functionType.Args);
-        }
-
-        public override bool Equals(SlangBaseType other)
-        {
-            return IsAssignable(other);
-        }
+        public override bool Equals(SlangType other) => other is SlangFunctionType t && (t.ReturnType.Equals(ReturnType)) && (t.Args.SequenceEqual(Args));
 
         public override string ToString()
         {
