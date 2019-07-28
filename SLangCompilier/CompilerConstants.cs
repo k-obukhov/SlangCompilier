@@ -5,6 +5,9 @@ using System.IO;
 
 namespace SLangCompiler
 {
+    public enum AccessModifier { Public, Private }
+    public enum ParamModifier { Val, Ref }
+
     static class CompilerConstants
     {
         /// <summary>

@@ -8,9 +8,9 @@ namespace SLangCompiler.FrontEnd.Types
     /// base custom type checks
     /// maybe need to store module name?
     /// </summary>
-    class SlangCustomType: SlangType
+    public class SlangCustomType: SlangType
     {
-        public static SlangCustomType Object => new SlangCustomType("Object");
+        public static SlangCustomType Object => new SlangCustomType(CompilerConstants.ObjectClassName);
 
         public string Name { get; set; }
 
