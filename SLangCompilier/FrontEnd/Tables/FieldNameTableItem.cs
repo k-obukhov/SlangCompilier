@@ -3,7 +3,7 @@
     /// <summary>
     /// Fields used in classes & in modules declaration place
     /// </summary>
-    public class FieldNameTableItem: VariableNameTable
+    public class FieldNameTableItem: VariableNameTableItem
     {
         public AccessModifier AccessModifier { get; set; }
     }

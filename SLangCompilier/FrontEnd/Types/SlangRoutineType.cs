@@ -16,7 +16,7 @@ namespace SLangCompiler.FrontEnd.Types
 
     public class SlangRoutineTypeArg
     {
-        public string Modifier { get; set; } // val or ref
+        public ParamModifier Modifier { get; set; } // val or ref
         public SlangType Type { get; set; }
 
         public override bool Equals(object obj) => obj is SlangRoutineTypeArg arg && (arg.Type.Equals(Type)) && (arg.Modifier == Modifier);

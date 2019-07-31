@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SLangCompiler.FrontEnd.Types
 {
-    class SlangFunctionType: SlangRoutineType
+    public class SlangFunctionType: SlangRoutineType
     {
         public SlangType ReturnType { get; set; }
         public SlangFunctionType(IList<SlangRoutineTypeArg> args, SlangType returnType): base(args) 

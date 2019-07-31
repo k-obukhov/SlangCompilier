@@ -9,17 +9,47 @@ namespace SLangCompiler.FrontEnd.Tables
     {
         public Scope Outer { get; set; } = null;
 
-        public Dictionary<string, VariableNameTable> Names { get; set; } = new Dictionary<string, VariableNameTable>();
+        public Dictionary<string, VariableNameTableItem> Names { get; set; } = new Dictionary<string, VariableNameTableItem>();
 
-        public Scope(Dictionary<string, VariableNameTable> names)
+        public Scope(Dictionary<string, VariableNameTableItem> names)
         {
             Names = names;
         }
 
-        public Scope(Dictionary<string, VariableNameTable> names, Scope outer)
+        public Scope(Dictionary<string, VariableNameTableItem> names, Scope outer)
         {
             Names = names;
             Outer = outer;
+        }
+
+        public bool VariableExists(string name) => FindVariable(name) != null;
+
+        public VariableNameTableItem FindVariable(string name)
+        {
+            VariableNameTableItem res = null;
+            // find in this scope
+            if (Names.ContainsKey(name))
+            {
+                res = Names[name];
+            }
+            else
+            {
+                // search in outer scopes
+                var outer = Outer;
+                while (outer != null)
+                {
+                    if (outer.Names.ContainsKey(name))
+                    {
+                        res = Names[name];
+                        break;
+                    }
+                    else
+                    {
+                        outer = outer.Outer;
+                    }
+                }
+            }
+            return res;
         }
     }
 }
