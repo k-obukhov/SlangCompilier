@@ -6,6 +6,6 @@ namespace SLangCompiler.FrontEnd.Tables
 {
     public class SourceCodeTable
     {
-        public Dictionary<string, ModuleNameTable> Modules { get; set; }
+        public Dictionary<string, ModuleNameTable> Modules { get; set; } = new Dictionary<string, ModuleNameTable>();
     }
 }
