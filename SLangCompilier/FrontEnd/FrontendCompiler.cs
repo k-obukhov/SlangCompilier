@@ -5,6 +5,7 @@ using System.Text;
 using Antlr4.Runtime;
 using SLangGrammar;
 using Antlr4.Runtime.Tree;
+using SLangCompiler.FileServices;
 
 namespace SLangCompiler.FrontEnd
 {
@@ -19,30 +20,27 @@ namespace SLangCompiler.FrontEnd
             SourceCode = new SourceCodeTable();
         }
 
-        public void CheckErrors()
+        public void CheckErrors(ProjectManager projectManager)
         {
             // TODO: make async
-            foreach (var code in SourceCode.Modules)
+            foreach (var code in projectManager.FileModules.Values)
             {
                 // find errors
-                AntlrInputStream inputStream = new AntlrInputStream(code.Value.ModuleData.Data);
+                AntlrInputStream inputStream = new AntlrInputStream(code.Data);
                 SLGrammarLexer lexer = new SLGrammarLexer(inputStream);
                 CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
                 SLGrammarParser parser = new SLGrammarParser(commonTokenStream);
 
-                SLangErrorListener errorListener = new SLangErrorListener(code.Value.ModuleData);
+                SLangErrorListener errorListener = new SLangErrorListener(code);
 
                 parser.RemoveErrorListeners();
                 parser.AddErrorListener(errorListener);
 
-                var pTree = parser.start();
-
-                StoreStepVisitor = new SlangStoreStepVisitor(SourceCode, code.Key);
-                SemanticVisitor = new SlangSemanticVisitor(SourceCode, code.Key);
+                StoreStepVisitor = new SlangStoreStepVisitor(SourceCode, code);
+                SemanticVisitor = new SlangSemanticVisitor(SourceCode, code);
 
                 // store data step
-                IParseTree tree = pTree;
-                StoreStepVisitor.Visit(pTree);
+                StoreStepVisitor.Visit(parser.start());
                 // last step
             }
         }

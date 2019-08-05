@@ -18,12 +18,8 @@ namespace SLangCompiler
                 p.LoadCode(new System.IO.DirectoryInfo(sourceCodeFolder));
 
                 var frontend = new FrontendCompiler();
-                foreach (var module in p.FileModules)
-                {
-                    frontend.SourceCode.Modules.Add(module.Key, new ModuleNameTable { ModuleData = module.Value });
-                }
 
-                frontend.CheckErrors();
+                frontend.CheckErrors(p);
             }
             catch (CompilerException e)
             {
@@ -33,11 +29,13 @@ namespace SLangCompiler
             {
                 Console.WriteLine($"IOError: {e.Message}");
             }
+            /*
             catch (Exception e)
             {
                 // all others
                 Console.WriteLine(e.Message);
             }
+            */
         }
     }
 }

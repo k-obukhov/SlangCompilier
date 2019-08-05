@@ -11,7 +11,7 @@ namespace SLangCompiler.FileServices
     /// <summary>
     /// Loads source code
     /// </summary>
-    class ProjectManager
+    public class ProjectManager
     {
         /// <summary>
         /// Source code container

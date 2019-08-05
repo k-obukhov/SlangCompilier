@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime.Misc;
+using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangGrammar;
 using System;
@@ -11,11 +12,11 @@ namespace SLangCompiler.FrontEnd
     {
         // base visitor login there (basic type returning, etc)
         public SourceCodeTable Table { get; }
-        private string ModuleName { get; }
-        public SlangBaseStepVisitor(SourceCodeTable table, string moduleName)
+        public ModuleData ModuleData { get; }
+        public SlangBaseStepVisitor(SourceCodeTable table, ModuleData moduleData)
         {
             Table = table;
-            ModuleName = moduleName;
+            ModuleData = moduleData;
         }
 
     }

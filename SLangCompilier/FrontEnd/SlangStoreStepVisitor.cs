@@ -1,4 +1,6 @@
 ﻿using Antlr4.Runtime.Misc;
+using SLangCompiler.Exceptions;
+using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangGrammar;
 using System;
@@ -10,8 +12,8 @@ namespace SLangCompiler.FrontEnd
 {
     public class SlangStoreStepVisitor: SlangBaseStepVisitor
     {
-        private ModuleNameTable moduleTable;
-        public SlangStoreStepVisitor(SourceCodeTable table, string moduleName) : base(table, moduleName)
+        private ModuleNameTable moduleTable = new ModuleNameTable();
+        public SlangStoreStepVisitor(SourceCodeTable table, ModuleData moduleData) : base(table, moduleData)
         {
         }
 
@@ -20,11 +22,28 @@ namespace SLangCompiler.FrontEnd
             Visit(context.moduleImportList());
             Visit(context.module());
 
+            Table.Modules[ModuleData.Name] = moduleTable;
+
             return base.VisitStart(context);
         }
 
         public override object VisitModuleImportList([NotNull] SLGrammarParser.ModuleImportListContext context)
         {
+            var moduleNames = context.moduleImport().Select(i => i.Id());
+            var modules = context.moduleImport(); 
+
+            foreach (var module in moduleNames)
+            {
+                // нет в папке проекта и папке Lib
+                var moduleName = module.GetText();
+                if (!Table.Modules.Keys.Contains(moduleName))
+                {
+                    throw new CompilerException($"Module {moduleName} not found", ModuleData.File, module.Symbol.Line, module.Symbol.Column);
+                }
+            }
+
+            moduleTable.ImportedModules = moduleNames.Select(i => i.GetText()).ToList();
+            // Add basic modules if not exists (System, etc)
             return base.VisitModuleImportList(context);
         }
 
