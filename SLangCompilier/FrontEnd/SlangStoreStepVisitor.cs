@@ -32,6 +32,8 @@ namespace SLangCompiler.FrontEnd
             var moduleNames = context.moduleImport().Select(i => i.Id());
             var modules = context.moduleImport(); 
 
+            // todo перенос в semantic visitor
+            /*
             foreach (var module in moduleNames)
             {
                 // нет в папке проекта и папке Lib
@@ -41,6 +43,7 @@ namespace SLangCompiler.FrontEnd
                     throw new CompilerException($"Module {moduleName} not found", ModuleData.File, module.Symbol.Line, module.Symbol.Column);
                 }
             }
+            */
 
             moduleTable.ImportedModules = moduleNames.Select(i => i.GetText()).ToList();
             // Add basic modules if not exists (System, etc)

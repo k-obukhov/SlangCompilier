@@ -156,7 +156,7 @@ functionalDeclareArgList : LBrace (functionalDeclareArg (Comma functionalDeclare
 
 functionalDeclareArg : FunctionArgModifier typeName Id;
 
-moduleEntry: Start statementSeq End Id Point;
+moduleEntry: Start statementSeq End;
 
 statementSeq: (statement | raw)*;
 
