@@ -13,8 +13,10 @@ namespace SLangCompiler.FrontEnd
     public class SlangStoreStepVisitor: SlangBaseStepVisitor
     {
         private ModuleNameTable moduleTable = new ModuleNameTable();
-        public SlangStoreStepVisitor(SourceCodeTable table, ModuleData moduleData) : base(table, moduleData)
+        private string[] allModuleNames;
+        public SlangStoreStepVisitor(SourceCodeTable table, ModuleData moduleData, string[] modules) : base(table, moduleData)
         {
+            allModuleNames = modules;
         }
 
         public override object VisitStart([NotNull] SLGrammarParser.StartContext context)
@@ -31,28 +33,59 @@ namespace SLangCompiler.FrontEnd
         {
             var moduleNames = context.moduleImport().Select(i => i.Id());
             var modules = context.moduleImport(); 
-
-            // todo перенос в semantic visitor
-            /*
+            
             foreach (var module in moduleNames)
             {
                 // нет в папке проекта и папке Lib
                 var moduleName = module.GetText();
-                if (!Table.Modules.Keys.Contains(moduleName))
+                if (moduleTable.ImportedModules.Contains(moduleName))
                 {
-                    throw new CompilerException($"Module {moduleName} not found", ModuleData.File, module.Symbol.Line, module.Symbol.Column);
+                    throw new CompilerException($"Repeating import of module ${moduleName}", ModuleData.File, module.Symbol);
                 }
+                if (!allModuleNames.Contains(moduleName))
+                {
+                    throw new CompilerException($"Module {moduleName} not found", ModuleData.File, module.Symbol);
+                }
+                if (moduleName == ModuleData.Name)
+                {
+                    throw new CompilerException($"Module {moduleName} imports itself", ModuleData.File, module.Symbol);
+                }
+                if (moduleName == CompilerConstants.MainModuleName)
+                {
+                    throw new CompilerException($"Unable to import main module from other!", ModuleData.File, module.Symbol);
+                }
+                moduleTable.ImportedModules.Add(moduleName);
             }
-            */
-
-            moduleTable.ImportedModules = moduleNames.Select(i => i.GetText()).ToList();
-            // Add basic modules if not exists (System, etc)
+            
             return base.VisitModuleImportList(context);
         }
 
         public override object VisitModule([NotNull] SLGrammarParser.ModuleContext context)
         {
+            var moduleName = context.Id().GetText();
+            if (context.Id().GetText() != ModuleData.Name)
+            {
+                throw new CompilerException($"Module name \"{moduleName}\" doest not match \"{ModuleData.Name}\"", ModuleData.File, context.Id().Symbol);
+            }
+
             return base.VisitModule(context);
+        }
+
+        public override object VisitClassDeclare([NotNull] SLGrammarParser.ClassDeclareContext context)
+        {
+            // todo checks if keyword (in slang and cpp)
+            var className = context.Id().GetText();
+            if (moduleTable.Classes.ContainsKey(className))
+            {
+                throw new CompilerException($"Redefinition of class \"{className}\"", ModuleData.File, context.Id().Symbol);
+            }
+
+            var isBase = context.base_head() == null;
+
+            var classItem = new ClassNameTableItem { TypeIdent = new Types.SlangCustomType(className), CanBeBase = isBase };
+
+            moduleTable.Classes[className] = classItem;
+            return base.VisitClassDeclare(context);
         }
     }
 }

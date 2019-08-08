@@ -16,6 +16,6 @@ namespace SLangCompiler.FrontEnd.Tables
         public IList<RoutineNameTableItem> Routines { get; set; } = new List<RoutineNameTableItem>();
         public Dictionary<string, FieldNameTableItem> Fields { get; set; }
 
-        public IList<ClassNameTableItem> Classes { get; set; } = new List<ClassNameTableItem>();
+        public Dictionary<string, ClassNameTableItem> Classes { get; set; } = new Dictionary<string, ClassNameTableItem>();
     }
 }

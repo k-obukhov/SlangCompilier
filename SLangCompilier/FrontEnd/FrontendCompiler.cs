@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Antlr4.Runtime;
+using System.Linq;
 using SLangGrammar;
 using Antlr4.Runtime.Tree;
 using SLangCompiler.FileServices;
@@ -23,6 +24,7 @@ namespace SLangCompiler.FrontEnd
         public void CheckErrors(ProjectManager projectManager)
         {
             // TODO: make async
+            string[] allModules = projectManager.FileModules.Values.Select(m => m.Name).ToArray();
             foreach (var code in projectManager.FileModules.Values)
             {
                 // find errors
@@ -36,7 +38,7 @@ namespace SLangCompiler.FrontEnd
                 parser.RemoveErrorListeners();
                 parser.AddErrorListener(errorListener);
 
-                StoreStepVisitor = new SlangStoreStepVisitor(SourceCode, code);
+                StoreStepVisitor = new SlangStoreStepVisitor(SourceCode, code, allModules);
                 SemanticVisitor = new SlangSemanticVisitor(SourceCode, code);
 
                 // store data step

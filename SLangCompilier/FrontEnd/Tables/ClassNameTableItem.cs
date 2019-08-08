@@ -6,7 +6,8 @@ namespace SLangCompiler.FrontEnd.Tables
     public class ClassNameTableItem
     {
         public SlangCustomType TypeIdent { get; set; }
-        public ClassNameTableItem ParentClassItem { get; set; }
+        public SlangCustomType Base { get; set; } = SlangCustomType.Object;
+        public bool CanBeBase { get; set; } = false; // от класса можно отнаследоваться 
 
         public Dictionary<string, FieldNameTableItem> Fields { get; set; } = new Dictionary<string, FieldNameTableItem>();
         public IList<MethodNameTableItem> Methods { get; set; } = new List<MethodNameTableItem>();
