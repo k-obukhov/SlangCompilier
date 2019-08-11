@@ -37,5 +37,10 @@ namespace SLangCompiler
         public static string BooleanType => "boolean";
 
         public static string ObjectClassName => "Object";
+
+        public static string Public => "public";
+        public static string Private => "private";
+        public static string Val => "val";
+        public static string Ref => "ref";
     }
 }

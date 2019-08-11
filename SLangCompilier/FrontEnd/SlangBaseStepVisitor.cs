@@ -19,5 +19,32 @@ namespace SLangCompiler.FrontEnd
             ModuleData = moduleData;
         }
 
+        public AccessModifier GetModifierByName(string name)
+        {
+            AccessModifier res;
+            if (name == CompilerConstants.Public)
+            {
+                res = AccessModifier.Public;
+            }
+            else
+            {
+                res = AccessModifier.Private;
+            }
+            return res;
+        }
+
+        public ParamModifier GetParamModifierByName(string name)
+        {
+            ParamModifier res;
+            if (name == CompilerConstants.Val)
+            {
+                res = ParamModifier.Val;
+            }
+            else
+            {
+                res = ParamModifier.Ref;
+            }
+            return res;
+        }
     }
 }
