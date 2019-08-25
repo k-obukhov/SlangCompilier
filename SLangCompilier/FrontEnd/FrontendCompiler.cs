@@ -15,6 +15,7 @@ namespace SLangCompiler.FrontEnd
         public SourceCodeTable SourceCode { get; set; }
         private SlangStoreStepVisitor StoreStepVisitor { get; set; }
         private SlangSemanticVisitor SemanticVisitor { get; set; }
+        private SlangStoreRoutinesVisitor StoreStepRoutinesVisitor { get; set; }
 
         public FrontendCompiler()
         {
@@ -45,7 +46,16 @@ namespace SLangCompiler.FrontEnd
             }
 
             // step #2
+            foreach (var code in projectManager.FileModules.Values)
+            {
+                SLGrammarParser parser = generateParser(code.Data);
+                SLangErrorListener errorListener = new SLangErrorListener(code);
+                parser.AddErrorListener(errorListener);
 
+                StoreStepRoutinesVisitor = new SlangStoreRoutinesVisitor(SourceCode, code, code.Name);
+                // store data step
+                StoreStepRoutinesVisitor.Visit(parser.start());
+            }
         }
     }
 }

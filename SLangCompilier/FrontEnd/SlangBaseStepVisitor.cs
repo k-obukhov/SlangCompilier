@@ -25,14 +25,12 @@ namespace SLangCompiler.FrontEnd
 
         public AccessModifier GetModifierByName(string name)
         {
-            Enum.TryParse(typeof(AccessModifier), name, out object res);
-            return (AccessModifier) res;
+            return (AccessModifier) Enum.Parse(typeof(AccessModifier), name, true);
         }
 
         public ParamModifier GetParamModifierByName(string name)
         {
-            Enum.TryParse(typeof(ParamModifier), name, out object res);
-            return (ParamModifier) res;
+            return (ParamModifier) Enum.Parse(typeof(ParamModifier), name, true);
         }
 
         public void ThrowIfReservedWord(string name, IToken token)
@@ -55,15 +53,15 @@ namespace SLangCompiler.FrontEnd
         {
             if (item == null)
             {
-                throw new CompilerException($"Class {item} does not exists in module {moduleName}", ModuleData.File, tokenToError);
+                throw new CompilerException($"Class {item.TypeIdent} does not exists in module {moduleName}", ModuleData.File, tokenToError);
             }
             else if (item.AccessModifier == AccessModifier.Private && !inSameModule)
             {
-                throw new CompilerException($"Class {item} is private", ModuleData.File, tokenToError);
+                throw new CompilerException($"Class {item.TypeIdent} is private", ModuleData.File, tokenToError);
             }
             else if (item.CanBeBase == false)
             {
-                throw new CompilerException($"Class {item} is not marked as base", ModuleData.File, tokenToError);
+                throw new CompilerException($"Class {item.TypeIdent} is not marked as base", ModuleData.File, tokenToError);
             }
         }
 

@@ -30,8 +30,7 @@ namespace SLangCompiler.FrontEnd
         public override object VisitClassDeclare([NotNull] SLGrammarParser.ClassDeclareContext context)
         {
             var classItem = moduleItem.Classes[context.Id().GetText()];
-            SlangCustomType baseClass = null;
-            if (context.inherit_head() != null)
+            if (context.inherit_head().id() != null)
             {
                 // Есть наследник
                 classItem.Base = FindTypeByName(context.inherit_head().id(), moduleItem);

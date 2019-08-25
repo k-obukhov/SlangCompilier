@@ -25,6 +25,7 @@ namespace SLangCompiler.FrontEnd
         public SlangStoreStepVisitor(SourceCodeTable table, ModuleData moduleData, string[] modules) : base(table, moduleData)
         {
             allModuleNames = modules;
+            moduleTable.ModuleData = moduleData;
         }
 
         public override object VisitStart([NotNull] SLGrammarParser.StartContext context)
@@ -33,8 +34,7 @@ namespace SLangCompiler.FrontEnd
             Visit(context.module());
 
             Table.Modules[ModuleData.Name] = moduleTable;
-
-            return base.VisitStart(context);
+            return null;
         }
 
         public override object VisitModuleImportList([NotNull] SLGrammarParser.ModuleImportListContext context)
@@ -72,7 +72,7 @@ namespace SLangCompiler.FrontEnd
         {
             var moduleName = context.Id().GetText();
             ThrowIfReservedWord(moduleName, context.Id().Symbol);
-            if (context.Id().GetText() != ModuleData.Name)
+            if (moduleName != ModuleData.Name)
             {
                 throw new CompilerException($"Module name \"{moduleName}\" doest not match \"{ModuleData.Name}\"", ModuleData.File, context.Id().Symbol);
             }
