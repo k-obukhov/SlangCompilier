@@ -73,8 +73,9 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitClassDeclare([NotNull] SLGrammarParser.ClassDeclareContext context)
         {
-            // todo checks if keyword (in slang and cpp)
             var className = context.Id().GetText();
+            ThrowIfReservedWord(className, context.Id().Symbol);
+
             if (moduleTable.Classes.ContainsKey(className))
             {
                 throw new CompilerException($"Redefinition of class \"{className}\"", ModuleData.File, context.Id().Symbol);
