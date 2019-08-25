@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
-    public class RoutineNameTableItem
+    public class RoutineNameTableItem: BaseNameTableItem
     {
         public string Name { get; set; }
         public SlangRoutineType Type { get; set; }

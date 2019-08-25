@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
-    public class ClassNameTableItem
+    public class ClassNameTableItem: BaseNameTableItem
     {
         public SlangCustomType TypeIdent { get; set; }
         public SlangCustomType Base { get; set; } = SlangCustomType.Object;

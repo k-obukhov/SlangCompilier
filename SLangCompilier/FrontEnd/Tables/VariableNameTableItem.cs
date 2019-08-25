@@ -2,7 +2,7 @@
 
 namespace SLangCompiler.FrontEnd.Tables
 {
-    public class VariableNameTableItem
+    public class VariableNameTableItem: BaseNameTableItem
     {
         public bool IsConstant { get; set; }
         public string Name { get; set; }

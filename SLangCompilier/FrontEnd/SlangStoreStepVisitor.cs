@@ -63,6 +63,7 @@ namespace SLangCompiler.FrontEnd
         public override object VisitModule([NotNull] SLGrammarParser.ModuleContext context)
         {
             var moduleName = context.Id().GetText();
+            ThrowIfReservedWord(moduleName, context.Id().Symbol);
             if (context.Id().GetText() != ModuleData.Name)
             {
                 throw new CompilerException($"Module name \"{moduleName}\" doest not match \"{ModuleData.Name}\"", ModuleData.File, context.Id().Symbol);
@@ -83,7 +84,7 @@ namespace SLangCompiler.FrontEnd
 
             var isBase = context.base_head() == null;
 
-            var classItem = new ClassNameTableItem { TypeIdent = new Types.SlangCustomType(className), CanBeBase = isBase };
+            var classItem = new ClassNameTableItem { TypeIdent = new Types.SlangCustomType(className), CanBeBase = isBase, Column = context.Id().Symbol.Column, Line = context.Id().Symbol.Line };
 
             moduleTable.Classes[className] = classItem;
             return base.VisitClassDeclare(context);
