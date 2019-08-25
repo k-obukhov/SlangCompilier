@@ -10,6 +10,14 @@ using System.Text;
 
 namespace SLangCompiler.FrontEnd
 {
+    /// <summary>
+    /// Store Visitor — стартовый проход семантического анализатора
+    /// Обязанности: 
+    /// 1) Проверки имен модулей
+    /// 2) Резервирование типов без их дополнительной информации (Этап объявления, все что касается определений полей и методов, а также наследования -- пропускается)
+    /// Мотивация:
+    /// 1) Иметь базовую информацию по типам к следующему проходу, который использует эту информацию при определении функций и методов
+    /// </summary>
     public class SlangStoreStepVisitor: SlangBaseStepVisitor
     {
         private ModuleNameTable moduleTable = new ModuleNameTable();
@@ -83,8 +91,9 @@ namespace SLangCompiler.FrontEnd
             }
 
             var isBase = context.base_head() == null;
+            var modifier = GetModifierByName(context.AccessModifier().GetText());
 
-            var classItem = new ClassNameTableItem { TypeIdent = new Types.SlangCustomType(className), CanBeBase = isBase, Column = context.Id().Symbol.Column, Line = context.Id().Symbol.Line };
+            var classItem = new ClassNameTableItem { TypeIdent = new Types.SlangCustomType(ModuleData.Name, className), CanBeBase = isBase, Column = context.Id().Symbol.Column, Line = context.Id().Symbol.Line, AccessModifier = modifier };
 
             moduleTable.Classes[className] = classItem;
             return base.VisitClassDeclare(context);

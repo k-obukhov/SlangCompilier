@@ -21,30 +21,31 @@ namespace SLangCompiler.FrontEnd
             SourceCode = new SourceCodeTable();
         }
 
+        private SLGrammarParser generateParser(string sourceCode)
+        {
+            AntlrInputStream inputStream = new AntlrInputStream(sourceCode);
+            SLGrammarLexer lexer = new SLGrammarLexer(inputStream);
+            CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
+            return new SLGrammarParser(commonTokenStream);
+        }
+
         public void CheckErrors(ProjectManager projectManager)
         {
             // TODO: make async
             string[] allModules = projectManager.FileModules.Values.Select(m => m.Name).ToArray();
             foreach (var code in projectManager.FileModules.Values)
             {
-                // find errors
-                AntlrInputStream inputStream = new AntlrInputStream(code.Data);
-                SLGrammarLexer lexer = new SLGrammarLexer(inputStream);
-                CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
-                SLGrammarParser parser = new SLGrammarParser(commonTokenStream);
-
+                SLGrammarParser parser = generateParser(code.Data);
                 SLangErrorListener errorListener = new SLangErrorListener(code);
-
-                parser.RemoveErrorListeners();
                 parser.AddErrorListener(errorListener);
 
                 StoreStepVisitor = new SlangStoreStepVisitor(SourceCode, code, allModules);
-                SemanticVisitor = new SlangSemanticVisitor(SourceCode, code);
-
                 // store data step
                 StoreStepVisitor.Visit(parser.start());
-                // last step
             }
+
+            // step #2
+
         }
     }
 }

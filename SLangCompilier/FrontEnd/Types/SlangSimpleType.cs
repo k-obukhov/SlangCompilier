@@ -13,6 +13,7 @@ namespace SLangCompiler.FrontEnd.Types
         public static SlangSimpleType Real => new SlangSimpleType(CompilerConstants.RealType);
         public static SlangSimpleType Character => new SlangSimpleType(CompilerConstants.CharacterType);
         public static SlangSimpleType Boolean => new SlangSimpleType(CompilerConstants.BooleanType);
+        public static SlangSimpleType String => new SlangSimpleType(CompilerConstants.StringType);
 
         public SlangSimpleType(string name)
         {

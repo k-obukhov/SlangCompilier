@@ -5,8 +5,9 @@ namespace SLangCompiler.FrontEnd.Tables
 {
     public class ClassNameTableItem: BaseNameTableItem
     {
+        public AccessModifier AccessModifier { get; set; }
         public SlangCustomType TypeIdent { get; set; }
-        public SlangCustomType Base { get; set; } = SlangCustomType.Object;
+        public SlangCustomType Base { get; set; } // may be null (if TypeIdent == System.Object)
         public bool CanBeBase { get; set; } = false; // от класса можно отнаследоваться 
 
         public Dictionary<string, FieldNameTableItem> Fields { get; set; } = new Dictionary<string, FieldNameTableItem>();
