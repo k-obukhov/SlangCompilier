@@ -78,6 +78,7 @@ fragment Integer: 'integer'; // | 'int'
 fragment Real: 'real';
 fragment Character: 'character'; // | 'char'
 fragment Boolean: 'boolean'; // | 'bool'
+fragment String: 'string';
 
 // Токены для указателей
 New: 'new'; // выделение памяти
@@ -114,7 +115,7 @@ moduleImportList: (moduleImport | raw)*;
 moduleImport: ImportToken Id;
 module: ModuleToken Id moduleDeclare moduleEntry;
 
-moduleDeclare: (functionDeclare | procedureDeclare | raw | varModuleDeclare | classDeclare)*; // Определение модуля 
+moduleDeclare: (functionDeclare | procedureDeclare | methodDeclare | raw | varModuleDeclare | classDeclare)*; // Определение модуля 
 
 
 /// Object-Oriented part!
@@ -134,7 +135,7 @@ inherit_head: (Inherit LBrace id RBrace)?;
 
 classDeclare: AccessModifier base_head Class Id inherit_head classStatements End;
 //classDeclare: AccessModifier Id Class;
-classStatements: (methodDeclare | raw | fieldDeclare)*;
+classStatements: (raw | fieldDeclare)*;
 methodDeclare: methodFuncDeclare | methodProcDeclare | methodFuncAbstract | methodProcAbstract;
 
 thisHeader: LBrace typeName Id  RBrace;
@@ -268,7 +269,7 @@ ptrExpAtom: newExp | Nil;
 expAtom: call | arrayLenProperty | arrayElement | id | (IntValue | RealValue | BoolValue) | call_func | StringLiteral | ptrExpAtom | array;
 // Точки -- для указания связт модуль-функция
 id: (Id Point)? Id;
-SimpleType: Real | Integer | Boolean | Character;
+SimpleType: Real | Integer | Boolean | Character | String;
 
 array: LABrace (expAtom (Comma expAtom)*)?  RABrace;
 
