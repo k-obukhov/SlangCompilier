@@ -48,19 +48,19 @@ namespace SLangCompiler.FrontEnd
                 var moduleName = module.GetText();
                 if (moduleTable.ImportedModules.Contains(moduleName))
                 {
-                    throw new CompilerException($"Repeating import of module ${moduleName}", ModuleData.File, module.Symbol);
+                    ThrowException($"Repeating import of module ${moduleName}", module.Symbol);
                 }
                 if (!allModuleNames.Contains(moduleName))
                 {
-                    throw new CompilerException($"Module {moduleName} not found", ModuleData.File, module.Symbol);
+                    ThrowException($"Module {moduleName} not found", module.Symbol);
                 }
                 if (moduleName == ModuleData.Name)
                 {
-                    throw new CompilerException($"Module {moduleName} imports itself", ModuleData.File, module.Symbol);
+                    ThrowException($"Module {moduleName} imports itself", module.Symbol);
                 }
                 if (moduleName == CompilerConstants.MainModuleName)
                 {
-                    throw new CompilerException($"Unable to import main module from other!", ModuleData.File, module.Symbol);
+                    ThrowException($"Unable to import main module from other!", module.Symbol);
                 }
                 moduleTable.ImportedModules.Add(moduleName);
             }
@@ -74,7 +74,7 @@ namespace SLangCompiler.FrontEnd
             ThrowIfReservedWord(moduleName, context.Id().Symbol);
             if (moduleName != ModuleData.Name)
             {
-                throw new CompilerException($"Module name \"{moduleName}\" doest not match \"{ModuleData.Name}\"", ModuleData.File, context.Id().Symbol);
+                ThrowException($"Module name \"{moduleName}\" doest not match \"{ModuleData.Name}\"", context.Id().Symbol);
             }
 
             return base.VisitModule(context);
@@ -87,7 +87,7 @@ namespace SLangCompiler.FrontEnd
 
             if (moduleTable.Classes.ContainsKey(className))
             {
-                throw new CompilerException($"Redefinition of class \"{className}\"", ModuleData.File, context.Id().Symbol);
+                ThrowException($"Redefinition of class \"{className}\"", context.Id().Symbol);
             }
 
             var isBase = context.baseHead().Base() != null;
