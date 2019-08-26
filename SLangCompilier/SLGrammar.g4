@@ -113,7 +113,7 @@ fragment PrivateModifier: 'private';
 start: moduleImportList module;
 moduleImportList: (moduleImport | raw)*;
 moduleImport: ImportToken Id;
-module: ModuleToken Id moduleDeclare moduleEntry;
+module: ModuleToken Id moduleDeclare (moduleEntry)?;
 
 moduleDeclare: (functionDeclare | procedureDeclare | methodDeclare | raw | varModuleDeclare | classDeclare)*; // Определение модуля 
 
