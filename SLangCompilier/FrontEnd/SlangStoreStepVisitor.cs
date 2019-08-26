@@ -20,8 +20,8 @@ namespace SLangCompiler.FrontEnd
     /// </summary>
     public class SlangStoreStepVisitor: SlangBaseStepVisitor
     {
-        private ModuleNameTable moduleTable = new ModuleNameTable();
-        private string[] allModuleNames;
+        private readonly ModuleNameTable moduleTable = new ModuleNameTable();
+        private readonly string[] allModuleNames;
         public SlangStoreStepVisitor(SourceCodeTable table, ModuleData moduleData, string[] modules) : base(table, moduleData)
         {
             allModuleNames = modules;

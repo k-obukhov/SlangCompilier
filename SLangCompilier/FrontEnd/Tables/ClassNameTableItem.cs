@@ -1,5 +1,6 @@
 ﻿using SLangCompiler.FrontEnd.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
@@ -12,6 +13,8 @@ namespace SLangCompiler.FrontEnd.Tables
 
         public Dictionary<string, FieldNameTableItem> Fields { get; set; } = new Dictionary<string, FieldNameTableItem>();
         public IList<MethodNameTableItem> Methods { get; set; } = new List<MethodNameTableItem>();
+
+        public bool IsAbstract() => Methods.Any(m => m.IsAbstract);
 
     }
 

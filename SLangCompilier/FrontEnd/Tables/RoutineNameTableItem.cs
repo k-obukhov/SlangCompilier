@@ -6,12 +6,18 @@ namespace SLangCompiler.FrontEnd.Tables
     public class RoutineNameTableItem: BaseNameTableItem
     {
         public string Name { get; set; }
-        public SlangRoutineType Type { get; set; }
-        public IList<string> NameParams { get; set; }
+        public SlangType ReturnType { get; set; }
+        public IList<RoutineArgNameTableItem> Params { get; set; }
 
         public AccessModifier AccessModifier { get; set; }
 
-        public bool IsFunction() => Type is SlangFunctionType;
-        public bool IsProcedure() => Type is SlangProcedureType;
+        public bool IsFunction() => ReturnType == null;
+        public bool IsProcedure() => ReturnType == null;
+    }
+
+    public class RoutineArgNameTableItem: BaseNameTableItem
+    {
+        public string Name { get; set; }
+        public SlangRoutineTypeArg Type { get; set; }
     }
 }

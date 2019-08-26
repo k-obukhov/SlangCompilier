@@ -136,7 +136,7 @@ namespace SLangCompiler.FrontEnd
             {
                 ThrowException($"Invalid name: {context.id().GetText()}", errToken);
             }
-
+            ThrowIfReservedWord(typeName, context.id().Id().First().Symbol);
             return new SlangCustomType(moduleName, typeName);
         }
     }
