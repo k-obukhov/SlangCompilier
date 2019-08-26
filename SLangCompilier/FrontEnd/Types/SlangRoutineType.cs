@@ -19,6 +19,12 @@ namespace SLangCompiler.FrontEnd.Types
         public ParamModifier Modifier { get; set; } // val or ref
         public SlangType Type { get; set; }
 
+        public SlangRoutineTypeArg(ParamModifier modifier, SlangType type)
+        {
+            Modifier = modifier;
+            Type = type;
+        }
+
         public override bool Equals(object obj) => obj is SlangRoutineTypeArg arg && (arg.Type.Equals(Type)) && (arg.Modifier == Modifier);
         public override int GetHashCode() => base.GetHashCode();
 

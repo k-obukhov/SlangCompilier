@@ -30,10 +30,10 @@ namespace SLangCompiler.FrontEnd
         public override object VisitClassDeclare([NotNull] SLGrammarParser.ClassDeclareContext context)
         {
             var classItem = moduleItem.Classes[context.Id().GetText()];
-            if (context.inherit_head().id() != null)
+            if (context.inheritHead().customType() != null)
             {
                 // Есть наследник
-                classItem.Base = FindTypeByName(context.inherit_head().id(), moduleItem);
+                classItem.Base = FindTypeByName(context.inheritHead().customType().id(), moduleItem);
             }
             else
             {

@@ -111,5 +111,76 @@ namespace SLangCompiler.FrontEnd
 
             return res;
         }
+
+        // Type Visit
+        public override object VisitSimpleType([NotNull] SLGrammarParser.SimpleTypeContext context)
+        {
+            return new SlangSimpleType(context.SimpleType().GetText());
+        }
+
+        public override object VisitFunctionType([NotNull] SLGrammarParser.FunctionTypeContext context)
+        {
+            var argTypes = Visit(context.functionalArgList()) as IList<SlangRoutineTypeArg>;
+            var returnType = Visit(context.typeName()) as SlangType;
+            return new SlangFunctionType(argTypes, returnType);
+        }
+
+        public override object VisitProcedureType([NotNull] SLGrammarParser.ProcedureTypeContext context)
+        {
+            var argTypes = Visit(context.functionalArgList()) as IList<SlangRoutineTypeArg>;
+            return new SlangProcedureType(argTypes);
+        }
+
+        public override object VisitFunctionalArgList([NotNull] SLGrammarParser.FunctionalArgListContext context)
+        {
+            IList<SlangRoutineTypeArg> args = new List<SlangRoutineTypeArg>(context.functionalArg().Length);
+
+            foreach (var arg in context.functionalArg())
+            {
+                args.Add(Visit(arg) as SlangRoutineTypeArg);
+            }
+
+            return args;
+        }
+
+        public override object VisitFunctionalArg([NotNull] SLGrammarParser.FunctionalArgContext context)
+        {
+            var modifier = GetParamModifierByName(context.FunctionArgModifier().GetText());
+            var type = Visit(context.typeName()) as SlangType;
+            return new SlangRoutineTypeArg(modifier, type);
+        }
+
+        public override object VisitArrayType([NotNull] SLGrammarParser.ArrayTypeContext context)
+        {
+            var type = Visit(context.scalarType()) as SlangType;
+            var dimension = context.arrayDimention().Length;
+            return new SlangArrayType(type, dimension);
+        }
+
+        public override object VisitPtrType([NotNull] SLGrammarParser.PtrTypeContext context)
+        {
+            return new SlangPointerType(Visit(context.customType()) as SlangCustomType);
+        }
+
+        public override object VisitCustomType([NotNull] SLGrammarParser.CustomTypeContext context)
+        {
+            string moduleName, typeName;
+            var ids = context.id().Id().Select(x => x.GetText()).ToArray();
+            if (ids.Count() == 1)
+            {
+                moduleName = ModuleData.Name;
+                typeName = ids[0];
+            }
+            else if (ids.Count() == 2)
+            {
+                moduleName = ids[0];
+                typeName = ids[1];
+            }
+            else
+            {
+                throw new CompilerException($"Invalid name: {context.id().GetText()}", ModuleData.File, context.id().Id().First().Symbol);
+            }
+            return new SlangCustomType(moduleName, typeName);
+        }
     }
 }

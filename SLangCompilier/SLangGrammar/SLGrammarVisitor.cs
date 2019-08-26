@@ -113,6 +113,22 @@ public interface ISLGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitBoolOrEmpty([NotNull] SLGrammarParser.BoolOrEmptyContext context);
 
 	/// <summary>
+	/// Visit a parse tree produced by the <c>IfElseIfElse</c>
+	/// labeled alternative in <see cref="SLGrammarParser.ifCond"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIfElseIfElse([NotNull] SLGrammarParser.IfElseIfElseContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by the <c>IfSingle</c>
+	/// labeled alternative in <see cref="SLGrammarParser.ifCond"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIfSingle([NotNull] SLGrammarParser.IfSingleContext context);
+
+	/// <summary>
 	/// Visit a parse tree produced by the <c>MathFactorUnaryMinus</c>
 	/// labeled alternative in <see cref="SLGrammarParser.mathFactor"/>.
 	/// </summary>
@@ -191,22 +207,6 @@ public interface ISLGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBoolAtomBracketsNot([NotNull] SLGrammarParser.BoolAtomBracketsNotContext context);
-
-	/// <summary>
-	/// Visit a parse tree produced by the <c>IfElseIfElse</c>
-	/// labeled alternative in <see cref="SLGrammarParser.if_cond"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitIfElseIfElse([NotNull] SLGrammarParser.IfElseIfElseContext context);
-
-	/// <summary>
-	/// Visit a parse tree produced by the <c>IfSingle</c>
-	/// labeled alternative in <see cref="SLGrammarParser.if_cond"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitIfSingle([NotNull] SLGrammarParser.IfSingleContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by the <c>BoolEqualityEmpty</c>
@@ -293,6 +293,13 @@ public interface ISLGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitPtrType([NotNull] SLGrammarParser.PtrTypeContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.customType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCustomType([NotNull] SLGrammarParser.CustomTypeContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLGrammarParser.scalarType"/>.
@@ -393,18 +400,18 @@ public interface ISLGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitModuleDeclare([NotNull] SLGrammarParser.ModuleDeclareContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.base_head"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.baseHead"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitBase_head([NotNull] SLGrammarParser.Base_headContext context);
+	Result VisitBaseHead([NotNull] SLGrammarParser.BaseHeadContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.inherit_head"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.inheritHead"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitInherit_head([NotNull] SLGrammarParser.Inherit_headContext context);
+	Result VisitInheritHead([NotNull] SLGrammarParser.InheritHeadContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLGrammarParser.classDeclare"/>.
@@ -631,11 +638,11 @@ public interface ISLGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitArrayLet([NotNull] SLGrammarParser.ArrayLetContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.return_val"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.returnVal"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitReturn_val([NotNull] SLGrammarParser.Return_valContext context);
+	Result VisitReturnVal([NotNull] SLGrammarParser.ReturnValContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLGrammarParser.input"/>.
@@ -680,25 +687,25 @@ public interface ISLGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitCallArg([NotNull] SLGrammarParser.CallArgContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.call_func"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.callFunc"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitCall_func([NotNull] SLGrammarParser.Call_funcContext context);
+	Result VisitCallFunc([NotNull] SLGrammarParser.CallFuncContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.if_cond"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.ifCond"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitIf_cond([NotNull] SLGrammarParser.If_condContext context);
+	Result VisitIfCond([NotNull] SLGrammarParser.IfCondContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.while_cond"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.whileCond"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitWhile_cond([NotNull] SLGrammarParser.While_condContext context);
+	Result VisitWhileCond([NotNull] SLGrammarParser.WhileCondContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLGrammarParser.repeat"/>.

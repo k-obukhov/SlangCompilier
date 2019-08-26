@@ -155,6 +155,30 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	public virtual Result VisitBoolOrEmpty([NotNull] SLGrammarParser.BoolOrEmptyContext context) { return VisitChildren(context); }
 
 	/// <summary>
+	/// Visit a parse tree produced by the <c>IfElseIfElse</c>
+	/// labeled alternative in <see cref="SLGrammarParser.ifCond"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitIfElseIfElse([NotNull] SLGrammarParser.IfElseIfElseContext context) { return VisitChildren(context); }
+
+	/// <summary>
+	/// Visit a parse tree produced by the <c>IfSingle</c>
+	/// labeled alternative in <see cref="SLGrammarParser.ifCond"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitIfSingle([NotNull] SLGrammarParser.IfSingleContext context) { return VisitChildren(context); }
+
+	/// <summary>
 	/// Visit a parse tree produced by the <c>MathFactorUnaryMinus</c>
 	/// labeled alternative in <see cref="SLGrammarParser.mathFactor"/>.
 	/// <para>
@@ -273,30 +297,6 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	public virtual Result VisitBoolAtomBracketsNot([NotNull] SLGrammarParser.BoolAtomBracketsNotContext context) { return VisitChildren(context); }
-
-	/// <summary>
-	/// Visit a parse tree produced by the <c>IfElseIfElse</c>
-	/// labeled alternative in <see cref="SLGrammarParser.if_cond"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitIfElseIfElse([NotNull] SLGrammarParser.IfElseIfElseContext context) { return VisitChildren(context); }
-
-	/// <summary>
-	/// Visit a parse tree produced by the <c>IfSingle</c>
-	/// labeled alternative in <see cref="SLGrammarParser.if_cond"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitIfSingle([NotNull] SLGrammarParser.IfSingleContext context) { return VisitChildren(context); }
 
 	/// <summary>
 	/// Visit a parse tree produced by the <c>BoolEqualityEmpty</c>
@@ -427,6 +427,17 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	public virtual Result VisitPtrType([NotNull] SLGrammarParser.PtrTypeContext context) { return VisitChildren(context); }
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.customType"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCustomType([NotNull] SLGrammarParser.CustomTypeContext context) { return VisitChildren(context); }
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLGrammarParser.scalarType"/>.
@@ -583,7 +594,7 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	public virtual Result VisitModuleDeclare([NotNull] SLGrammarParser.ModuleDeclareContext context) { return VisitChildren(context); }
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.base_head"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.baseHead"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -591,10 +602,10 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitBase_head([NotNull] SLGrammarParser.Base_headContext context) { return VisitChildren(context); }
+	public virtual Result VisitBaseHead([NotNull] SLGrammarParser.BaseHeadContext context) { return VisitChildren(context); }
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.inherit_head"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.inheritHead"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -602,7 +613,7 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitInherit_head([NotNull] SLGrammarParser.Inherit_headContext context) { return VisitChildren(context); }
+	public virtual Result VisitInheritHead([NotNull] SLGrammarParser.InheritHeadContext context) { return VisitChildren(context); }
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLGrammarParser.classDeclare"/>.
@@ -957,7 +968,7 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	public virtual Result VisitArrayLet([NotNull] SLGrammarParser.ArrayLetContext context) { return VisitChildren(context); }
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.return_val"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.returnVal"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -965,7 +976,7 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitReturn_val([NotNull] SLGrammarParser.Return_valContext context) { return VisitChildren(context); }
+	public virtual Result VisitReturnVal([NotNull] SLGrammarParser.ReturnValContext context) { return VisitChildren(context); }
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLGrammarParser.input"/>.
@@ -1034,7 +1045,7 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	public virtual Result VisitCallArg([NotNull] SLGrammarParser.CallArgContext context) { return VisitChildren(context); }
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.call_func"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.callFunc"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -1042,10 +1053,10 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitCall_func([NotNull] SLGrammarParser.Call_funcContext context) { return VisitChildren(context); }
+	public virtual Result VisitCallFunc([NotNull] SLGrammarParser.CallFuncContext context) { return VisitChildren(context); }
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.if_cond"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.ifCond"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -1053,10 +1064,10 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitIf_cond([NotNull] SLGrammarParser.If_condContext context) { return VisitChildren(context); }
+	public virtual Result VisitIfCond([NotNull] SLGrammarParser.IfCondContext context) { return VisitChildren(context); }
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLGrammarParser.while_cond"/>.
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.whileCond"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -1064,7 +1075,7 @@ public partial class SLGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitWhile_cond([NotNull] SLGrammarParser.While_condContext context) { return VisitChildren(context); }
+	public virtual Result VisitWhileCond([NotNull] SLGrammarParser.WhileCondContext context) { return VisitChildren(context); }
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLGrammarParser.repeat"/>.
