@@ -34,25 +34,27 @@ namespace SLangCompiler.FrontEnd
         {
             // TODO: make async
             string[] allModules = projectManager.FileModules.Values.Select(m => m.Name).ToArray();
-            foreach (var code in projectManager.FileModules.Values)
+            var modules = projectManager.FileModules;
+
+            foreach (var key in modules.Keys)
             {
-                SLGrammarParser parser = generateParser(code.Data);
-                SLangErrorListener errorListener = new SLangErrorListener(code);
+                SLGrammarParser parser = generateParser(modules[key].Data);
+                SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
                 parser.AddErrorListener(errorListener);
 
-                StoreStepVisitor = new SlangStoreStepVisitor(SourceCode, code, allModules);
+                StoreStepVisitor = new SlangStoreStepVisitor(SourceCode, modules[key], allModules);
                 // store data step
                 StoreStepVisitor.Visit(parser.start());
             }
 
             // step #2
-            foreach (var code in projectManager.FileModules.Values)
+            foreach (var key in modules.Keys)
             {
-                SLGrammarParser parser = generateParser(code.Data);
-                SLangErrorListener errorListener = new SLangErrorListener(code);
+                SLGrammarParser parser = generateParser(modules[key].Data);
+                SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
                 parser.AddErrorListener(errorListener);
 
-                StoreStepRoutinesVisitor = new SlangStoreRoutinesVisitor(SourceCode, code, code.Name);
+                StoreStepRoutinesVisitor = new SlangStoreRoutinesVisitor(SourceCode, modules[key]);
                 // store data step
                 StoreStepRoutinesVisitor.Visit(parser.start());
             }

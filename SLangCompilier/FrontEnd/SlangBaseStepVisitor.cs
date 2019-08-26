@@ -41,77 +41,6 @@ namespace SLangCompiler.FrontEnd
             }
         }
 
-        /// <summary>
-        /// base check of class that found in inherit head
-        /// 1) is should be exists
-        /// 2) it should be public (in another module)
-        /// 3) it should have base modifier (anyway)
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="moduleName"></param>
-        private void checkInheritanceClass(ClassNameTableItem item, string moduleName, bool inSameModule, IToken tokenToError)
-        {
-            if (item == null)
-            {
-                throw new CompilerException($"Class {item.TypeIdent} does not exists in module {moduleName}", ModuleData.File, tokenToError);
-            }
-            else if (item.AccessModifier == AccessModifier.Private && !inSameModule)
-            {
-                throw new CompilerException($"Class {item.TypeIdent} is private", ModuleData.File, tokenToError);
-            }
-            else if (item.CanBeBase == false)
-            {
-                throw new CompilerException($"Class {item.TypeIdent} is not marked as base", ModuleData.File, tokenToError);
-            }
-        }
-
-        /// <summary>
-        /// Поиск идентификатора типа по его названию
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public SlangCustomType FindTypeByName(SLGrammarParser.IdContext id, ModuleNameTable module)
-        {
-            SlangCustomType res = null;
-            var tokenToError = id.Id().First().Symbol;
-            var nameArray = id.Id().Select(t => t.GetText()).ToArray();
-
-            if (nameArray.Count() == 1)
-            {
-                var className = nameArray[0];
-                var classFound = module.Classes[className];
-
-                checkInheritanceClass(classFound, module.ModuleData.Name, true, tokenToError);
-                res = classFound.TypeIdent;
-            }
-            else if (nameArray.Count() == 2)
-            {
-                var moduleName = nameArray[0];
-                var className = nameArray[1];
-
-                // check module name in imported modules
-                if (module.ImportedModules.Contains(moduleName))
-                {
-                    throw new CompilerException($"Module {moduleName} is not imported", module.ModuleData.File, tokenToError);
-                }
-                else
-                {
-                    // check class in module
-                    var moduleFound = Table.Modules[moduleName];
-                    var classFound = moduleFound.Classes[className];
-
-                    checkInheritanceClass(classFound, moduleName, false, tokenToError);
-                    res = classFound.TypeIdent;
-                }
-            }
-            else
-            {
-                throw new CompilerException("Invalid name format", module.ModuleData.File, tokenToError);
-            }
-
-            return res;
-        }
-
         // Type Visit
         public override object VisitSimpleType([NotNull] SLGrammarParser.SimpleTypeContext context)
         {
@@ -162,10 +91,37 @@ namespace SLangCompiler.FrontEnd
             return new SlangPointerType(Visit(context.customType()) as SlangCustomType);
         }
 
+        public void ThrowException(string message, IToken symbol)
+        {
+            throw new CompilerException(message, ModuleData.File, symbol);
+        }
+
+        public void CheckClassExists(string moduleName, string typeName, IToken errToken)
+        {
+            if (!Table.Modules.ContainsKey(moduleName)) // модуля нет
+            {
+                ThrowException($"Module {moduleName} not found", errToken);
+            }
+            else if (!Table.Modules[ModuleData.Name].ImportedModules.Contains(moduleName) && moduleName != ModuleData.Name)
+            {
+                ThrowException($"Module {moduleName} not imported", errToken);
+            }
+            else if (!Table.Modules[moduleName].Classes.ContainsKey(typeName))
+            {
+                ThrowException($"Class {typeName} not found in module {moduleName}", errToken);
+            }
+            else if (Table.Modules[moduleName].Classes[typeName].AccessModifier == AccessModifier.Private && moduleName != ModuleData.Name)
+            {
+                ThrowException($"Class {typeName} from module {moduleName} is private", errToken);
+            }
+        }
+
         public override object VisitCustomType([NotNull] SLGrammarParser.CustomTypeContext context)
         {
-            string moduleName, typeName;
+            string moduleName = "", typeName = "";
             var ids = context.id().Id().Select(x => x.GetText()).ToArray();
+            var errToken = context.id().Id().First().Symbol;
+
             if (ids.Count() == 1)
             {
                 moduleName = ModuleData.Name;
@@ -178,8 +134,9 @@ namespace SLangCompiler.FrontEnd
             }
             else
             {
-                throw new CompilerException($"Invalid name: {context.id().GetText()}", ModuleData.File, context.id().Id().First().Symbol);
+                ThrowException($"Invalid name: {context.id().GetText()}", errToken);
             }
+
             return new SlangCustomType(moduleName, typeName);
         }
     }

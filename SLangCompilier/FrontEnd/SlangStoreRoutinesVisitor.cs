@@ -22,9 +22,9 @@ namespace SLangCompiler.FrontEnd
         /// </summary>
 
         private ModuleNameTable moduleItem;
-        public SlangStoreRoutinesVisitor(SourceCodeTable table, ModuleData module, string moduleName): base(table, module)
+        public SlangStoreRoutinesVisitor(SourceCodeTable table, ModuleData module): base(table, module)
         {
-            moduleItem = table.Modules[moduleName];
+            moduleItem = table.Modules[module.Name];
         }
 
         public override object VisitClassDeclare([NotNull] SLGrammarParser.ClassDeclareContext context)
@@ -33,14 +33,28 @@ namespace SLangCompiler.FrontEnd
             if (context.inheritHead().customType() != null)
             {
                 // Есть наследник
-                classItem.Base = FindTypeByName(context.inheritHead().customType().id(), moduleItem);
+                classItem.Base = Visit(context.inheritHead().customType()) as SlangCustomType;
             }
             else
             {
                 // Нету наследника, берем Object из System
                 classItem.Base = Table.Modules[CompilerConstants.SystemModuleName].Classes[CompilerConstants.ObjectClassName].TypeIdent;
             }
+
+            var moduleName = classItem.Base.ModuleName;
+            var typeName = classItem.Base.Name;
+            var errToken = context.Id().Symbol;
+
+            CheckClassExists(moduleName, typeName, errToken);
+
+            if (!Table.Modules[classItem.Base.ModuleName].Classes[classItem.Base.Name].CanBeBase)
+            {
+                ThrowException($"Class {classItem.Base} is not marked as base", errToken);
+            }
+
             return null;
         }
+
+        // store routines data here
     }
 }

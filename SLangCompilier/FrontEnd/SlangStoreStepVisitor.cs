@@ -90,7 +90,7 @@ namespace SLangCompiler.FrontEnd
                 throw new CompilerException($"Redefinition of class \"{className}\"", ModuleData.File, context.Id().Symbol);
             }
 
-            var isBase = context.baseHead() == null;
+            var isBase = context.baseHead().Base() != null;
             var modifier = GetModifierByName(context.AccessModifier().GetText());
 
             var classItem = new ClassNameTableItem { TypeIdent = new Types.SlangCustomType(ModuleData.Name, className), CanBeBase = isBase, Column = context.Id().Symbol.Column, Line = context.Id().Symbol.Line, AccessModifier = modifier };
