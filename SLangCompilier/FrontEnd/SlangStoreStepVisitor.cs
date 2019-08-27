@@ -77,6 +77,11 @@ namespace SLangCompiler.FrontEnd
                 ThrowException($"Module name \"{moduleName}\" doest not match \"{ModuleData.Name}\"", context.Id().Symbol);
             }
 
+            if (moduleName != CompilerConstants.MainModuleName && context.moduleEntry() != null)
+            {
+                ThrowException($"Module {moduleName} is not main module but have an entry point", context.moduleEntry().Start().Symbol);
+            }
+
             return base.VisitModule(context);
         }
 

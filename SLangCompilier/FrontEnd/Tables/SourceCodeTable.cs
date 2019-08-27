@@ -14,7 +14,7 @@ namespace SLangCompiler.FrontEnd.Tables
 
             if (Modules.ContainsKey(moduleName) && Modules[moduleName].Classes.ContainsKey(className))
             {
-                res = Modules[moduleName].Classes[moduleName];
+                res = Modules[moduleName].Classes[className];
             }
 
             return res;

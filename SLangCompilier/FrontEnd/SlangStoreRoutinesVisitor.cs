@@ -57,10 +57,10 @@ namespace SLangCompiler.FrontEnd
                 {
                     ThrowException($"Field {item.Name} already defined in class {context.Id().GetText()}", fieldContext.varDeclare().Start);
                 }
-                classItem.Fields[item.Name] = new FieldNameTableItem { AccessModifier = GetModifierByName(fieldContext.AccessModifier().GetText()), Name = item.Name, IsConstant = item.IsConstant, Column = item.Column, Line = item.Line, Type = item.Type };
+                classItem.Fields.Add(item.Name, new FieldNameTableItem { AccessModifier = GetModifierByName(fieldContext.AccessModifier().GetText()), Name = item.Name, IsConstant = item.IsConstant, Column = item.Column, Line = item.Line, Type = item.Type });
             }
 
-            return null;
+            return base.VisitClassDeclare(context);
         }
 
         private void ThrowModuleFromOtherClassModuleException(Antlr4.Runtime.Tree.ITerminalNode token)
