@@ -49,6 +49,17 @@ namespace SLangCompiler.FrontEnd
                 ThrowException($"Class {classItem.Base} is not marked as base", errToken);
             }
 
+            // store fields
+            foreach(var fieldContext in context.classStatements().fieldDeclare())
+            {
+                var item = Visit(fieldContext) as VariableNameTableItem;
+                if (classItem.Fields.ContainsKey(item.Name))
+                {
+                    ThrowException($"Field {item.Name} already defined in class {context.Id().GetText()}", fieldContext.varDeclare().Start);
+                }
+                classItem.Fields[item.Name] = new FieldNameTableItem { AccessModifier = GetModifierByName(fieldContext.AccessModifier().GetText()), Name = item.Name, IsConstant = item.IsConstant, Column = item.Column, Line = item.Line, Type = item.Type };
+            }
+
             return null;
         }
 
@@ -336,14 +347,93 @@ namespace SLangCompiler.FrontEnd
             return res;
         }
         // store fields of class / module
+        // fieldDeclare -> varDeclare
+        // varModuleDeclare -> declare -> (varDeclare | constDeclare)
+        // constDeclare -> anyType
+        // varDeclare -> ptrDeclare (ptrType) | arrDeclare (arrType) | scalarDeclare (anyType - array - ptr)
         public override object VisitFieldDeclare([NotNull] SLGrammarParser.FieldDeclareContext context)
         {
-            return base.VisitFieldDeclare(context);
+            var data = Visit(context.varDeclare()) as VariableNameTableItem;
+            var modifier = GetModifierByName(context.AccessModifier().GetText());
+            return new FieldNameTableItem { AccessModifier = modifier, Column = data.Column, IsConstant = data.IsConstant, Line = data.Line, Name = data.Name, Type = data.Type };
         }
 
         public override object VisitVarModuleDeclare([NotNull] SLGrammarParser.VarModuleDeclareContext context)
         {
+            var data = Visit(context.declare()) as VariableNameTableItem;
+            var isReadonly = context.Readonly() == null ? true : false;
+            if (moduleItem.Fields.ContainsKey(data.Name))
+            {
+                ThrowIfVariableExistsException(data.Name, data.Line, data.Column);
+            }
+            moduleItem.Fields[data.Name] = new ModuleFieldNameTableItem { AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
+                IsConstant = data.IsConstant,
+                Column = data.Column,
+                Line = data.Line,
+                IsReadonly = isReadonly,
+                Name = data.Name,
+                Type = data.Type };
+
             return base.VisitVarModuleDeclare(context);
+        }
+        // var & const declare
+        public override object VisitDeclare([NotNull] SLGrammarParser.DeclareContext context)
+        {
+            if (context.varDeclare() != null)
+            {
+                return Visit(context.varDeclare());
+            }
+            else
+            {
+                return Visit(context.constDeclare());
+            }
+        }
+        public override object VisitVarDeclare([NotNull] SLGrammarParser.VarDeclareContext context)
+        {
+            if (context.arrayDeclare() != null)
+            {
+                return Visit(context.arrayDeclare());
+            }
+            else if (context.scalarDeclare() != null)
+            {
+                return Visit(context.scalarDeclare());
+            }
+            else
+            {
+                return Visit(context.ptrDeclare());
+            }
+        }
+        public override object VisitConstDeclare([NotNull] SLGrammarParser.ConstDeclareContext context)
+        {
+            var type = Visit(context.typeName()) as SlangType;
+            var name = context.Id();
+            ThrowIfReservedWord(name.GetText(), name.Symbol);
+            return new VariableNameTableItem { IsConstant = true, Name = name.GetText(), Type = type, Column = name.Symbol.Column, Line = name.Symbol.Line };
+        }
+        // var -> scalar
+        public override object VisitScalarDeclare([NotNull] SLGrammarParser.ScalarDeclareContext context)
+        {
+            var type = Visit(context.scalarType()) as SlangType;
+            var name = context.Id();
+            ThrowIfReservedWord(name.GetText(), name.Symbol);
+            return new VariableNameTableItem { IsConstant = false, Type = type, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line };
+        }
+        // var -> arr
+        public override object VisitArrayDeclare([NotNull] SLGrammarParser.ArrayDeclareContext context)
+        {
+            var type = Visit(context.arrayDeclareType().scalarType()) as SlangType;
+            var dimensiton = context.arrayDeclareType().arrayDeclareDimention().Length;
+            var name = context.Id();
+            ThrowIfReservedWord(name.GetText(), name.Symbol);
+            return new VariableNameTableItem { IsConstant = false, Type = new SlangArrayType(type, dimensiton), Line = name.Symbol.Line, Column = name.Symbol.Column, Name = name.GetText() };
+        }
+        // var -> ptr
+        public override object VisitPtrDeclare([NotNull] SLGrammarParser.PtrDeclareContext context)
+        {
+            var type = Visit(context.ptrType()) as SlangType;
+            var name = context.Id();
+            ThrowIfReservedWord(name.GetText(), name.Symbol);
+            return new VariableNameTableItem { IsConstant = false, Type = type, Column = name.Symbol.Column, Line = name.Symbol.Line, Name = name.GetText() };
         }
     }
 }

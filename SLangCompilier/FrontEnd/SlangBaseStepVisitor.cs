@@ -41,6 +41,12 @@ namespace SLangCompiler.FrontEnd
             }
         }
 
+        public void ThrowIfVariableExistsException(string name, int line, int column)
+        {
+            ThrowException($"variable or constant with name {name} already exists", line, column);
+        }
+
+
         // Type Visit
         public override object VisitSimpleType([NotNull] SLGrammarParser.SimpleTypeContext context)
         {
@@ -93,7 +99,12 @@ namespace SLangCompiler.FrontEnd
 
         public void ThrowException(string message, IToken symbol)
         {
-            throw new CompilerException(message, ModuleData.File, symbol);
+            ThrowException(message, symbol.Line, symbol.Column);
+        }
+
+        public void ThrowException(string message, int line, int column)
+        {
+            throw new CompilerException(message, ModuleData.File, line, column);
         }
 
         public void CheckClassExists(string moduleName, string typeName, IToken errToken)

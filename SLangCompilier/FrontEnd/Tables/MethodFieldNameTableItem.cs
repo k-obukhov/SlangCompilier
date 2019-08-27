@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
-    public class MethodFieldNameTableItem: FieldNameTableItem
+    public class ModuleFieldNameTableItem: FieldNameTableItem
     {
         public bool IsReadonly { get; set; }
     }
