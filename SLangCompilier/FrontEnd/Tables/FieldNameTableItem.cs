@@ -1,7 +1,7 @@
 ﻿namespace SLangCompiler.FrontEnd.Tables
 {
     /// <summary>
-    /// Fields used in classes & in modules declaration place
+    /// Fields used in classes 
     /// </summary>
     public class FieldNameTableItem: VariableNameTableItem
     {

@@ -340,5 +340,10 @@ namespace SLangCompiler.FrontEnd
         {
             return base.VisitFieldDeclare(context);
         }
+
+        public override object VisitVarModuleDeclare([NotNull] SLGrammarParser.VarModuleDeclareContext context)
+        {
+            return base.VisitVarModuleDeclare(context);
+        }
     }
 }

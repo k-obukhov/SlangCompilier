@@ -20,6 +20,7 @@ Return: 'return';
 Input: 'input';
 Output: 'output';
 Call: 'call';
+Readonly: 'readonly';
 
 If: 'if';
 Then: 'then';
@@ -152,7 +153,7 @@ fieldDeclare: AccessModifier varDeclare Semicolon;
 
 functionDeclare: AccessModifier Function functionalDeclareArgList Colon typeName Id statementSeq End; // Функции
 procedureDeclare: AccessModifier Procedure functionalDeclareArgList Id statementSeq End; // Процедура
-varModuleDeclare: AccessModifier declare Semicolon;
+varModuleDeclare: AccessModifier (Readonly)? declare Semicolon;
 
 functionalDeclareArgList : LBrace (functionalDeclareArg (Comma functionalDeclareArg)* | /* нет аргументов */ )  RBrace; 
 
