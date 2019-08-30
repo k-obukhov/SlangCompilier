@@ -6,7 +6,6 @@ namespace SLangCompiler.FrontEnd.Types
 {
     /// <summary>
     /// base custom type checks
-    /// maybe need to store module name?
     /// </summary>
     public class SlangCustomType: SlangType
     {

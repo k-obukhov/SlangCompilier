@@ -59,6 +59,8 @@ namespace SLangCompiler.FrontEnd
                 StoreStepRoutinesVisitor.Visit(parser.start());
             }
 
+            var classChecker = new ClassesValidator(SourceCode);
+            classChecker.Check();
         }
     }
 }

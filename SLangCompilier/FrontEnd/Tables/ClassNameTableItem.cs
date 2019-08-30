@@ -20,6 +20,7 @@ namespace SLangCompiler.FrontEnd.Tables
 
     public class MethodNameTableItem: RoutineNameTableItem
     {
+        public bool IsDerived { get; set; } = false;
         public bool IsAbstract { get; set; }
         public bool IsOverride { get; set; }
         public string NameOfThis { get; set; }
