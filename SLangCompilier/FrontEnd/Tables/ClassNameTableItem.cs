@@ -1,4 +1,5 @@
 ﻿using SLangCompiler.FrontEnd.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,12 +19,17 @@ namespace SLangCompiler.FrontEnd.Tables
 
     }
 
-    public class MethodNameTableItem: RoutineNameTableItem
+    public class MethodNameTableItem: RoutineNameTableItem, ICloneable
     {
         public bool IsDerived { get; set; } = false;
         public bool IsAbstract { get; set; }
         public bool IsOverride { get; set; }
         public string NameOfThis { get; set; }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 
 }

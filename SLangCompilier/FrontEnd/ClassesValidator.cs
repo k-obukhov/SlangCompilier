@@ -10,8 +10,10 @@ using System.Text;
 namespace SLangCompiler.FrontEnd
 {
     /// <summary>
-    /// Проход по класса с целью проверки:
-    /// 1) 
+    /// Проход по классу с целью проверки:
+    /// 1) Переопределений методов
+    /// 2) Переопределений полей
+    /// 3) Обработка ООП-ошибок
     /// </summary>
     public class ClassesValidator
     {
@@ -41,7 +43,44 @@ namespace SLangCompiler.FrontEnd
         /// <param name="derivedClass">Item for derived class</param>
         private void CheckClass(ClassNameTableItem baseClass, ClassNameTableItem derivedClass)
         {
+            // check fields
+            foreach (var item in baseClass.Fields)
+            {
+                if (item.Value.AccessModifier == AccessModifier.Public)
+                {
+                    if (derivedClass.Fields.ContainsKey(item.Key))
+                    {
+                        var field = derivedClass.Fields[item.Key];
+                        throw new CompilerException($"Trying to override field {item.Key} from base class {baseClass.TypeIdent} in derived class {derivedClass.TypeIdent}", GetFileOfClass(derivedClass.TypeIdent), field.Line, field.Column);
+                    }
+                    var cloneField = item.Value.Clone() as FieldNameTableItem;
+                    cloneField.IsDerived = true;
+                    derivedClass.Fields.Add(item.Key, cloneField);
+                }
+            }
+            // check methods
+            // method marked override but does not override
+            foreach (var item in derivedClass.Methods)
+            {
+                if (item.IsOverride)
+                {
+                    if (!baseClass.Methods.Any(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params)))
+                    {
+                        throw new CompilerException($"Method {item.Name} marked override but does not override", GetFileOfClass(derivedClass.TypeIdent), item.Line, item.Column);
+                    }
+                }
+            }
 
+            foreach (var item in baseClass.Methods)
+            {
+                // для каждого метода из базового класса проверяем, есть ли перегрузка
+                // если есть -- то базовый метод нет смысла добавлять
+                if (!derivedClass.Methods.Any(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params)))
+                {
+                    var copy = item.Clone() as MethodNameTableItem;
+                    copy.IsDerived = true;
+                }
+            }
         }
 
         public void Check()

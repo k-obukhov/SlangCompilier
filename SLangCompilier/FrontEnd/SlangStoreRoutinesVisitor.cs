@@ -82,6 +82,14 @@ namespace SLangCompiler.FrontEnd
         {
             ThrowException($"Procedure or function {token.GetText()} with same signature already exists", token.Symbol);
         }
+
+        private void ThrowIfAbstractMethodPrivate(AccessModifier modifier, IToken symbol)
+        {
+            if (modifier == AccessModifier.Private)
+            {
+                ThrowException("Abstract methods cannot be private", symbol);
+            }
+        }
         // store methods
         public override object VisitMethodFuncDeclare([NotNull] SLGrammarParser.MethodFuncDeclareContext context)
         {
@@ -157,6 +165,7 @@ namespace SLangCompiler.FrontEnd
 
                 ThrowIfReservedWord(name.GetText(), context.Id().Symbol);
                 ThrowIfReservedWord(thisName.GetText(), thisName.Symbol);
+                ThrowIfAbstractMethodPrivate(modifier, name.Symbol);
                 var args = Visit(context.functionalDeclareArgList()) as IList<RoutineArgNameTableItem>;
                 if (args.Any(a => a.Name == thisName.GetText()))
                 {
@@ -205,6 +214,7 @@ namespace SLangCompiler.FrontEnd
 
                 ThrowIfReservedWord(name.GetText(), context.Id().Symbol);
                 ThrowIfReservedWord(thisName.GetText(), thisName.Symbol);
+                ThrowIfAbstractMethodPrivate(modifier, name.Symbol);
                 var args = Visit(context.functionalDeclareArgList()) as IList<RoutineArgNameTableItem>;
                 if (args.Any(a => a.Name == thisName.GetText()))
                 {
