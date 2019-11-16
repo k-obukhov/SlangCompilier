@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+// ToDo приватные классы не могут быть в публичных полях?
+// ToDo приватные классы не могут быть возвращаемым значением и параметром публичных методов и функций?
+
 namespace SLangCompiler.FrontEnd
 {
     public class SlangStoreRoutinesVisitor: SlangBaseStepVisitor

@@ -30,8 +30,6 @@ Repeat: 'repeat';
 Elseif: 'elseif';
 Do: 'do';
 
-Raw: 'raw';
-
 // Арифметика и булевы токены
 AddOp: '+';
 SubOp: '-';
@@ -80,6 +78,7 @@ fragment Real: 'real';
 fragment Character: 'character'; // | 'char'
 fragment Boolean: 'boolean'; // | 'bool'
 fragment String: 'string';
+fragment Unit: 'unit'; // most common type
 
 // Токены для указателей
 New: 'new'; // выделение памяти
@@ -89,15 +88,8 @@ Pointer: 'pointer'; // указатель
 typeName: scalarType | arrayType;
 ptrType: Pointer (LBrace customType RBrace)?; // id -- тип
 customType: id;
-scalarType: simpleType | functionalType | customType | ptrType;
-functionalType: procedureType | functionType; // Функциональный тип = процедуры и функции
+scalarType: simpleType | customType | ptrType;
 simpleType : SimpleType; // Встроенные типы 
-
-functionType: Procedure functionalArgList Colon typeName; // Тип функция
-procedureType: Function functionalArgList;                // Тип процедура
-
-functionalArgList: LBrace (functionalArg(Comma functionalArg) | /* nothing */) RBrace;
-functionalArg: FunctionArgModifier typeName;
 
 ArrayToken: 'array'; // Массивный тип
 arrayType: ArrayToken (arrayDimention)+ scalarType;
@@ -113,11 +105,11 @@ fragment PrivateModifier: 'private';
 
 // Работа с модулями тут =
 start: moduleImportList module;
-moduleImportList: (moduleImport | raw)*;
+moduleImportList: (moduleImport)*;
 moduleImport: ImportToken Id;
 module: ModuleToken Id moduleDeclare (moduleEntry)?;
 
-moduleDeclare: (functionDeclare | procedureDeclare | methodDeclare | raw | varModuleDeclare | classDeclare)*; // Определение модуля 
+moduleDeclare: (functionDeclare | procedureDeclare | methodDeclare | varModuleDeclare | classDeclare)*; // Определение модуля 
 
 
 /// Object-Oriented part!
@@ -137,7 +129,7 @@ inheritHead: (Inherit LBrace customType RBrace)?;
 
 classDeclare: AccessModifier baseHead Class Id inheritHead classStatements End;
 //classDeclare: AccessModifier Id Class;
-classStatements: (raw | fieldDeclare)*;
+classStatements: (fieldDeclare)*;
 methodDeclare: methodFuncDeclare | methodProcDeclare | methodFuncAbstract | methodProcAbstract;
 
 thisHeader: LBrace customType Id  RBrace;
@@ -150,10 +142,12 @@ methodProcDeclare: AccessModifier (Override)? thisHeader Procedure functionalDec
 
 fieldDeclare: AccessModifier varDeclare Semicolon;
 // end OOP
-
-functionDeclare: AccessModifier Function functionalDeclareArgList Colon typeName Id statementSeq End; // Функции
-procedureDeclare: AccessModifier Procedure functionalDeclareArgList Id statementSeq End; // Процедура
-varModuleDeclare: AccessModifier (Readonly)? declare Semicolon;
+File: 'file'; // not keyword
+Uses: 'uses'; // not keyword
+importHeader: LSBrace File StringLiteral Uses StringLiteral RSBrace;
+functionDeclare: (importHeader)? AccessModifier Function functionalDeclareArgList Colon typeName Id statementSeq End; // Функции
+procedureDeclare: (importHeader)? AccessModifier Procedure functionalDeclareArgList Id statementSeq End; // Процедура
+varModuleDeclare: (importHeader)? AccessModifier (Readonly)? declare Semicolon;
 
 functionalDeclareArgList : LBrace (functionalDeclareArg (Comma functionalDeclareArg)* | /* нет аргументов */ )  RBrace; 
 
@@ -161,7 +155,7 @@ functionalDeclareArg : FunctionArgModifier typeName Id;
 
 moduleEntry: Start statementSeq End;
 
-statementSeq: (statement | raw)*;
+statementSeq: (statement)*;
 
 statement: simpleStatement | complexStatement;
 
@@ -184,7 +178,6 @@ ptrDeclare: ptrType Id (AssignToken mathExpression)?; // всего скорее, без адрес
 arrayDeclareType: ArrayToken (arrayDeclareDimention)+ scalarType;
 arrayDeclareDimention: LSBrace mathExpression RSBrace;
 arrayElement: id (arrayDeclareDimention)+;
-arrayLenProperty: id Point Length LBrace IntValue RBrace;
 
 let: Let (simpleLet | arrayLet);
 simpleLet : id AssignToken mathExpression | id AssignToken boolExpression | id AssignToken let;
@@ -192,8 +185,7 @@ arrayLet: arrayElement AssignToken mathExpression | arrayElement AssignToken boo
 
 returnVal: Return (exp)?;
 input: Input id (Comma id)*;
-output: Output outputArgument (Comma outputArgument)*;
-outputArgument: StringLiteral | exp;
+output: Output exp (Comma exp)*;
 
 call: Call id LBrace callArgList RBrace;
 callArgList: (callArg (Comma callArg)*) | /*nothing*/;
@@ -268,16 +260,12 @@ boolFactor
 
 newExp: New LBrace id RBrace;
 ptrExpAtom: newExp | Nil;
-expAtom: call | arrayLenProperty | arrayElement | id | (IntValue | RealValue | BoolValue) | callFunc | StringLiteral | ptrExpAtom | array;
+expAtom: call | arrayElement | id | (IntValue | RealValue | BoolValue) | callFunc | StringLiteral | ptrExpAtom;
 // Точки -- для указания связт модуль-функция
 id: (Id Point)? Id;
-SimpleType: Real | Integer | Boolean | Character | String;
-
-array: LABrace (expAtom (Comma expAtom)*)?  RABrace;
+SimpleType: Real | Integer | Boolean | Character | String | Unit;
 
 exp: mathExpression | boolExpression;
-
-raw: 'raw' any End; // Вставка целевого кода -- мы же не будем писать стандартные модули на чистом семантике!
 any: (.)*?;
 
 // Многие простые типы-константы
