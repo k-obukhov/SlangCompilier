@@ -19,6 +19,6 @@ namespace SLangCompiler.FrontEnd.Tables
     public class RoutineArgNameTableItem: BaseNameTableItem
     {
         public string Name { get; set; }
-        public SlangRoutineTypeArg Type { get; set; }
+        public SlangRoutineTypeArg TypeArg { get; set; }
     }
 }

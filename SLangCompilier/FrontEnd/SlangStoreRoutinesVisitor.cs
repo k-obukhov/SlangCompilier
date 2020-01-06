@@ -25,15 +25,75 @@ namespace SLangCompiler.FrontEnd
         /// 4) Сбор данных о классах (проверка на существование базового класса и т.д)
         /// </summary>
 
+        private readonly ModuleNameTable moduleItem;
+        public SlangStoreRoutinesVisitor(SourceCodeTable table, ModuleData module): base(table, module)
+        {
+            moduleItem = table.Modules[module.Name];
+        }
         public override object VisitImportHeader([NotNull] SLGrammarParser.ImportHeaderContext context)
         {
             return new ImportHeader(context?.StringLiteral()[0].GetText(), context?.StringLiteral()[1].GetText());
         }
 
-        private readonly ModuleNameTable moduleItem;
-        public SlangStoreRoutinesVisitor(SourceCodeTable table, ModuleData module): base(table, module)
+        /// <summary>
+        /// checks access level for public routines -- they should not have a private class in args or return type (for funcs)
+        /// </summary>
+        /// <param name="items">routine args</param>
+        /// <param name="returnType">return type (may be null for procedures)</param>
+        /// <param name="routineToken">token for exception data</param>
+        /// <param name="routineName">name of routine</param>
+        private void CheckLevelAccessForRoutines(IList<RoutineArgNameTableItem> items, SlangType returnType, Antlr4.Runtime.Tree.ITerminalNode routineToken, string routineName)
         {
-            moduleItem = table.Modules[module.Name];
+            foreach (var item in items)
+            {
+                var typeArg = item.TypeArg.Type;
+                if (typeArg is SlangCustomType customType)
+                {
+                    var classItem = Table.Modules[customType.ModuleName].Classes[customType.Name];
+                    if (classItem.AccessModifier == AccessModifier.Private)
+                    {
+                        ThrowLevelAccessibilityException(routineToken, customType.ToString(), routineName);
+                    }
+                }
+            }
+            if (returnType != null)
+            {
+                if (returnType is SlangCustomType type)
+                {
+                    var classItem = Table.Modules[type.ModuleName].Classes[type.Name];
+                    if (classItem.AccessModifier == AccessModifier.Private)
+                    {
+                        ThrowLevelAccessibilityException(routineToken, type.ToString(), routineName);
+                    }
+                }
+            }
+        }
+
+        private void CheckLevelAccessForMethods(MethodNameTableItem method, Antlr4.Runtime.Tree.ITerminalNode routineToken, SlangCustomType classIdent)
+        {
+            foreach (var item in method.Params)
+            {
+                var typeArg = item.TypeArg.Type;
+                if (typeArg is SlangCustomType customType)
+                {
+                    var classItem = Table.Modules[customType.ModuleName].Classes[customType.Name];
+                    if (classItem.AccessModifier == AccessModifier.Private && customType != classIdent)
+                    {
+                        ThrowLevelAccessibilityException(routineToken, customType.ToString(), method.Name);
+                    }
+                }
+            }
+            if (method.ReturnType != null)
+            {
+                if (method.ReturnType is SlangCustomType type)
+                {
+                    var classItem = Table.Modules[type.ModuleName].Classes[type.Name];
+                    if (classItem.AccessModifier == AccessModifier.Private)
+                    {
+                        ThrowLevelAccessibilityException(routineToken, type.ToString(), method.Name);
+                    }
+                }
+            }
         }
 
         public override object VisitClassDeclare([NotNull] SLGrammarParser.ClassDeclareContext context)
@@ -60,17 +120,32 @@ namespace SLangCompiler.FrontEnd
             // store fields
             foreach(var fieldContext in context.classStatements().fieldDeclare())
             {
-                var item = Visit(fieldContext) as VariableNameTableItem;
+                var item = Visit(fieldContext) as FieldNameTableItem;
                 if (classItem.Fields.ContainsKey(item.Name))
                 {
                     ThrowException($"Field {item.Name} already defined in class {context.Id().GetText()}", fieldContext.varDeclare().Start);
                 }
-                classItem.Fields.Add(item.Name, new FieldNameTableItem { AccessModifier = GetModifierByName(fieldContext.AccessModifier().GetText()), Name = item.Name, IsConstant = item.IsConstant, Column = item.Column, Line = item.Line, Type = item.Type });
+                // check level of access
+                if (item.Type is SlangCustomType t)
+                {
+                    var typeOfItem = Table.FindClass(t);
+                    // если поле класса публично, а тип поля приватный, но при этом тип поля не тип класса
+                    if (item.AccessModifier == AccessModifier.Public && typeOfItem.AccessModifier == AccessModifier.Private && (t != classItem.TypeIdent))
+                    {
+                        ThrowException($"Level of accessibility of field {item.Name} more than type {t}", fieldContext.varDeclare().Start);
+                    }
+                }
+                classItem.Fields.Add(item.Name, item);
+                //classItem.Fields.Add(item.Name, new FieldNameTableItem { AccessModifier = GetModifierByName(fieldContext.AccessModifier().GetText()), Name = item.Name, IsConstant = item.IsConstant, Column = item.Column, Line = item.Line, Type = item.Type });
             }
 
             return base.VisitClassDeclare(context);
         }
 
+        private void ThrowLevelAccessibilityException(Antlr4.Runtime.Tree.ITerminalNode token, string className, string routineName)
+        {
+            ThrowException($"Level of accessibility of type {className} less than access to routine {routineName}", token.Symbol);
+        }
         private void ThrowModuleFromOtherClassModuleException(Antlr4.Runtime.Tree.ITerminalNode token)
         {
             ThrowException($"Method with name {token.GetText()} refers to a class in another module", token.Symbol);
@@ -134,7 +209,7 @@ namespace SLangCompiler.FrontEnd
                     ThrowMethodSignatureExistsException(classData, name);
                 }
 
-                foundClass.Methods.Add(new MethodNameTableItem
+                var method = new MethodNameTableItem
                 {
                     AccessModifier = modifier,
                     IsAbstract = false,
@@ -145,7 +220,14 @@ namespace SLangCompiler.FrontEnd
                     ReturnType = returnType,
                     Column = name.Symbol.Column,
                     Line = name.Symbol.Line
-                });
+                };
+
+                if (modifier == AccessModifier.Public)
+                {
+                    CheckLevelAccessForMethods(method, context.Id(), classData);
+                }
+
+                foundClass.Methods.Add(method);
             }
             return null;
         }
@@ -184,7 +266,7 @@ namespace SLangCompiler.FrontEnd
                     ThrowMethodSignatureExistsException(classData, name);
                 }
 
-                foundClass.Methods.Add(new MethodNameTableItem
+                var method = new MethodNameTableItem
                 {
                     AccessModifier = modifier,
                     IsAbstract = true,
@@ -195,7 +277,14 @@ namespace SLangCompiler.FrontEnd
                     ReturnType = returnType,
                     Column = name.Symbol.Column,
                     Line = name.Symbol.Line
-                });
+                };
+
+                if (modifier == AccessModifier.Public)
+                {
+                    CheckLevelAccessForMethods(method, context.Id(), classData);
+                }
+
+                foundClass.Methods.Add(method);
             }
             return null;
         }
@@ -233,7 +322,7 @@ namespace SLangCompiler.FrontEnd
                     ThrowMethodSignatureExistsException(classData, name);
                 }
 
-                foundClass.Methods.Add(new MethodNameTableItem
+                var method = new MethodNameTableItem
                 {
                     AccessModifier = modifier,
                     IsAbstract = true,
@@ -243,7 +332,14 @@ namespace SLangCompiler.FrontEnd
                     Name = name.GetText(),
                     Column = name.Symbol.Column,
                     Line = name.Symbol.Line
-                });
+                };
+
+                if (modifier == AccessModifier.Public)
+                {
+                    CheckLevelAccessForMethods(method, context.Id(), classData);
+                }
+
+                foundClass.Methods.Add(method);
             }
             return null;
         }
@@ -281,7 +377,7 @@ namespace SLangCompiler.FrontEnd
                     ThrowMethodSignatureExistsException(classData, name);
                 }
 
-                foundClass.Methods.Add(new MethodNameTableItem
+                var method = new MethodNameTableItem
                 {
                     AccessModifier = modifier,
                     IsAbstract = false,
@@ -291,7 +387,14 @@ namespace SLangCompiler.FrontEnd
                     Name = name.GetText(),
                     Column = name.Symbol.Column,
                     Line = name.Symbol.Line
-                });
+                };
+
+                if (modifier == AccessModifier.Public)
+                {
+                    CheckLevelAccessForMethods(method, context.Id(), classData);
+                }
+
+                foundClass.Methods.Add(method);
             }
             return null;
         }
@@ -304,11 +407,16 @@ namespace SLangCompiler.FrontEnd
             var args = Visit(context.functionalDeclareArgList()) as IList<RoutineArgNameTableItem>;
             var token = context.Id();
             var returnType = Visit(context.typeName()) as SlangType;
-            var importHeader = Visit(context.importHeader()) as ImportHeader;
+            var importHeader = context?.importHeader() != null ? Visit(context?.importHeader()) as ImportHeader : null;
 
             if (moduleItem.Routines.Any(r => r.Name == name && r.Params.SequenceEqual(args)))
             {
                 ThrowRoutineExistsException(token);
+            }
+
+            if (modifier == AccessModifier.Public)
+            {
+                CheckLevelAccessForRoutines(args, returnType, context.Id(), name);
             }
 
             moduleItem.Routines.Add(new RoutineNameTableItem { AccessModifier = modifier, Name = name, Params = args, Column = token.Symbol.Column, Line = token.Symbol.Line, ReturnType = returnType, Header = importHeader });
@@ -322,11 +430,16 @@ namespace SLangCompiler.FrontEnd
             var modifier = GetModifierByName(context.AccessModifier().GetText());
             var args = Visit(context.functionalDeclareArgList()) as IList<RoutineArgNameTableItem>;
             var token = context.Id();
-            var importHeader = Visit(context.importHeader()) as ImportHeader;
+            var importHeader = context?.importHeader() != null ? Visit(context?.importHeader()) as ImportHeader : null;
 
             if (moduleItem.Routines.Any(r => r.Name == name && r.Params.SequenceEqual(args)))
             {
                 ThrowRoutineExistsException(token);
+            }
+
+            if (modifier == AccessModifier.Public)
+            {
+                CheckLevelAccessForRoutines(args, null, context.Id(), name);
             }
 
             moduleItem.Routines.Add(new RoutineNameTableItem { AccessModifier = modifier, Name = name, Params = args, Column = token.Symbol.Column, Line = token.Symbol.Line, Header = importHeader });
@@ -340,7 +453,7 @@ namespace SLangCompiler.FrontEnd
             var name = context.Id().GetText();
             ThrowIfReservedWord(name, context.Id().Symbol);
 
-            return new RoutineArgNameTableItem { Name = name, Type = new SlangRoutineTypeArg(modifier, type), Column = context.Id().Symbol.Column, Line = context.Id().Symbol.Line};
+            return new RoutineArgNameTableItem { Name = name, TypeArg = new SlangRoutineTypeArg(modifier, type), Column = context.Id().Symbol.Column, Line = context.Id().Symbol.Line};
         }
 
         public override object VisitCustomType([NotNull] SLGrammarParser.CustomTypeContext context)
@@ -376,19 +489,21 @@ namespace SLangCompiler.FrontEnd
             var data = Visit(context.varDeclare()) as VariableNameTableItem;
             var modifier = GetModifierByName(context.AccessModifier().GetText());
             return new FieldNameTableItem { AccessModifier = modifier, Column = data.Column, IsConstant = data.IsConstant, Line = data.Line, Name = data.Name, Type = data.Type };
+
         }
 
         public override object VisitVarModuleDeclare([NotNull] SLGrammarParser.VarModuleDeclareContext context)
         {
             var data = Visit(context.declare()) as VariableNameTableItem;
             var isReadonly = context.Readonly() == null ? true : false;
-            var importHeader = Visit(context.importHeader()) as ImportHeader;
+            var importHeader = context?.importHeader() != null ? Visit(context?.importHeader()) as ImportHeader : null;
 
             if (moduleItem.Fields.ContainsKey(data.Name))
             {
                 ThrowIfVariableExistsException(data.Name, data.Line, data.Column);
             }
-            moduleItem.Fields[data.Name] = new ModuleFieldNameTableItem { AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
+            
+            var item = new ModuleFieldNameTableItem { AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
                 IsConstant = data.IsConstant,
                 Column = data.Column,
                 Line = data.Line,
@@ -398,6 +513,17 @@ namespace SLangCompiler.FrontEnd
                 Header = importHeader
             };
 
+            if (item.Type is SlangCustomType t)
+            {
+                var typeOfItem = Table.FindClass(t);
+                // если поле класса публично, а тип поля приватный, но при этом тип поля не тип класса
+                if (item.AccessModifier == AccessModifier.Public && typeOfItem.AccessModifier == AccessModifier.Private)
+                {
+                    ThrowException($"Level of accessibility of field {item.Name} more than type {t}", data.Line, data.Column);
+                }
+            }
+
+            moduleItem.Fields[data.Name] = item;
             return base.VisitVarModuleDeclare(context);
         }
         // var & const declare
