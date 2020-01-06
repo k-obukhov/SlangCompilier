@@ -852,6 +852,19 @@ public partial class SLGrammarBaseListener : ISLGrammarListener {
 	public virtual void ExitVarModuleDeclare([NotNull] SLGrammarParser.VarModuleDeclareContext context) { }
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLGrammarParser.constModuleDeclare"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterConstModuleDeclare([NotNull] SLGrammarParser.ConstModuleDeclareContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLGrammarParser.constModuleDeclare"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitConstModuleDeclare([NotNull] SLGrammarParser.ConstModuleDeclareContext context) { }
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLGrammarParser.functionalDeclareArgList"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

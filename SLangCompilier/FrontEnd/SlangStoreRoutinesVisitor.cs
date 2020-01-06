@@ -7,10 +7,6 @@ using SLangGrammar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-// ToDo приватные классы не могут быть в публичных полях?
-// ToDo приватные классы не могут быть возвращаемым значением и параметром публичных методов и функций?
 
 namespace SLangCompiler.FrontEnd
 {
@@ -173,6 +169,17 @@ namespace SLangCompiler.FrontEnd
                 ThrowException("Abstract methods cannot be private", symbol);
             }
         }
+
+        private void ThrowImportHeaderException(Antlr4.Runtime.Tree.ITerminalNode token)
+        {
+            ThrowImportHeaderException(token.Symbol.Line, token.Symbol.Column);
+        }
+
+        private void ThrowImportHeaderException(int line, int column)
+        {
+            ThrowException("Routines and module fields marked imported must't contant logic", line, column);
+        }
+
         // store methods
         public override object VisitMethodFuncDeclare([NotNull] SLGrammarParser.MethodFuncDeclareContext context)
         {
@@ -409,6 +416,11 @@ namespace SLangCompiler.FrontEnd
             var returnType = Visit(context.typeName()) as SlangType;
             var importHeader = context?.importHeader() != null ? Visit(context?.importHeader()) as ImportHeader : null;
 
+            if (importHeader != null && context.statementSeq().statement().Length != 0)
+            {
+                ThrowImportHeaderException(context.Id());
+            }
+
             if (moduleItem.Routines.Any(r => r.Name == name && r.Params.SequenceEqual(args)))
             {
                 ThrowRoutineExistsException(token);
@@ -440,6 +452,11 @@ namespace SLangCompiler.FrontEnd
             if (modifier == AccessModifier.Public)
             {
                 CheckLevelAccessForRoutines(args, null, context.Id(), name);
+            }
+
+            if (importHeader != null && context.statementSeq().statement().Length != 0)
+            {
+                ThrowImportHeaderException(context.Id());
             }
 
             moduleItem.Routines.Add(new RoutineNameTableItem { AccessModifier = modifier, Name = name, Params = args, Column = token.Symbol.Column, Line = token.Symbol.Line, Header = importHeader });
@@ -492,25 +509,24 @@ namespace SLangCompiler.FrontEnd
 
         }
 
-        public override object VisitVarModuleDeclare([NotNull] SLGrammarParser.VarModuleDeclareContext context)
+        public override object VisitConstModuleDeclare([NotNull] SLGrammarParser.ConstModuleDeclareContext context)
         {
-            var data = Visit(context.declare()) as VariableNameTableItem;
-            var isReadonly = context.Readonly() == null ? true : false;
-            var importHeader = context?.importHeader() != null ? Visit(context?.importHeader()) as ImportHeader : null;
+            var data = Visit(context.constDeclare()) as VariableNameTableItem;
 
             if (moduleItem.Fields.ContainsKey(data.Name))
             {
                 ThrowIfVariableExistsException(data.Name, data.Line, data.Column);
             }
-            
-            var item = new ModuleFieldNameTableItem { AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
-                IsConstant = data.IsConstant,
+
+            var item = new ModuleFieldNameTableItem
+            {
+                AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
+                IsConstant = true,
                 Column = data.Column,
                 Line = data.Line,
-                IsReadonly = isReadonly,
+                IsReadonly = true,
                 Name = data.Name,
-                Type = data.Type,
-                Header = importHeader
+                Type = data.Type
             };
 
             if (item.Type is SlangCustomType t)
@@ -523,21 +539,46 @@ namespace SLangCompiler.FrontEnd
                 }
             }
 
+
+            moduleItem.Fields[data.Name] = item;
+            return base.VisitConstModuleDeclare(context);
+        }
+
+        public override object VisitVarModuleDeclare([NotNull] SLGrammarParser.VarModuleDeclareContext context)
+        {
+            var data = Visit(context.varDeclare()) as VariableNameTableItem;
+            var isReadonly = context.Readonly() == null ? true : false;
+
+            if (moduleItem.Fields.ContainsKey(data.Name))
+            {
+                ThrowIfVariableExistsException(data.Name, data.Line, data.Column);
+            }
+            
+            var item = new ModuleFieldNameTableItem { AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
+                IsConstant = false,
+                Column = data.Column,
+                Line = data.Line,
+                IsReadonly = isReadonly,
+                Name = data.Name,
+                Type = data.Type
+            };
+
+            if (item.Type is SlangCustomType t)
+            {
+                var typeOfItem = Table.FindClass(t);
+                // если поле класса публично, а тип поля приватный, но при этом тип поля не тип класса
+                if (item.AccessModifier == AccessModifier.Public && typeOfItem.AccessModifier == AccessModifier.Private)
+                {
+                    ThrowException($"Level of accessibility of field {item.Name} more than type {t}", data.Line, data.Column);
+                }
+            }
+
+            
+
             moduleItem.Fields[data.Name] = item;
             return base.VisitVarModuleDeclare(context);
         }
         // var & const declare
-        public override object VisitDeclare([NotNull] SLGrammarParser.DeclareContext context)
-        {
-            if (context.varDeclare() != null)
-            {
-                return Visit(context.varDeclare());
-            }
-            else
-            {
-                return Visit(context.constDeclare());
-            }
-        }
         public override object VisitVarDeclare([NotNull] SLGrammarParser.VarDeclareContext context)
         {
             if (context.arrayDeclare() != null)

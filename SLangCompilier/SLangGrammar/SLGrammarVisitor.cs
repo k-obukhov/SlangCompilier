@@ -470,6 +470,13 @@ public interface ISLGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitVarModuleDeclare([NotNull] SLGrammarParser.VarModuleDeclareContext context);
 
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLGrammarParser.constModuleDeclare"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitConstModuleDeclare([NotNull] SLGrammarParser.ConstModuleDeclareContext context);
+
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLGrammarParser.functionalDeclareArgList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

@@ -109,7 +109,7 @@ moduleImportList: (moduleImport)*;
 moduleImport: ImportToken Id;
 module: ModuleToken Id moduleDeclare (moduleEntry)?;
 
-moduleDeclare: (functionDeclare | procedureDeclare | methodDeclare | varModuleDeclare | classDeclare)*; // Определение модуля 
+moduleDeclare: (functionDeclare | procedureDeclare | methodDeclare | varModuleDeclare | constModuleDeclare | classDeclare)*; // Определение модуля 
 
 
 /// Object-Oriented part!
@@ -147,7 +147,8 @@ Uses: 'uses'; // not keyword
 importHeader: LSBrace File StringLiteral Uses StringLiteral RSBrace;
 functionDeclare: (importHeader)? AccessModifier Function functionalDeclareArgList Colon typeName Id statementSeq End; // Функции
 procedureDeclare: (importHeader)? AccessModifier Procedure functionalDeclareArgList Id statementSeq End; // Процедура
-varModuleDeclare: (importHeader)? AccessModifier (Readonly)? declare Semicolon;
+varModuleDeclare:  AccessModifier (Readonly)? varDeclare Semicolon;
+constModuleDeclare:  AccessModifier constDeclare Semicolon;
 
 functionalDeclareArgList : LBrace (functionalDeclareArg (Comma functionalDeclareArg)* | /* нет аргументов */ )  RBrace; 
 
@@ -168,10 +169,10 @@ declare: constDeclare | varDeclare; // Определение констант и переменных
 // Определение констант и переменных
 // Константы -- простые типы языка (на текущий момент)
 
-constDeclare: Const typeName Id AssignToken (mathExpression | boolExpression);
+constDeclare: Const typeName Id AssignToken exp;
 varDeclare: scalarDeclare | arrayDeclare | ptrDeclare;
 
-scalarDeclare: Variable scalarType Id (AssignToken mathExpression | AssignToken boolExpression)?;
+scalarDeclare: Variable scalarType Id (AssignToken exp)?;
 arrayDeclare: arrayDeclareType Id (AssignToken mathExpression)?; // выражение
 ptrDeclare: ptrType Id (AssignToken mathExpression)?; // всего скорее, без адресной арифметики -- нужен только expAtom для указателей -- new, nil
 

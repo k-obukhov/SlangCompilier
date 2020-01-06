@@ -732,6 +732,17 @@ public interface ISLGrammarListener : IParseTreeListener {
 	void ExitVarModuleDeclare([NotNull] SLGrammarParser.VarModuleDeclareContext context);
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLGrammarParser.constModuleDeclare"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterConstModuleDeclare([NotNull] SLGrammarParser.ConstModuleDeclareContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLGrammarParser.constModuleDeclare"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitConstModuleDeclare([NotNull] SLGrammarParser.ConstModuleDeclareContext context);
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLGrammarParser.functionalDeclareArgList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
