@@ -36,7 +36,8 @@ namespace SLangCompiler.FrontEnd
             string[] allModules = projectManager.FileModules.Values.Select(m => m.Name).ToArray();
             var modules = projectManager.FileModules;
 
-            foreach (var key in modules.Keys)
+
+            modules.Keys.ToList().ForEach((key) =>
             {
                 SLGrammarParser parser = generateParser(modules[key].Data);
                 SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
@@ -45,10 +46,10 @@ namespace SLangCompiler.FrontEnd
                 StoreStepVisitor = new SlangStoreStepVisitor(SourceCode, modules[key], allModules);
                 // store data step
                 StoreStepVisitor.Visit(parser.start());
-            }
+            });
 
             // step #2
-            foreach (var key in modules.Keys)
+            modules.Keys.ToList().ForEach((key) =>
             {
                 SLGrammarParser parser = generateParser(modules[key].Data);
                 SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
@@ -57,7 +58,7 @@ namespace SLangCompiler.FrontEnd
                 StoreStepRoutinesVisitor = new SlangStoreRoutinesVisitor(SourceCode, modules[key]);
                 // store data step
                 StoreStepRoutinesVisitor.Visit(parser.start());
-            }
+            });
 
             var classChecker = new ClassesValidator(SourceCode);
             classChecker.Check();
