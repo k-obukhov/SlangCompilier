@@ -553,19 +553,6 @@ public partial class SLGrammarBaseListener : ISLGrammarListener {
 	public virtual void ExitScalarType([NotNull] SLGrammarParser.ScalarTypeContext context) { }
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLGrammarParser.functionalType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterFunctionalType([NotNull] SLGrammarParser.FunctionalTypeContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLGrammarParser.functionalType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitFunctionalType([NotNull] SLGrammarParser.FunctionalTypeContext context) { }
-
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLGrammarParser.simpleType"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -577,58 +564,6 @@ public partial class SLGrammarBaseListener : ISLGrammarListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitSimpleType([NotNull] SLGrammarParser.SimpleTypeContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLGrammarParser.functionType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterFunctionType([NotNull] SLGrammarParser.FunctionTypeContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLGrammarParser.functionType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitFunctionType([NotNull] SLGrammarParser.FunctionTypeContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLGrammarParser.procedureType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterProcedureType([NotNull] SLGrammarParser.ProcedureTypeContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLGrammarParser.procedureType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitProcedureType([NotNull] SLGrammarParser.ProcedureTypeContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLGrammarParser.functionalArgList"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterFunctionalArgList([NotNull] SLGrammarParser.FunctionalArgListContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLGrammarParser.functionalArgList"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitFunctionalArgList([NotNull] SLGrammarParser.FunctionalArgListContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLGrammarParser.functionalArg"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterFunctionalArg([NotNull] SLGrammarParser.FunctionalArgContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLGrammarParser.functionalArg"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitFunctionalArg([NotNull] SLGrammarParser.FunctionalArgContext context) { }
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLGrammarParser.arrayType"/>.
@@ -863,6 +798,19 @@ public partial class SLGrammarBaseListener : ISLGrammarListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitFieldDeclare([NotNull] SLGrammarParser.FieldDeclareContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLGrammarParser.importHeader"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterImportHeader([NotNull] SLGrammarParser.ImportHeaderContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLGrammarParser.importHeader"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitImportHeader([NotNull] SLGrammarParser.ImportHeaderContext context) { }
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLGrammarParser.functionDeclare"/>.
@@ -1112,19 +1060,6 @@ public partial class SLGrammarBaseListener : ISLGrammarListener {
 	public virtual void ExitArrayElement([NotNull] SLGrammarParser.ArrayElementContext context) { }
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLGrammarParser.arrayLenProperty"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterArrayLenProperty([NotNull] SLGrammarParser.ArrayLenPropertyContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLGrammarParser.arrayLenProperty"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitArrayLenProperty([NotNull] SLGrammarParser.ArrayLenPropertyContext context) { }
-
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLGrammarParser.let"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -1201,19 +1136,6 @@ public partial class SLGrammarBaseListener : ISLGrammarListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitOutput([NotNull] SLGrammarParser.OutputContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLGrammarParser.outputArgument"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterOutputArgument([NotNull] SLGrammarParser.OutputArgumentContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLGrammarParser.outputArgument"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitOutputArgument([NotNull] SLGrammarParser.OutputArgumentContext context) { }
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLGrammarParser.call"/>.
@@ -1463,19 +1385,6 @@ public partial class SLGrammarBaseListener : ISLGrammarListener {
 	public virtual void ExitId([NotNull] SLGrammarParser.IdContext context) { }
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLGrammarParser.array"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterArray([NotNull] SLGrammarParser.ArrayContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLGrammarParser.array"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitArray([NotNull] SLGrammarParser.ArrayContext context) { }
-
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLGrammarParser.exp"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -1487,19 +1396,6 @@ public partial class SLGrammarBaseListener : ISLGrammarListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitExp([NotNull] SLGrammarParser.ExpContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLGrammarParser.raw"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterRaw([NotNull] SLGrammarParser.RawContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLGrammarParser.raw"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitRaw([NotNull] SLGrammarParser.RawContext context) { }
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLGrammarParser.any"/>.

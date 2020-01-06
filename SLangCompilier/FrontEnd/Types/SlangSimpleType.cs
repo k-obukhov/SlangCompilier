@@ -15,6 +15,8 @@ namespace SLangCompiler.FrontEnd.Types
         public static SlangSimpleType Boolean => new SlangSimpleType(CompilerConstants.BooleanType);
         public static SlangSimpleType String => new SlangSimpleType(CompilerConstants.StringType);
 
+        public static SlangSimpleType Unit => new SlangSimpleType(CompilerConstants.UnitType);
+
         public SlangSimpleType(string name)
         {
             Name = name;

@@ -5,6 +5,7 @@ namespace SLangCompiler.FrontEnd.Tables
 {
     public class RoutineNameTableItem: BaseNameTableItem
     {
+        public ImportHeader Header { get; set; }
         public string Name { get; set; }
         public SlangType ReturnType { get; set; }
         public IList<RoutineArgNameTableItem> Params { get; set; }

@@ -25,6 +25,11 @@ namespace SLangCompiler.FrontEnd
         /// 4) Сбор данных о классах (проверка на существование базового класса и т.д)
         /// </summary>
 
+        public override object VisitImportHeader([NotNull] SLGrammarParser.ImportHeaderContext context)
+        {
+            return new ImportHeader(context?.StringLiteral()[0].GetText(), context?.StringLiteral()[1].GetText());
+        }
+
         private readonly ModuleNameTable moduleItem;
         public SlangStoreRoutinesVisitor(SourceCodeTable table, ModuleData module): base(table, module)
         {
@@ -299,13 +304,14 @@ namespace SLangCompiler.FrontEnd
             var args = Visit(context.functionalDeclareArgList()) as IList<RoutineArgNameTableItem>;
             var token = context.Id();
             var returnType = Visit(context.typeName()) as SlangType;
+            var importHeader = Visit(context.importHeader()) as ImportHeader;
 
             if (moduleItem.Routines.Any(r => r.Name == name && r.Params.SequenceEqual(args)))
             {
                 ThrowRoutineExistsException(token);
             }
 
-            moduleItem.Routines.Add(new RoutineNameTableItem { AccessModifier = modifier, Name = name, Params = args, Column = token.Symbol.Column, Line = token.Symbol.Line, ReturnType = returnType });
+            moduleItem.Routines.Add(new RoutineNameTableItem { AccessModifier = modifier, Name = name, Params = args, Column = token.Symbol.Column, Line = token.Symbol.Line, ReturnType = returnType, Header = importHeader });
             return null;
         }
         // store procedure
@@ -316,13 +322,14 @@ namespace SLangCompiler.FrontEnd
             var modifier = GetModifierByName(context.AccessModifier().GetText());
             var args = Visit(context.functionalDeclareArgList()) as IList<RoutineArgNameTableItem>;
             var token = context.Id();
+            var importHeader = Visit(context.importHeader()) as ImportHeader;
 
             if (moduleItem.Routines.Any(r => r.Name == name && r.Params.SequenceEqual(args)))
             {
                 ThrowRoutineExistsException(token);
             }
 
-            moduleItem.Routines.Add(new RoutineNameTableItem { AccessModifier = modifier, Name = name, Params = args, Column = token.Symbol.Column, Line = token.Symbol.Line });
+            moduleItem.Routines.Add(new RoutineNameTableItem { AccessModifier = modifier, Name = name, Params = args, Column = token.Symbol.Column, Line = token.Symbol.Line, Header = importHeader });
             return null;
         }
         // store arguments
@@ -375,6 +382,8 @@ namespace SLangCompiler.FrontEnd
         {
             var data = Visit(context.declare()) as VariableNameTableItem;
             var isReadonly = context.Readonly() == null ? true : false;
+            var importHeader = Visit(context.importHeader()) as ImportHeader;
+
             if (moduleItem.Fields.ContainsKey(data.Name))
             {
                 ThrowIfVariableExistsException(data.Name, data.Line, data.Column);
@@ -385,7 +394,9 @@ namespace SLangCompiler.FrontEnd
                 Line = data.Line,
                 IsReadonly = isReadonly,
                 Name = data.Name,
-                Type = data.Type };
+                Type = data.Type,
+                Header = importHeader
+            };
 
             return base.VisitVarModuleDeclare(context);
         }
