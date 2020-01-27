@@ -1,12 +1,14 @@
-﻿using System;
-using Antlr4.Runtime;
+﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using SLangCompiler.Exceptions;
 using SLangCompiler.FileServices;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace SLangCompiler.FrontEnd
 {
-    class SLangErrorListener: BaseErrorListener
+    class SLangErrorListener : BaseErrorListener
     {
         public ModuleData Module { get; }
 

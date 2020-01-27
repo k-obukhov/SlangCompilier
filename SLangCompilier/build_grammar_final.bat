@@ -1,1 +1,1 @@
-antlr4-csharp-4.6.5-complete.jar -visitor -package SLangGrammar -o SLangGrammar -Dlanguage=CSharp_v4_5 SLGrammar.g4
+antlr4-csharp-4.6.5-complete.jar -visitor -package SLangGrammar -o SLangGrammar -Dlanguage=CSharp_v4_5 SLangGrammar.g4

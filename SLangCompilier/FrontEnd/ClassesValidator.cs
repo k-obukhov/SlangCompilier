@@ -79,6 +79,15 @@ namespace SLangCompiler.FrontEnd
                 {
                     var copy = item.Clone() as MethodNameTableItem;
                     copy.IsDerived = true;
+                    derivedClass.Methods.Add(copy);
+                }
+                else
+                {
+                    var methodOverriden = derivedClass.Methods.First(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params));
+                    if (!methodOverriden.IsOverride)
+                    {
+                        throw new CompilerException($"Method {methodOverriden.Name} marked override but does not override", GetFileOfClass(derivedClass.TypeIdent), methodOverriden.Line, methodOverriden.Column);
+                    }
                 }
             }
         }

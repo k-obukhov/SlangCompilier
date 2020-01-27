@@ -13,21 +13,18 @@ namespace SLangCompiler.FrontEnd
     public class FrontendCompiler
     {
         public SourceCodeTable SourceCode { get; set; }
-        private SlangStoreStepVisitor StoreStepVisitor { get; set; }
-        private SlangSemanticVisitor SemanticVisitor { get; set; }
-        private SlangStoreRoutinesVisitor StoreStepRoutinesVisitor { get; set; }
 
         public FrontendCompiler()
         {
             SourceCode = new SourceCodeTable();
         }
 
-        private SLGrammarParser generateParser(string sourceCode)
+        private SLangGrammarParser GenerateParser(string sourceCode)
         {
             AntlrInputStream inputStream = new AntlrInputStream(sourceCode);
-            SLGrammarLexer lexer = new SLGrammarLexer(inputStream);
+            SLangGrammarLexer lexer = new SLangGrammarLexer(inputStream);
             CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
-            return new SLGrammarParser(commonTokenStream);
+            return new SLangGrammarParser(commonTokenStream);
         }
 
         public void CheckErrors(ProjectManager projectManager)
@@ -39,29 +36,40 @@ namespace SLangCompiler.FrontEnd
 
             modules.Keys.ToList().ForEach((key) =>
             {
-                SLGrammarParser parser = generateParser(modules[key].Data);
+                SLangGrammarParser parser = GenerateParser(modules[key].Data);
                 SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
                 parser.AddErrorListener(errorListener);
 
-                StoreStepVisitor = new SlangStoreStepVisitor(SourceCode, modules[key], allModules);
+                var storeStepVisitor = new SlangStoreTypesVisitor(SourceCode, modules[key], allModules);
                 // store data step
-                StoreStepVisitor.Visit(parser.start());
+                storeStepVisitor.Visit(parser.start());
             });
 
-            // step #2
             modules.Keys.ToList().ForEach((key) =>
             {
-                SLGrammarParser parser = generateParser(modules[key].Data);
+                SLangGrammarParser parser = GenerateParser(modules[key].Data);
                 SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
                 parser.AddErrorListener(errorListener);
 
-                StoreStepRoutinesVisitor = new SlangStoreRoutinesVisitor(SourceCode, modules[key]);
+                var storeStepFieldsVisitor = new SlangStoreRoutinesVisitor(SourceCode, modules[key]);
                 // store data step
-                StoreStepRoutinesVisitor.Visit(parser.start());
+                storeStepFieldsVisitor.Visit(parser.start());
+            });
+
+            modules.Keys.ToList().ForEach((key) =>
+            {
+                SLangGrammarParser parser = GenerateParser(modules[key].Data);
+                SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
+                parser.AddErrorListener(errorListener);
+
+                var storeStepRoutinesVisitor = new SlangStoreRoutinesVisitor(SourceCode, modules[key]);
+                // store data step
+                storeStepRoutinesVisitor.Visit(parser.start());
             });
 
             var classChecker = new ClassesValidator(SourceCode);
             classChecker.Check();
+
         }
     }
 }
