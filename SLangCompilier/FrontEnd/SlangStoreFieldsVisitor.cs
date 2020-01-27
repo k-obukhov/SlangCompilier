@@ -148,5 +148,12 @@ namespace SLangCompiler.FrontEnd
             ThrowIfReservedWord(name.GetText(), ModuleData.File, name.Symbol);
             return new VariableNameTableItem { IsConstant = false, Type = type, Column = name.Symbol.Column, Line = name.Symbol.Line, Name = name.GetText() };
         }
+
+        public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
+        {
+            var classItem = base.VisitCustomType(context) as SlangCustomType;
+            CheckClassExists(classItem.ModuleName, classItem.Name, context.qualident().Id().First().Symbol);
+            return classItem;
+        }
     }
 }

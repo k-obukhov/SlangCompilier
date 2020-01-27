@@ -336,5 +336,12 @@ namespace SLangCompiler.FrontEnd
             }
             return base.VisitProcedureDecl(context);
         }
+
+        public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
+        {
+            var classItem = base.VisitCustomType(context) as SlangCustomType;
+            CheckClassExists(classItem.ModuleName, classItem.Name, context.qualident().Id().First().Symbol);
+            return classItem;
+        }
     }
 }
