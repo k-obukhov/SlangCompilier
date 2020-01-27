@@ -9,8 +9,8 @@ namespace SLangCompiler.BackEnd
     public class BackendCompiler
     {
         private readonly SourceCodeTable table;
-        private readonly BaseBackendTranslator translator;
-        public BackendCompiler(SourceCodeTable table, BaseBackendTranslator translator)
+        private readonly BaseBackEndTranslator translator;
+        public BackendCompiler(SourceCodeTable table, BaseBackEndTranslator translator)
         {
             this.table = table;
             this.translator = translator;

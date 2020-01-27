@@ -4,11 +4,11 @@ using System.Text;
 
 namespace SLangCompiler.BackEnd.Translator
 {
-    public abstract class BaseBackendTranslator
+    public abstract class BaseBackEndTranslator
     {
         private readonly StringBuilder builder;
 
-        public BaseBackendTranslator()
+        public BaseBackEndTranslator()
         {
             builder = new StringBuilder();
         }
