@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="BackEnd\" />
     <Folder Include="ConsoleService\" />
   </ItemGroup>
 
