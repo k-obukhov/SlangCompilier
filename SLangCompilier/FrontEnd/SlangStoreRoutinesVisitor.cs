@@ -223,6 +223,7 @@ namespace SLangCompiler.FrontEnd
             foreach (var arg in context.routineArg())
             {
                 var routineArg = (RoutineArgNameTableItem)Visit(arg);
+                ThrowIfReservedWord(routineArg.Name, ModuleData.File, arg.Id().Symbol);
                 if (res.Any(a => a.Name == routineArg.Name))
                 {
                     ThrowException($"Parameter with name {routineArg.Name} already defined", ModuleData.File, arg.Id().Symbol);
