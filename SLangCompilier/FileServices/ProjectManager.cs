@@ -22,19 +22,19 @@ namespace SLangCompiler.FileServices
         /// Load source code from Lib folder and user directory
         /// </summary>
         /// <param name="directory">user soucre code directory</param>
-        public async void LoadCode(DirectoryInfo directory)
+        public void LoadCode(DirectoryInfo directory)
         {
             if (!directory.Exists)
                 throw new DirectoryNotFoundException($"Directory \"{directory.FullName}\" not found");
 
-            await LoadLibrary();
+            LoadLibrary();
 
             IEnumerable<FileInfo> inputFiles =
                 directory.GetFiles(CompilerConstants.FileMask, SearchOption.TopDirectoryOnly);
 
             foreach (FileInfo inputFile in inputFiles.AsParallel())
             {
-                ModuleData module = await LoadModuleFile(inputFile, false);
+                ModuleData module = LoadModuleFile(inputFile, false);
 
                 if (FileModules.ContainsKey(module.Name))
                 {
@@ -53,7 +53,7 @@ namespace SLangCompiler.FileServices
         /// Load code from Lib folder
         /// </summary>
         /// <returns></returns>
-        public async Task LoadLibrary()
+        public void LoadLibrary()
         {
             DirectoryInfo inputDirectory = new DirectoryInfo(CompilerConstants.LibPath);
 
@@ -62,7 +62,7 @@ namespace SLangCompiler.FileServices
 
             foreach (FileInfo inputFile in inputFiles.AsParallel())
             {
-                ModuleData module = await LoadModuleFile(inputFile, true);
+                ModuleData module = LoadModuleFile(inputFile, true);
                 FileModules.Add(module.Name, module);
             }
         }
@@ -72,14 +72,14 @@ namespace SLangCompiler.FileServices
         /// <param name="file">File data</param>
         /// <param name="isLib">Check file is in Lib folder</param>
         /// <returns></returns>
-        public async Task<ModuleData> LoadModuleFile(FileInfo file, bool isLib)
+        public ModuleData LoadModuleFile(FileInfo file, bool isLib)
         {
             string nameOfModule = Path.GetFileNameWithoutExtension(file.FullName);
             string code;
 
             using (TextReader reader = file.OpenText())
             {
-                code = await reader.ReadToEndAsync();
+                code = reader.ReadToEnd();
             }
             return new ModuleData(nameOfModule, file, code, isLib);
         }

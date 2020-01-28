@@ -14,7 +14,7 @@ moduleDeclareSeq: (functionDecl | procedureDecl | typeDecl | moduleFieldDecl)*;
 
 declare: variableDecl | constDecl;
 variableDecl: simpleDecl | arrayDecl | ptrDecl;
-simpleDecl: Variable simpleType Id (Assign exp)?;
+simpleDecl: Variable (simpleType | customType) Id (Assign exp)?;
 arrayDecl: arrayDeclType Id (Assign exp)?;
 arrayDeclType: Array (LSBrace exp RSBrace)+ scalarType;
 ptrDecl: ptrType Id (Assign exp)?;

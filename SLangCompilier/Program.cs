@@ -11,15 +11,17 @@ namespace SLangCompiler
     {
         static void Main(string[] args)
         {
+            var sourceCodeFolder = @"C:\projects\sldemo";
+            ProjectManager p = new ProjectManager();
+            p.LoadCode(new System.IO.DirectoryInfo(sourceCodeFolder));
+
+            var frontend = new FrontendCompiler();
+
+            frontend.CheckErrors(p);
+            /*
             try
             {
-                var sourceCodeFolder = @"C:\projects\sldemo";
-                ProjectManager p = new ProjectManager();
-                p.LoadCode(new System.IO.DirectoryInfo(sourceCodeFolder));
-
-                var frontend = new FrontendCompiler();
-
-                frontend.CheckErrors(p);
+                
             }
             catch (CompilerException e)
             {
@@ -29,7 +31,6 @@ namespace SLangCompiler
             {
                 Console.WriteLine($"IOError: {e.Message}");
             }
-            /*
             catch (Exception e)
             {
                 // all others

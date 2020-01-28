@@ -26,6 +26,8 @@ namespace SLangCompiler.FrontEnd
         {
             allModuleNames = modules;
             moduleTable.ModuleData = moduleData;
+
+            Table.Modules[ModuleData.Name] = moduleTable;
         }
 
         public override object VisitStart([NotNull] SLangGrammarParser.StartContext context)
@@ -33,7 +35,6 @@ namespace SLangCompiler.FrontEnd
             CheckModuleNames(context);
             Visit(context.module());
 
-            Table.Modules[ModuleData.Name] = moduleTable;
             return null;
         }
 
@@ -77,7 +78,7 @@ namespace SLangCompiler.FrontEnd
                 ThrowException($"Module name \"{moduleName}\" doest not match \"{ModuleData.Name}\"", ModuleData.File, moduleToken);
             }
 
-            if (moduleName != CompilerConstants.MainModuleName && context.moduleStatementsSeq().statementSeq().statement().Length == 0)
+            if (moduleName != CompilerConstants.MainModuleName && context.moduleStatementsSeq() != null)
             {
                 ThrowException($"Module {moduleName} is not main module but have an entry point", ModuleData.File, context.moduleStatementsSeq().Start().Symbol);
             }

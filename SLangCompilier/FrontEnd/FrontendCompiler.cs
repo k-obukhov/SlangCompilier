@@ -30,7 +30,7 @@ namespace SLangCompiler.FrontEnd
         public void CheckErrors(ProjectManager projectManager)
         {
             // TODO: make async
-            string[] allModules = projectManager.FileModules.Values.Select(m => m.Name).ToArray();
+            string[] allModules = projectManager.FileModules.Keys.ToArray();
             var modules = projectManager.FileModules;
 
 
@@ -44,14 +44,14 @@ namespace SLangCompiler.FrontEnd
                 // store data step
                 storeStepVisitor.Visit(parser.start());
             });
-
+            
             modules.Keys.ToList().ForEach((key) =>
             {
                 SLangGrammarParser parser = GenerateParser(modules[key].Data);
                 SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
                 parser.AddErrorListener(errorListener);
 
-                var storeStepFieldsVisitor = new SlangStoreRoutinesVisitor(SourceCode, modules[key]);
+                var storeStepFieldsVisitor = new SlangStoreFieldsVisitor(SourceCode, modules[key]);
                 // store data step
                 storeStepFieldsVisitor.Visit(parser.start());
             });

@@ -22,7 +22,7 @@ namespace SLangCompiler.FrontEnd
         public override object VisitTypeDecl([NotNull] SLangGrammarParser.TypeDeclContext context)
         {
             var classItem = moduleItem.Classes[context.Id().GetText()];
-            if (context.typeInherit().customType() != null)
+            if (context.typeInherit() != null)
             {
                 // Есть наследник
                 classItem.Base = Visit(context.typeInherit().customType()) as SlangCustomType;
@@ -129,7 +129,15 @@ namespace SLangCompiler.FrontEnd
         // var -> scalar
         public override object VisitSimpleDecl([NotNull] SLangGrammarParser.SimpleDeclContext context)
         {
-            var type = Visit(context.simpleType()) as SlangType;
+            SlangType type;
+            if (context.simpleType() != null)
+            {
+                type = Visit(context.simpleType()) as SlangSimpleType;
+            }
+            else
+            {
+                type = Visit(context.customType()) as SlangCustomType;
+            }
             var name = context.Id();
             ThrowIfReservedWord(name.GetText(), ModuleData.File, name.Symbol);
             return new VariableNameTableItem { IsConstant = false, Type = type, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line };
