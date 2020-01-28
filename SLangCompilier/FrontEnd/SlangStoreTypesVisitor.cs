@@ -84,5 +84,24 @@ namespace SLangCompiler.FrontEnd
 
             return base.VisitModule(context);
         }
+
+        public override object VisitTypeDecl([NotNull] SLangGrammarParser.TypeDeclContext context)
+        {
+            var className = context.Id().GetText();
+            ThrowIfReservedWord(className, ModuleData.File, context.Id().Symbol);
+
+            if (moduleTable.Classes.ContainsKey(className))
+            {
+                ThrowException($"Redefinition of class \"{className}\"", ModuleData.File, context.Id().Symbol);
+            }
+
+            var isBase = context.Base() != null;
+            var modifier = GetModifierByName(context.AccessModifier().GetText());
+
+            var classItem = new ClassNameTableItem { TypeIdent = new Types.SlangCustomType(ModuleData.Name, className), CanBeBase = isBase, Column = context.Id().Symbol.Column, Line = context.Id().Symbol.Line, AccessModifier = modifier };
+
+            moduleTable.Classes[className] = classItem;
+            return base.VisitTypeDecl(context);
+        }
     }
 }

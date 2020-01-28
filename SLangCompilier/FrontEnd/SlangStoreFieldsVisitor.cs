@@ -44,6 +44,7 @@ namespace SLangCompiler.FrontEnd
             foreach (var fieldContext in context.typeFieldDecl())
             {
                 var item = Visit(fieldContext) as FieldNameTableItem;
+                ThrowIfReservedWord(item.Name, ModuleData.File, fieldContext.variableDecl().Start);
                 if (classItem.Fields.ContainsKey(item.Name))
                 {
                     ThrowException($"Field {item.Name} already defined in class {context.Id().GetText()}", ModuleData.File, fieldContext.variableDecl().Start);
@@ -78,6 +79,7 @@ namespace SLangCompiler.FrontEnd
             var data = Visit(context.variableDecl()) as VariableNameTableItem;
             var isReadonly = context.Readonly() == null ? true : false;
 
+            ThrowIfReservedWord(data.Name, ModuleData.File, context.variableDecl().Start);
             if (moduleItem.Fields.ContainsKey(data.Name))
             {
                 ThrowIfVariableExistsException(data.Name, ModuleData.File, data.Line, data.Column);
