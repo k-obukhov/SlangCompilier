@@ -137,11 +137,12 @@ namespace SLangCompiler.FrontEnd
         // var -> arr
         public override object VisitArrayDecl([NotNull] SLangGrammarParser.ArrayDeclContext context)
         {
-            var type = Visit(context.arrayType()) as SlangArrayType;
+            var type = Visit(context.arrayDeclType()) as SlangArrayType;
             var name = context.Id();
             ThrowIfReservedWord(name.GetText(), ModuleData.File, name.Symbol);
             return new VariableNameTableItem { IsConstant = false, Type = type, Line = name.Symbol.Line, Column = name.Symbol.Column, Name = name.GetText() };
         }
+
         // var -> ptr
         public override object VisitPtrDecl([NotNull] SLangGrammarParser.PtrDeclContext context)
         {

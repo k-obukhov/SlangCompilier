@@ -46,6 +46,13 @@ namespace SLangCompiler.FrontEnd
             return new SlangArrayType(type, dimension);
         }
 
+        public override object VisitArrayDeclType([NotNull] SLangGrammarParser.ArrayDeclTypeContext context)
+        {
+            var type = Visit(context.scalarType()) as SlangType;
+            var dimension = context.exp().Length;
+            return new SlangArrayType(type, dimension);
+        }
+
         public override object VisitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context)
         {
             return new SlangPointerType(Visit(context.customType()) as SlangCustomType);

@@ -33,55 +33,6 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.typeName"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitTypeName([NotNull] SLangGrammarParser.TypeNameContext context);
-
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.ptrType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context);
-
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.customType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context);
-
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.scalarType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitScalarType([NotNull] SLangGrammarParser.ScalarTypeContext context);
-
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.simpleType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context);
-
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.arrayType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context);
-
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.arrayDimention"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitArrayDimention([NotNull] SLangGrammarParser.ArrayDimentionContext context);
-
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.start"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -145,6 +96,13 @@ public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitArrayDecl([NotNull] SLangGrammarParser.ArrayDeclContext context);
 
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.arrayDeclType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArrayDeclType([NotNull] SLangGrammarParser.ArrayDeclTypeContext context);
+
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.ptrDecl"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -164,6 +122,55 @@ public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.typeName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTypeName([NotNull] SLangGrammarParser.TypeNameContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.ptrType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.customType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.scalarType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitScalarType([NotNull] SLangGrammarParser.ScalarTypeContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.simpleType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.arrayType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.arrayDimention"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArrayDimention([NotNull] SLangGrammarParser.ArrayDimentionContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.typeDecl"/>.
@@ -339,6 +346,13 @@ public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitTerm([NotNull] SLangGrammarParser.TermContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.signedFactor"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSignedFactor([NotNull] SLangGrammarParser.SignedFactorContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.factor"/>.

@@ -36,97 +36,6 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 [System.CLSCompliant(false)]
 public partial class SLangGrammarBaseListener : ISLangGrammarListener {
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.typeName"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterTypeName([NotNull] SLangGrammarParser.TypeNameContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.typeName"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitTypeName([NotNull] SLangGrammarParser.TypeNameContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.ptrType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterPtrType([NotNull] SLangGrammarParser.PtrTypeContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.ptrType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.customType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterCustomType([NotNull] SLangGrammarParser.CustomTypeContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.customType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.scalarType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterScalarType([NotNull] SLangGrammarParser.ScalarTypeContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.scalarType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitScalarType([NotNull] SLangGrammarParser.ScalarTypeContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.simpleType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.simpleType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.arrayType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.arrayType"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context) { }
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.arrayDimention"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterArrayDimention([NotNull] SLangGrammarParser.ArrayDimentionContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.arrayDimention"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitArrayDimention([NotNull] SLangGrammarParser.ArrayDimentionContext context) { }
-
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.start"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -244,6 +153,19 @@ public partial class SLangGrammarBaseListener : ISLangGrammarListener {
 	public virtual void ExitArrayDecl([NotNull] SLangGrammarParser.ArrayDeclContext context) { }
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.arrayDeclType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterArrayDeclType([NotNull] SLangGrammarParser.ArrayDeclTypeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.arrayDeclType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitArrayDeclType([NotNull] SLangGrammarParser.ArrayDeclTypeContext context) { }
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.ptrDecl"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -281,6 +203,97 @@ public partial class SLangGrammarBaseListener : ISLangGrammarListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.typeName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTypeName([NotNull] SLangGrammarParser.TypeNameContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.typeName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTypeName([NotNull] SLangGrammarParser.TypeNameContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.ptrType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPtrType([NotNull] SLangGrammarParser.PtrTypeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.ptrType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.customType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterCustomType([NotNull] SLangGrammarParser.CustomTypeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.customType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.scalarType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterScalarType([NotNull] SLangGrammarParser.ScalarTypeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.scalarType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitScalarType([NotNull] SLangGrammarParser.ScalarTypeContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.simpleType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.simpleType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.arrayType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.arrayType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.arrayDimention"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterArrayDimention([NotNull] SLangGrammarParser.ArrayDimentionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.arrayDimention"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitArrayDimention([NotNull] SLangGrammarParser.ArrayDimentionContext context) { }
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.typeDecl"/>.
@@ -606,6 +619,19 @@ public partial class SLangGrammarBaseListener : ISLangGrammarListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitTerm([NotNull] SLangGrammarParser.TermContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.signedFactor"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSignedFactor([NotNull] SLangGrammarParser.SignedFactorContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.signedFactor"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSignedFactor([NotNull] SLangGrammarParser.SignedFactorContext context) { }
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.factor"/>.

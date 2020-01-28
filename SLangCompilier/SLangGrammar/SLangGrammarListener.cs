@@ -32,83 +32,6 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface ISLangGrammarListener : IParseTreeListener {
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.typeName"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterTypeName([NotNull] SLangGrammarParser.TypeNameContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.typeName"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitTypeName([NotNull] SLangGrammarParser.TypeNameContext context);
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.ptrType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterPtrType([NotNull] SLangGrammarParser.PtrTypeContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.ptrType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context);
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.customType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterCustomType([NotNull] SLangGrammarParser.CustomTypeContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.customType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context);
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.scalarType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterScalarType([NotNull] SLangGrammarParser.ScalarTypeContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.scalarType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitScalarType([NotNull] SLangGrammarParser.ScalarTypeContext context);
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.simpleType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.simpleType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context);
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.arrayType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.arrayType"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context);
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.arrayDimention"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterArrayDimention([NotNull] SLangGrammarParser.ArrayDimentionContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.arrayDimention"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitArrayDimention([NotNull] SLangGrammarParser.ArrayDimentionContext context);
-
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.start"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -208,6 +131,17 @@ public interface ISLangGrammarListener : IParseTreeListener {
 	void ExitArrayDecl([NotNull] SLangGrammarParser.ArrayDeclContext context);
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.arrayDeclType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterArrayDeclType([NotNull] SLangGrammarParser.ArrayDeclTypeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.arrayDeclType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitArrayDeclType([NotNull] SLangGrammarParser.ArrayDeclTypeContext context);
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.ptrDecl"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -239,6 +173,83 @@ public interface ISLangGrammarListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.typeName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterTypeName([NotNull] SLangGrammarParser.TypeNameContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.typeName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitTypeName([NotNull] SLangGrammarParser.TypeNameContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.ptrType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPtrType([NotNull] SLangGrammarParser.PtrTypeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.ptrType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.customType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterCustomType([NotNull] SLangGrammarParser.CustomTypeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.customType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.scalarType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterScalarType([NotNull] SLangGrammarParser.ScalarTypeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.scalarType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitScalarType([NotNull] SLangGrammarParser.ScalarTypeContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.simpleType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.simpleType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.arrayType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.arrayType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.arrayDimention"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterArrayDimention([NotNull] SLangGrammarParser.ArrayDimentionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.arrayDimention"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitArrayDimention([NotNull] SLangGrammarParser.ArrayDimentionContext context);
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.typeDecl"/>.
@@ -514,6 +525,17 @@ public interface ISLangGrammarListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitTerm([NotNull] SLangGrammarParser.TermContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.signedFactor"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterSignedFactor([NotNull] SLangGrammarParser.SignedFactorContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.signedFactor"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitSignedFactor([NotNull] SLangGrammarParser.SignedFactorContext context);
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.factor"/>.

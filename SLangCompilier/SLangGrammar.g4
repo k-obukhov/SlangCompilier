@@ -6,6 +6,91 @@
 
 grammar SLangGrammar;
 
+start: (moduleImport)* module;
+moduleImport: Import Id;
+module: Module Id moduleDeclareSeq (moduleStatementsSeq)?;
+moduleStatementsSeq: Start statementSeq End;
+moduleDeclareSeq: (functionDecl | procedureDecl | typeDecl | moduleFieldDecl)*;
+
+declare: variableDecl | constDecl;
+variableDecl: simpleDecl | arrayDecl | ptrDecl;
+simpleDecl: Variable simpleType Id (Assign exp)?;
+arrayDecl: arrayDeclType Id (Assign exp)?;
+arrayDeclType: Array (LSBrace exp RSBrace)+ scalarType;
+ptrDecl: ptrType Id (Assign exp)?;
+constDecl: Const typeName Id Assign exp;
+moduleFieldDecl: AccessModifier (Readonly)? variableDecl Semicolon;
+
+typeName: scalarType | arrayType;
+ptrType: Pointer (LBrace customType RBrace)?; // id -- тип
+customType: qualident;
+scalarType: simpleType | customType | ptrType;
+simpleType : SimpleType; // Встроенные типы 
+SimpleType: Real | Integer | Boolean | Character | String;
+arrayType: Array (arrayDimention)+ scalarType;
+arrayDimention : LSBrace RSBrace;
+
+typeDecl: AccessModifier (Base)? Class Id (typeInherit)? (typeFieldDecl)* End;
+typeInherit: Inherit LBrace customType RBrace;
+typeFieldDecl: AccessModifier variableDecl Semicolon;
+
+functionDecl: (importHead)? AccessModifier (Abstract | Override)? (thisHeader)? Function LBrace routineArgList RBrace Colon typeName Id statementSeq End;
+thisHeader: LBrace customType Id RBrace;
+routineArgList: (routineArg (Comma routineArg)* | /* нет аргументов */ );
+routineArg: FunctionArgModifier Id;
+procedureDecl: (importHead)? AccessModifier (Abstract | Override)? (thisHeader)? Procedure LBrace routineArgList RBrace Id statementSeq End;
+importHead: LSBrace File StringLiteral Import StringLiteral RSBrace;
+
+statementSeq: (statement)*;
+statement: (simpleStatement | complexStatement);
+simpleStatement: (declare | let | input | output | returnC | call) Semicolon;
+complexStatement: ifC | whileC | repeatC;
+
+let: Let designator Assign exp;
+ifC: If LBrace exp RBrace Then statementSeq (Elseif LBrace exp RBrace Then statementSeq)* (Else statementSeq)? End;
+whileC: While LBrace exp RBrace Do statementSeq End;
+repeatC: Repeat statementSeq While LBrace exp RBrace;
+input: Input designator (Comma designator)*;
+output: Output exp (Comma exp)*;
+returnC: Return (exp)?;
+call: Call qualident LBrace exprList RBrace;
+exprList: (exp (Comma exp)* | /* nothing*/);
+
+exp: simpleExpr (Relation exp)?; 
+
+simpleExpr: term (AddictiveOp simpleExpr)?;
+
+term: signedFactor (MultiplicativeOp term)?;
+signedFactor: (AddOp | SubOp)? factor;
+
+factor:  designator | ( IntValue | RealValue | BoolValue | StringLiteral | SingleCharacter ) | (BoolNot factor) | newC | (LBrace exp RBrace);
+newC: New LBrace customType RBrace;
+designator: qualident (Point Id | LSBrace exprList RSBrace | LBrace qualident RBrace | LBrace exprList RBrace )*;
+qualident: (Id Point)? Id;
+
+// Арифметика и булевы токены
+AddOp: '+';
+SubOp: '-';
+MulOp: '*';
+DivOp: '/';
+ModOp: '%';
+
+BoolOr: '||';
+BoolAnd: '&&';
+
+AddictiveOp: AddOp | SubOp | BoolOr;
+MultiplicativeOp: MulOp | DivOp | BoolAnd;
+
+BoolEq: '==';
+BoolNeq: '!=';
+BoolG: '>';
+BoolL: '<';
+BoolGeq: '>=';
+BoolLeq: '<=';
+BoolNot: '!';
+
+Relation: BoolEq | BoolNeq | BoolG | BoolL | BoolLeq | BoolGeq;
+
 // Базовые символы и имена
 Colon: ':';
 Semicolon: ';';
@@ -44,18 +129,14 @@ RBrace: ')';
 LSBrace: '[';
 RSBrace: ']';
 
-LABrace: '{';
-RABrace: '}';
-
 Assign: ':='; // Присваивание
 
 // ТИПЫ
-Integer: 'integer'; // | 'int'
-Real: 'real';
-Character: 'character'; // | 'char'
-Boolean: 'boolean'; // | 'bool'
-String: 'string';
-Unit: 'unit'; // most common type
+fragment Integer: 'integer'; // | 'int'
+fragment Real: 'real';
+fragment Character: 'character'; // | 'char'
+fragment Boolean: 'boolean'; // | 'bool'
+fragment String: 'string';
 
 // Токены для указателей
 New: 'new'; // выделение памяти
@@ -65,12 +146,12 @@ Pointer: 'pointer'; // указатель
 Array: 'array'; // Массивный тип
 
 FunctionArgModifier : ArgValModifier | ArgRefModifier ; // Передача аргументов в функцию по значению и ссылке
-ArgValModifier: 'val';
-ArgRefModifier: 'ref';
+fragment ArgValModifier: 'val';
+fragment ArgRefModifier: 'ref';
 
 AccessModifier: PublicModifier | PrivateModifier; // Модификаторы доступа
-PublicModifier: 'public';
-PrivateModifier: 'private';
+fragment PublicModifier: 'public';
+fragment PrivateModifier: 'private';
 
 Class: 'class';
 
@@ -81,85 +162,6 @@ Abstract: 'abstract';
 Override: 'override'; // Метод переопределяется
 
 File: 'file';
-
-SimpleType: Real | Integer | Boolean | Character | String | Unit;
-
-typeName: scalarType | arrayType;
-ptrType: Pointer (LBrace customType RBrace)?; // id -- тип
-customType: qualident;
-scalarType: simpleType | customType | ptrType;
-simpleType : SimpleType; // Встроенные типы 
-arrayType: Array (arrayDimention)+ scalarType;
-arrayDimention : LSBrace RSBrace;
-
-start: (moduleImport)* module;
-moduleImport: Import Id;
-module: Module Id moduleDeclareSeq (moduleStatementsSeq)?;
-moduleStatementsSeq: Start statementSeq End;
-moduleDeclareSeq: (functionDecl | procedureDecl | typeDecl | moduleFieldDecl)*;
-
-declare: variableDecl | constDecl;
-variableDecl: simpleDecl | arrayDecl | ptrDecl;
-simpleDecl: Variable simpleType Id (Assign exp)?;
-arrayDecl: arrayType Id (Assign exp)?;
-ptrDecl: ptrType Id (Assign exp)?;
-constDecl: Const typeName Id Assign exp;
-moduleFieldDecl: AccessModifier (Readonly)? variableDecl Semicolon;
-
-typeDecl: AccessModifier (Base)? Class Id (typeInherit)? (typeFieldDecl)* End;
-typeInherit: Inherit LBrace customType RBrace;
-typeFieldDecl: AccessModifier variableDecl Semicolon;
-
-functionDecl: (importHead)? AccessModifier (Abstract | Override)? (thisHeader)? Function LBrace routineArgList RBrace Colon typeName Id statementSeq End;
-thisHeader: LBrace customType Id RBrace;
-routineArgList: (routineArg (Comma routineArg)* | /* нет аргументов */ );
-routineArg: FunctionArgModifier Id;
-procedureDecl: (importHead)? AccessModifier (Abstract | Override)? (thisHeader)? Procedure LBrace routineArgList RBrace Id statementSeq End;
-importHead: LSBrace File StringLiteral Import StringLiteral RSBrace;
-
-statementSeq: (statement)*;
-statement: (simpleStatement | complexStatement);
-simpleStatement: (declare | let | input | output | returnC | call) Semicolon;
-complexStatement: ifC | whileC| repeatC;
-
-let: Let designator Assign exp;
-ifC: If LBrace exp RBrace Then statementSeq (Elseif LBrace exp RBrace Then statementSeq)* (Else statementSeq)? End;
-whileC: While LBrace exp RBrace Do statementSeq End;
-repeatC: Repeat statementSeq While LBrace exp RBrace;
-input: Input designator (Comma designator)*;
-output: Output designator (Comma designator)*;
-returnC: Return (exp)?;
-call: Call qualident LBrace exprList RBrace;
-exprList: (exp (Comma exp)* | /* nothing*/);
-
-exp: simpleExpr (Relation simpleExpr)?; 
-Relation: BoolEq | BoolNeq | BoolG | BoolL | BoolLeq | BoolGeq;
-simpleExpr: (AddOp | SubOp)? term (AddictiveOp term)*;
-AddictiveOp: AddOp | SubOp | BoolOr;
-term: factor (MultiplicativeOp factor)*;
-MultiplicativeOp: MulOp | DivOp | BoolAnd;
-factor: designator | ( IntValue | RealValue | BoolValue | StringLiteral | SingleCharacter ) | (BoolNot factor) | newC | LBrace exp RBrace;
-newC: New LBrace customType RBrace;
-designator: qualident (Point Id | LSBrace exprList RSBrace | LBrace qualident RBrace | LBrace exprList RBrace )*;
-qualident: (Id Point)? Id;
-
-// Арифметика и булевы токены
-AddOp: '+';
-SubOp: '-';
-MulOp: '*';
-DivOp: '/';
-ModOp: '%';
-
-BoolOr: '||';
-BoolAnd: '&&';
-
-BoolEq: '==';
-BoolNeq: '!=';
-BoolG: '>';
-BoolL: '<';
-BoolGeq: '>=';
-BoolLeq: '<=';
-BoolNot: '!';
 
 fragment Digit: [0-9]; // цифра
 
