@@ -264,25 +264,25 @@ public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitLet([NotNull] SLangGrammarParser.LetContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.if"/>.
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitIf([NotNull] SLangGrammarParser.IfContext context);
+	Result VisitIfC([NotNull] SLangGrammarParser.IfCContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.while"/>.
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitWhile([NotNull] SLangGrammarParser.WhileContext context);
+	Result VisitWhileC([NotNull] SLangGrammarParser.WhileCContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.repeat"/>.
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitRepeat([NotNull] SLangGrammarParser.RepeatContext context);
+	Result VisitRepeatC([NotNull] SLangGrammarParser.RepeatCContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.input"/>.
@@ -299,11 +299,11 @@ public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitOutput([NotNull] SLangGrammarParser.OutputContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.return"/>.
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.returnC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitReturn([NotNull] SLangGrammarParser.ReturnContext context);
+	Result VisitReturnC([NotNull] SLangGrammarParser.ReturnCContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.call"/>.
@@ -348,11 +348,11 @@ public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitFactor([NotNull] SLangGrammarParser.FactorContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.new"/>.
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.newC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitNew([NotNull] SLangGrammarParser.NewContext context);
+	Result VisitNewC([NotNull] SLangGrammarParser.NewCContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.designator"/>.

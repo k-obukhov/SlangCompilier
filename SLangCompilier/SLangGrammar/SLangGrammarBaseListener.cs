@@ -465,43 +465,43 @@ public partial class SLangGrammarBaseListener : ISLangGrammarListener {
 	public virtual void ExitLet([NotNull] SLangGrammarParser.LetContext context) { }
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.if"/>.
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterIf([NotNull] SLangGrammarParser.IfContext context) { }
+	public virtual void EnterIfC([NotNull] SLangGrammarParser.IfCContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.if"/>.
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitIf([NotNull] SLangGrammarParser.IfContext context) { }
+	public virtual void ExitIfC([NotNull] SLangGrammarParser.IfCContext context) { }
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.while"/>.
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterWhile([NotNull] SLangGrammarParser.WhileContext context) { }
+	public virtual void EnterWhileC([NotNull] SLangGrammarParser.WhileCContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.while"/>.
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitWhile([NotNull] SLangGrammarParser.WhileContext context) { }
+	public virtual void ExitWhileC([NotNull] SLangGrammarParser.WhileCContext context) { }
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.repeat"/>.
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterRepeat([NotNull] SLangGrammarParser.RepeatContext context) { }
+	public virtual void EnterRepeatC([NotNull] SLangGrammarParser.RepeatCContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.repeat"/>.
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitRepeat([NotNull] SLangGrammarParser.RepeatContext context) { }
+	public virtual void ExitRepeatC([NotNull] SLangGrammarParser.RepeatCContext context) { }
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.input"/>.
@@ -530,17 +530,17 @@ public partial class SLangGrammarBaseListener : ISLangGrammarListener {
 	public virtual void ExitOutput([NotNull] SLangGrammarParser.OutputContext context) { }
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.return"/>.
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.returnC"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterReturn([NotNull] SLangGrammarParser.ReturnContext context) { }
+	public virtual void EnterReturnC([NotNull] SLangGrammarParser.ReturnCContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.return"/>.
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.returnC"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitReturn([NotNull] SLangGrammarParser.ReturnContext context) { }
+	public virtual void ExitReturnC([NotNull] SLangGrammarParser.ReturnCContext context) { }
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.call"/>.
@@ -621,17 +621,17 @@ public partial class SLangGrammarBaseListener : ISLangGrammarListener {
 	public virtual void ExitFactor([NotNull] SLangGrammarParser.FactorContext context) { }
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.new"/>.
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.newC"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterNew([NotNull] SLangGrammarParser.NewContext context) { }
+	public virtual void EnterNewC([NotNull] SLangGrammarParser.NewCContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.new"/>.
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.newC"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitNew([NotNull] SLangGrammarParser.NewContext context) { }
+	public virtual void ExitNewC([NotNull] SLangGrammarParser.NewCContext context) { }
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.designator"/>.

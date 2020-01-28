@@ -395,37 +395,37 @@ public interface ISLangGrammarListener : IParseTreeListener {
 	void ExitLet([NotNull] SLangGrammarParser.LetContext context);
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.if"/>.
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterIf([NotNull] SLangGrammarParser.IfContext context);
+	void EnterIfC([NotNull] SLangGrammarParser.IfCContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.if"/>.
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitIf([NotNull] SLangGrammarParser.IfContext context);
+	void ExitIfC([NotNull] SLangGrammarParser.IfCContext context);
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.while"/>.
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterWhile([NotNull] SLangGrammarParser.WhileContext context);
+	void EnterWhileC([NotNull] SLangGrammarParser.WhileCContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.while"/>.
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitWhile([NotNull] SLangGrammarParser.WhileContext context);
+	void ExitWhileC([NotNull] SLangGrammarParser.WhileCContext context);
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.repeat"/>.
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterRepeat([NotNull] SLangGrammarParser.RepeatContext context);
+	void EnterRepeatC([NotNull] SLangGrammarParser.RepeatCContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.repeat"/>.
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitRepeat([NotNull] SLangGrammarParser.RepeatContext context);
+	void ExitRepeatC([NotNull] SLangGrammarParser.RepeatCContext context);
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.input"/>.
@@ -450,15 +450,15 @@ public interface ISLangGrammarListener : IParseTreeListener {
 	void ExitOutput([NotNull] SLangGrammarParser.OutputContext context);
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.return"/>.
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.returnC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterReturn([NotNull] SLangGrammarParser.ReturnContext context);
+	void EnterReturnC([NotNull] SLangGrammarParser.ReturnCContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.return"/>.
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.returnC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitReturn([NotNull] SLangGrammarParser.ReturnContext context);
+	void ExitReturnC([NotNull] SLangGrammarParser.ReturnCContext context);
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.call"/>.
@@ -527,15 +527,15 @@ public interface ISLangGrammarListener : IParseTreeListener {
 	void ExitFactor([NotNull] SLangGrammarParser.FactorContext context);
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.new"/>.
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.newC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterNew([NotNull] SLangGrammarParser.NewContext context);
+	void EnterNewC([NotNull] SLangGrammarParser.NewCContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.new"/>.
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.newC"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitNew([NotNull] SLangGrammarParser.NewContext context);
+	void ExitNewC([NotNull] SLangGrammarParser.NewCContext context);
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.designator"/>.

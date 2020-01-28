@@ -29,24 +29,6 @@ Repeat: 'repeat';
 Elseif: 'elseif';
 Do: 'do';
 
-// Арифметика и булевы токены
-AddOp: '+';
-SubOp: '-';
-MulOp: '*';
-DivOp: '/';
-ModOp: '%';
-
-BoolOr: '||';
-BoolAnd: '&&';
-
-BoolEq: '==';
-BoolNeq: '!=';
-BoolG: '>';
-BoolL: '<';
-BoolGeq: '>=';
-BoolLeq: '<=';
-BoolNot: '!';
-
 Module: 'module';
 Import: 'import';
 
@@ -137,16 +119,16 @@ importHead: LSBrace File StringLiteral Import StringLiteral RSBrace;
 
 statementSeq: (statement)*;
 statement: (simpleStatement | complexStatement);
-simpleStatement: (declare | let | input | output | return | call) Semicolon;
-complexStatement: if | while | repeat;
+simpleStatement: (declare | let | input | output | returnC | call) Semicolon;
+complexStatement: ifC | whileC| repeatC;
 
 let: Let designator Assign exp;
-if: If LBrace exp RBrace Then statementSeq (Elseif LBrace exp RBrace Then statementSeq)* (Else statementSeq)? End;
-while: While LBrace exp RBrace Do statementSeq End;
-repeat: Repeat statementSeq While LBrace exp RBrace;
+ifC: If LBrace exp RBrace Then statementSeq (Elseif LBrace exp RBrace Then statementSeq)* (Else statementSeq)? End;
+whileC: While LBrace exp RBrace Do statementSeq End;
+repeatC: Repeat statementSeq While LBrace exp RBrace;
 input: Input designator (Comma designator)*;
 output: Output designator (Comma designator)*;
-return: Return (exp)?;
+returnC: Return (exp)?;
 call: Call qualident LBrace exprList RBrace;
 exprList: (exp (Comma exp)* | /* nothing*/);
 
@@ -156,10 +138,28 @@ simpleExpr: (AddOp | SubOp)? term (AddictiveOp term)*;
 AddictiveOp: AddOp | SubOp | BoolOr;
 term: factor (MultiplicativeOp factor)*;
 MultiplicativeOp: MulOp | DivOp | BoolAnd;
-factor: designator | ( IntValue | RealValue | BoolValue | StringLiteral | SingleCharacter ) | (BoolNot factor) | new;
-new: New LBrace customType RBrace;
-designator: qualident (Point Id | LSBrace exprList LSBrace | LBrace qualident RBrace | LBrace exprList RBrace )*;
+factor: designator | ( IntValue | RealValue | BoolValue | StringLiteral | SingleCharacter ) | (BoolNot factor) | newC | LBrace exp RBrace;
+newC: New LBrace customType RBrace;
+designator: qualident (Point Id | LSBrace exprList RSBrace | LBrace qualident RBrace | LBrace exprList RBrace )*;
 qualident: (Id Point)? Id;
+
+// Арифметика и булевы токены
+AddOp: '+';
+SubOp: '-';
+MulOp: '*';
+DivOp: '/';
+ModOp: '%';
+
+BoolOr: '||';
+BoolAnd: '&&';
+
+BoolEq: '==';
+BoolNeq: '!=';
+BoolG: '>';
+BoolL: '<';
+BoolGeq: '>=';
+BoolLeq: '<=';
+BoolNot: '!';
 
 fragment Digit: [0-9]; // цифра
 

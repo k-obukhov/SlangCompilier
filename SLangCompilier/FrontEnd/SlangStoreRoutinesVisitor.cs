@@ -1,11 +1,13 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
+using Antlr4.Runtime.Tree;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
 using SLangGrammar;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using static SLangCompiler.Exceptions.CompilerErrors;
 
@@ -160,6 +162,11 @@ namespace SLangCompiler.FrontEnd
                     ThrowMethodSignatureExistsException(classData, context.Id(), ModuleData.File);
                 }
 
+                if (isAbstract && context.statementSeq().statement().Length != 0)
+                {
+                    ThrowAbstractEmptyException(context.Id(), ModuleData.File);
+                }
+
                 var method = new MethodNameTableItem
                 {
                     AccessModifier = modifier,
@@ -287,6 +294,11 @@ namespace SLangCompiler.FrontEnd
                 if (foundClass.Methods.Any(m => m.Name == name && m.Params.SequenceEqual(args)))
                 {
                     ThrowMethodSignatureExistsException(classData, context.Id(), ModuleData.File);
+                }
+
+                if (isAbstract && context.statementSeq().statement().Length != 0)
+                {
+                    ThrowAbstractEmptyException(context.Id(), ModuleData.File);
                 }
 
                 var method = new MethodNameTableItem

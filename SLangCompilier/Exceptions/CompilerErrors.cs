@@ -42,5 +42,7 @@ namespace SLangCompiler.Exceptions
         public static void ThrowImportHeaderException(FileInfo file, int line, int column) => ThrowException("Routines and module fields marked imported must't contain logic", file, line, column);
 
         public static void ThrowRoutinesAbstractOverrideException(FileInfo file, Antlr4.Runtime.Tree.ITerminalNode token) => ThrowException("Routines cannot have abstract or override modifiers", file, token.Symbol);
+
+        public static void ThrowAbstractEmptyException(Antlr4.Runtime.Tree.ITerminalNode terminalNode, FileInfo file) => ThrowException("Abstract methods cannot have a body", file, terminalNode.Symbol);
     }
 }
