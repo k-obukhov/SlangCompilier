@@ -73,20 +73,23 @@ namespace SLangCompiler.FrontEnd
 
             foreach (var item in baseClass.Methods)
             {
-                // для каждого метода из базового класса проверяем, есть ли перегрузка
+                // для каждого публичного метода из базового класса проверяем, есть ли перегрузка
                 // если есть -- то базовый метод нет смысла добавлять
-                if (!derivedClass.Methods.Any(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params)))
+                if (item.AccessModifier == AccessModifier.Public)
                 {
-                    var copy = item.Clone() as MethodNameTableItem;
-                    copy.IsDerived = true;
-                    derivedClass.Methods.Add(copy);
-                }
-                else
-                {
-                    var methodOverriden = derivedClass.Methods.First(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params));
-                    if (!methodOverriden.IsOverride)
+                    if (!derivedClass.Methods.Any(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params)))
                     {
-                        throw new CompilerException($"Method {methodOverriden.Name} marked override but does not override", GetFileOfClass(derivedClass.TypeIdent), methodOverriden.Line, methodOverriden.Column);
+                        var copy = item.Clone() as MethodNameTableItem;
+                        copy.IsDerived = true;
+                        derivedClass.Methods.Add(copy);
+                    }
+                    else
+                    {
+                        var methodOverriden = derivedClass.Methods.First(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params));
+                        if (!methodOverriden.IsOverride)
+                        {
+                            throw new CompilerException($"Method {methodOverriden.Name} does not marked override", GetFileOfClass(derivedClass.TypeIdent), methodOverriden.Line, methodOverriden.Column);
+                        }
                     }
                 }
             }
