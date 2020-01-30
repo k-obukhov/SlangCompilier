@@ -13,10 +13,15 @@ namespace SLangCompiler.FrontEnd
     public class SlangSemanticVisitor: SlangBaseVisitor
     {
         private readonly ModuleNameTable moduleItem;
+        private RoutineNameTableItem currentRoutine;
         public SlangSemanticVisitor(SourceCodeTable table, ModuleData module) : base(table, module)
         {
             moduleItem = table.Modules[module.Name];
         }
+
+        
+
+
 
         public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
         {

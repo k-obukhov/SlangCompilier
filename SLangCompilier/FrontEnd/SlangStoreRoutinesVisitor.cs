@@ -184,6 +184,10 @@ namespace SLangCompiler.FrontEnd
                 {
                     CheckLevelAccessForMethods(method, context.Id(), classData);
                 }
+                if (foundClass.Fields.ContainsKey(method.Name))
+                {
+                    ThrowConflictNameException(ModuleData.File, context.Id());
+                }
                 
                 foundClass.Methods.Add(method);
             }
@@ -208,6 +212,10 @@ namespace SLangCompiler.FrontEnd
                 if (modifier == AccessModifier.Public)
                 {
                     CheckLevelAccessForRoutines(routine, context.Id(), name);
+                }
+                if (moduleItem.Fields.ContainsKey(routine.Name))
+                {
+                    ThrowConflictNameException(ModuleData.File, context.Id());
                 }
 
                 moduleItem.Routines.Add(routine);
@@ -319,6 +327,10 @@ namespace SLangCompiler.FrontEnd
                 {
                     CheckLevelAccessForMethods(method, context.Id(), classData);
                 }
+                if (foundClass.Fields.ContainsKey(method.Name))
+                {
+                    ThrowConflictNameException(ModuleData.File, context.Id());
+                }
 
                 foundClass.Methods.Add(method);
             }
@@ -343,6 +355,10 @@ namespace SLangCompiler.FrontEnd
                 if (modifier == AccessModifier.Public)
                 {
                     CheckLevelAccessForRoutines(routine, context.Id(), name);
+                }
+                if (moduleItem.Fields.ContainsKey(routine.Name))
+                {
+                    ThrowConflictNameException(ModuleData.File, context.Id());
                 }
 
                 moduleItem.Routines.Add(routine);

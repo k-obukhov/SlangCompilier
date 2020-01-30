@@ -571,6 +571,17 @@ public interface ISLangGrammarListener : IParseTreeListener {
 	void ExitDesignator([NotNull] SLangGrammarParser.DesignatorContext context);
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.designatorStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterDesignatorStatement([NotNull] SLangGrammarParser.DesignatorStatementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.designatorStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitDesignatorStatement([NotNull] SLangGrammarParser.DesignatorStatementContext context);
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.qualident"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

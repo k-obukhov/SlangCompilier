@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd
 {
@@ -138,6 +139,17 @@ namespace SLangCompiler.FrontEnd
                 {
                     CheckClass(allClasses[index], allClasses[derived]);
                     stack.Push(derived);
+                }
+            }
+
+            foreach (var classItem in allClasses)
+            {
+                foreach (var key in classItem.Fields.Keys)
+                {
+                    if (classItem.Methods.Any((method) => method.Name == key))
+                    {
+                        ThrowConflictNameException(GetFileOfClass(classItem.TypeIdent), classItem.Line, classItem.Column);
+                    }
                 }
             }
         }

@@ -673,6 +673,19 @@ public partial class SLangGrammarBaseListener : ISLangGrammarListener {
 	public virtual void ExitDesignator([NotNull] SLangGrammarParser.DesignatorContext context) { }
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.designatorStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDesignatorStatement([NotNull] SLangGrammarParser.DesignatorStatementContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.designatorStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDesignatorStatement([NotNull] SLangGrammarParser.DesignatorStatementContext context) { }
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.qualident"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

@@ -44,5 +44,8 @@ namespace SLangCompiler.Exceptions
         public static void ThrowRoutinesAbstractOverrideException(FileInfo file, Antlr4.Runtime.Tree.ITerminalNode token) => ThrowException("Routines cannot have abstract or override modifiers", file, token.Symbol);
 
         public static void ThrowAbstractEmptyException(Antlr4.Runtime.Tree.ITerminalNode terminalNode, FileInfo file) => ThrowException("Abstract methods cannot have a body", file, terminalNode.Symbol);
+
+        public static void ThrowConflictNameException(FileInfo file, int line, int column) => ThrowException("Method or routine name conflicts with one of field name", file, line, column);
+        public static void ThrowConflictNameException(FileInfo file, Antlr4.Runtime.Tree.ITerminalNode terminalNode) => ThrowConflictNameException(file, terminalNode.Symbol.Line, terminalNode.Symbol.Column);
     }
 }

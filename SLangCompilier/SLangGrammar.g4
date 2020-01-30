@@ -53,7 +53,7 @@ repeatC: Repeat statementSeq While LBrace exp RBrace;
 input: Input designator (Comma designator)*;
 output: Output exp (Comma exp)*;
 returnC: Return (exp)?;
-call: Call qualident LBrace exprList RBrace;
+call: Call designator;
 exprList: (exp (Comma exp)* | /* nothing*/);
 
 exp: simpleExpr (Relation exp)?; 
@@ -65,7 +65,8 @@ signedFactor: (AddOp | SubOp)? factor;
 
 factor:  designator | ( IntValue | RealValue | BoolValue | StringLiteral | SingleCharacter ) | (BoolNot factor) | newC | (LBrace exp RBrace);
 newC: New LBrace customType RBrace;
-designator: qualident (Point Id | LSBrace exprList RSBrace | LBrace qualident RBrace | LBrace exprList RBrace )*;
+designator: Id (designatorStatement)*;
+designatorStatement: (Point Id | LSBrace exprList RSBrace | LBrace exprList RBrace);
 qualident: (Id Point)? Id;
 
 // Арифметика и булевы токены

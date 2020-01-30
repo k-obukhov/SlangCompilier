@@ -376,6 +376,13 @@ public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitDesignator([NotNull] SLangGrammarParser.DesignatorContext context);
 
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.designatorStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDesignatorStatement([NotNull] SLangGrammarParser.DesignatorStatementContext context);
+
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.qualident"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
