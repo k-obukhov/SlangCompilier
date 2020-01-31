@@ -47,5 +47,7 @@ namespace SLangCompiler.Exceptions
 
         public static void ThrowConflictNameException(FileInfo file, int line, int column) => ThrowException("Method or routine name conflicts with one of field name", file, line, column);
         public static void ThrowConflictNameException(FileInfo file, Antlr4.Runtime.Tree.ITerminalNode terminalNode) => ThrowConflictNameException(file, terminalNode.Symbol.Line, terminalNode.Symbol.Column);
+
+        public static void ThrowNotFoundInContextException(FileInfo file, IToken symbol) => ThrowException($"Variable or constant with name {symbol.Text} not found in thecurrent context", file, symbol);
     }
 }

@@ -18,7 +18,7 @@ namespace SLangCompiler.FrontEnd
     {
         private readonly ModuleNameTable moduleItem;
         private RoutineNameTableItem currentRoutine;
-        private readonly Scope scope;
+        private Scope scope;
         private SlangCustomType currentType;
         private readonly FileInfo file;
         public SlangSemanticVisitor(SourceCodeTable table, ModuleData module) : base(table, module)
@@ -105,14 +105,50 @@ namespace SLangCompiler.FrontEnd
                     }
                 }
             }
+            // если сейчас в контексте типа - может в полях типа?
+            // в методах обращение будет идти через this.name, а мы ищем по одному имени
+            if (currentType != null && currentRoutine == null)
+            {
+                var classData = Table.FindClass(currentType);
+                if (classData.Fields.ContainsKey(name))
+                {
+                    return classData.Fields[name];
+                }
+            }
+
             var result = scope.FindVariable(name);
             if (result == null)
             {
-                ThrowException($"Variable or constant with name {name} not found in current context", file, symbol);
+                // ну тогда может в контексте полей нашего модуля?
+                if (moduleItem.Fields.ContainsKey(name))
+                {
+                    return moduleItem.Fields[name];
+                }
+                // ничего не нашли.. кидаем исключение
+                ThrowNotFoundInContextException(file, symbol);
             }
             return result;
         }
-        
+
+        public override object VisitStatementSeq([NotNull] SLangGrammarParser.StatementSeqContext context)
+        {
+            var newScope = new Scope(new Dictionary<string, VariableNameTableItem>(), scope);
+            scope = newScope;
+
+            var result = new StatementResult(false);
+
+            foreach (var statement in context.statement())
+            {
+                var res = Visit(statement);
+                if (res != null && res is StatementResult stRes && stRes.Returning)
+                {
+                    result.Returning = true;
+                }
+            }
+
+            scope = scope?.Outer;
+            return result;
+        }
 
         public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
         {
