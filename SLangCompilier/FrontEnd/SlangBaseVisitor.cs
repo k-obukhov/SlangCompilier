@@ -55,7 +55,8 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context)
         {
-            return new SlangPointerType(Visit(context.customType()) as SlangCustomType);
+            var customType = context.customType() != null ? Visit(context.customType()) as SlangCustomType : SlangCustomType.Object;
+            return new SlangPointerType(customType);
         }
 
         public void CheckClassExists(string moduleName, string typeName, IToken errToken)
