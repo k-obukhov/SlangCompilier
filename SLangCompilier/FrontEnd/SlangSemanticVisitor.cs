@@ -18,9 +18,9 @@ namespace SLangCompiler.FrontEnd
     {
         private readonly ModuleNameTable moduleItem;
         private RoutineNameTableItem currentRoutine;
-        private Scope scope;
+        private readonly Scope scope;
         private SlangCustomType currentType;
-        private FileInfo file;
+        private readonly FileInfo file;
         public SlangSemanticVisitor(SourceCodeTable table, ModuleData module) : base(table, module)
         {
             moduleItem = table.Modules[module.Name];
@@ -30,40 +30,43 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitFunctionDecl([NotNull] SLangGrammarParser.FunctionDeclContext context)
         {
-            currentType = context.thisHeader() != null ? Visit(context.thisHeader().customType()) as SlangCustomType: null;
-            if (currentType != null)
-            {
-                // TODO find method by line and column and assign to current
-            }
-            else
-            {
-                // TODO find method by line and column and assign to current
-            }
+            var symbol = context.Id().Symbol;
+            InitializeRoutineStates(context.thisHeader(), symbol);
             // some work...
             currentType = null;
+            currentRoutine = null;
             return base.VisitFunctionDecl(context);
         }
 
         public override object VisitProcedureDecl([NotNull] SLangGrammarParser.ProcedureDeclContext context)
         {
-            currentType = context.thisHeader() != null ? Visit(context.thisHeader().customType()) as SlangCustomType : null;
-            if (currentType != null)
-            {
-                // TODO find method by line and column and assign to current
-            }
-            else
-            {
-                // TODO find method by line and column and assign to current
-            }
+            var symbol = context.Id().Symbol;
+            InitializeRoutineStates(context.thisHeader(), symbol);
             // some work...
             currentType = null;
+            currentRoutine = null;
             return base.VisitProcedureDecl(context);
         }
 
-        public override object VisitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context)
+        private void InitializeRoutineStates(SLangGrammarParser.ThisHeaderContext context, IToken symbol)
         {
-            // toDo check expressions
-            return base.VisitModuleFieldDecl(context);
+            currentType = context != null ? Visit(context.customType()) as SlangCustomType : null;
+            if (currentType != null)
+            {
+                currentRoutine = Table.FindClass(currentType).Methods.First(m => m.Line == symbol.Line && m.Column == symbol.Column);
+            }
+            else
+            {
+                currentRoutine = moduleItem.Routines.First(r => r.Line == symbol.Line && r.Column == symbol.Column);
+            }
+        }
+
+        public override object VisitTypeDecl([NotNull] SLangGrammarParser.TypeDeclContext context)
+        {
+            currentType = new SlangCustomType(ModuleData.Name, context.Id().GetText());
+            // ToDo checks expressions in fields
+            currentType = null;
+            return base.VisitTypeDecl(context);
         }
 
         public override object VisitModuleStatementsSeq([NotNull] SLangGrammarParser.ModuleStatementsSeqContext context)
@@ -71,7 +74,14 @@ namespace SLangCompiler.FrontEnd
             // state -- work in module statements
             currentRoutine = null;
             currentType = null;
+            //ToDo checks expressions in fields
             return base.VisitModuleStatementsSeq(context);
+        }
+
+        public override object VisitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context)
+        {
+            // toDo check expressions
+            return base.VisitModuleFieldDecl(context);
         }
 
         private VariableNameTableItem FindVariable(string name, IToken symbol)

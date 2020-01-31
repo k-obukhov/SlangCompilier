@@ -101,70 +101,77 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitFunctionDecl([NotNull] SLangGrammarParser.FunctionDeclContext context)
         {
-            var isMethod = context.thisHeader() != null;
-            var symbol = context.Id().Symbol;
+            ValidateContext(context.thisHeader(), context.Id(), context.importHead(), context.AccessModifier(), context.Abstract(), context.Override(), context.routineArgList(), context.typeName(), context.statementSeq());
+            
+            return base.VisitFunctionDecl(context);
+        }
+
+        private void ValidateContext(SLangGrammarParser.ThisHeaderContext thisHeader, ITerminalNode Id, SLangGrammarParser.ImportHeadContext importHead, ITerminalNode accessModifier, ITerminalNode abstractToken, ITerminalNode overrideToken, SLangGrammarParser.RoutineArgListContext routineArgList, SLangGrammarParser.TypeNameContext typeName, SLangGrammarParser.StatementSeqContext statementSeq)
+        {
+            var isMethod = thisHeader != null;
+            var symbol = Id.Symbol;
 
             string nameOfThis = string.Empty;
             if (isMethod)
             {
-                nameOfThis = context.thisHeader().Id().GetText();
-                ThrowIfReservedWord(nameOfThis, ModuleData.File, context.thisHeader().Id().Symbol);
-                if (context.importHead() != null)
+                nameOfThis = thisHeader.Id().GetText();
+                ThrowIfReservedWord(nameOfThis, ModuleData.File,thisHeader.Id().Symbol);
+                if (importHead != null)
                 {
-                    ThrowImportHeaderMethodsException(ModuleData.File, context.Id());
+                    ThrowImportHeaderMethodsException(ModuleData.File, Id);
                 }
             }
-            var name = context.Id().GetText();
-            ThrowIfReservedWord(name, ModuleData.File, context.thisHeader().Id().Symbol);
-            var args = Visit(context.routineArgList()) as List<RoutineArgNameTableItem>;
+            var name = Id.GetText();
+            ThrowIfReservedWord(name, ModuleData.File, thisHeader.Id().Symbol);
+            var args = Visit(routineArgList) as List<RoutineArgNameTableItem>;
             ImportHeader header = null;
-            if (context.importHead() != null)
+            if (importHead != null)
             {
-                header = Visit(context.importHead()) as ImportHeader;
+                header = Visit(importHead) as ImportHeader;
             }
 
-            var returnType = Visit(context.typeName()) as SlangType;
-            var modifier = GetModifierByName(context.AccessModifier().GetText());
+            var returnType = Visit(typeName) as SlangType;
+            var modifier = GetModifierByName(accessModifier.GetText());
 
-            var isAbstract = context.Abstract() != null;
-            var isOverride = context.Override() != null;
+            var isAbstract = abstractToken != null;
+            var isOverride = overrideToken != null;
 
             if (!isMethod && (isAbstract || isOverride))
             {
-                ThrowRoutinesAbstractOverrideException(ModuleData.File, context.Abstract() ?? context.Override());
+                ThrowRoutinesAbstractOverrideException(ModuleData.File, abstractToken ?? overrideToken);
             }
 
-            if (header != null && context.statementSeq().statement().Length != 0)
+            if (header != null && statementSeq.statement().Length != 0)
             {
-                ThrowImportHeaderException(ModuleData.File, context.Id());
+                ThrowImportHeaderException(ModuleData.File, Id);
             }
 
             if (isMethod)
             {
-                var methodTypeIdent = Visit(context.thisHeader()) as SlangCustomType;
+                var methodTypeIdent = Visit(thisHeader) as SlangCustomType;
                 if (methodTypeIdent.ModuleName != ModuleData.Name)
                 {
-                    ThrowModuleFromOtherClassModuleException(context.Id(), ModuleData.File);
+                    ThrowModuleFromOtherClassModuleException(Id, ModuleData.File);
                 }
                 if (isAbstract)
                 {
-                    ThrowIfAbstractMethodPrivate(modifier, ModuleData.File, context.Id());
+                    ThrowIfAbstractMethodPrivate(modifier, ModuleData.File, Id);
                 }
                 if (args.Any(a => a.Name == nameOfThis))
                 {
-                    ThrowConfictsThisException(context.thisHeader().Id(), ModuleData.File);
+                    ThrowConfictsThisException(thisHeader.Id(), ModuleData.File);
                 }
-                var classData = Visit(context.thisHeader()) as SlangCustomType;
+                var classData = Visit(thisHeader) as SlangCustomType;
                 var foundClass = Table.FindClass(classData);
 
                 if (foundClass.Methods.Any(m => m.Name == name && m.Params.SequenceEqual(args)))
                 {
-                    ThrowMethodSignatureExistsException(classData, context.Id(), ModuleData.File);
+                    ThrowMethodSignatureExistsException(classData, Id, ModuleData.File);
                 }
 
-                if (isAbstract && context.statementSeq().statement().Length != 0)
+                if (isAbstract && statementSeq.statement().Length != 0)
                 {
-                    ThrowAbstractEmptyException(context.Id(), ModuleData.File);
+                    ThrowAbstractEmptyException(Id, ModuleData.File);
                 }
 
                 var method = new MethodNameTableItem
@@ -182,20 +189,20 @@ namespace SLangCompiler.FrontEnd
                 };
                 if (modifier == AccessModifier.Public)
                 {
-                    CheckLevelAccessForMethods(method, context.Id(), classData);
+                    CheckLevelAccessForMethods(method, Id, classData);
                 }
                 if (foundClass.Fields.ContainsKey(method.Name))
                 {
-                    ThrowConflictNameException(ModuleData.File, context.Id());
+                    ThrowConflictNameException(ModuleData.File, Id);
                 }
-                
+
                 foundClass.Methods.Add(method);
             }
             else
             {
                 if (moduleItem.Routines.Any(r => r.Name == name && r.Params.SequenceEqual(args)))
                 {
-                    ThrowRoutineExistsException(context.Id(), ModuleData.File);
+                    ThrowRoutineExistsException(Id, ModuleData.File);
                 }
 
                 var routine = new RoutineNameTableItem
@@ -211,17 +218,15 @@ namespace SLangCompiler.FrontEnd
 
                 if (modifier == AccessModifier.Public)
                 {
-                    CheckLevelAccessForRoutines(routine, context.Id(), name);
+                    CheckLevelAccessForRoutines(routine, Id, name);
                 }
                 if (moduleItem.Fields.ContainsKey(routine.Name))
                 {
-                    ThrowConflictNameException(ModuleData.File, context.Id());
+                    ThrowConflictNameException(ModuleData.File, Id);
                 }
 
                 moduleItem.Routines.Add(routine);
             }
-
-            return base.VisitFunctionDecl(context);
         }
 
         public override object VisitRoutineArgList([NotNull] SLangGrammarParser.RoutineArgListContext context)
@@ -245,124 +250,8 @@ namespace SLangCompiler.FrontEnd
         // same as functions only without return type (maybe i can optimize that later)
         public override object VisitProcedureDecl([NotNull] SLangGrammarParser.ProcedureDeclContext context)
         {
-            var isMethod = context.thisHeader() != null;
-            var symbol = context.Id().Symbol;
+            ValidateContext(context.thisHeader(), context.Id(), context.importHead(), context.AccessModifier(), context.Abstract(), context.Override(), context.routineArgList(), null, context.statementSeq());
 
-            string nameOfThis = string.Empty;
-            if (isMethod)
-            {
-                nameOfThis = context.thisHeader().Id().GetText();
-                ThrowIfReservedWord(nameOfThis, ModuleData.File, context.thisHeader().Id().Symbol);
-                if (context.importHead() != null)
-                {
-                    ThrowImportHeaderMethodsException(ModuleData.File, context.Id());
-                }
-            }
-            var name = context.Id().GetText();
-            ThrowIfReservedWord(name, ModuleData.File, context.thisHeader().Id().Symbol);
-            var args = Visit(context.routineArgList()) as List<RoutineArgNameTableItem>;
-            ImportHeader header = null;
-            if (context.importHead() != null)
-            {
-                header = Visit(context.importHead()) as ImportHeader;
-            }
-
-            var modifier = GetModifierByName(context.AccessModifier().GetText());
-
-            var isAbstract = context.Abstract() != null;
-            var isOverride = context.Override() != null;
-
-            if (!isMethod && (isAbstract || isOverride))
-            {
-                ThrowRoutinesAbstractOverrideException(ModuleData.File, context.Abstract() ?? context.Override());
-            }
-
-            if (header != null && context.statementSeq().statement().Length != 0)
-            {
-                ThrowImportHeaderException(ModuleData.File, context.Id());
-            }
-
-            if (isMethod)
-            {
-                var methodTypeIdent = Visit(context.thisHeader()) as SlangCustomType;
-                if (methodTypeIdent.ModuleName != ModuleData.Name)
-                {
-                    ThrowModuleFromOtherClassModuleException(context.Id(), ModuleData.File);
-                }
-                if (isAbstract)
-                {
-                    ThrowIfAbstractMethodPrivate(modifier, ModuleData.File, context.Id());
-                }
-                if (args.Any(a => a.Name == nameOfThis))
-                {
-                    ThrowConfictsThisException(context.thisHeader().Id(), ModuleData.File);
-                }
-                var classData = Visit(context.thisHeader()) as SlangCustomType;
-                var foundClass = Table.FindClass(classData);
-
-                if (foundClass.Methods.Any(m => m.Name == name && m.Params.SequenceEqual(args)))
-                {
-                    ThrowMethodSignatureExistsException(classData, context.Id(), ModuleData.File);
-                }
-
-                if (isAbstract && context.statementSeq().statement().Length != 0)
-                {
-                    ThrowAbstractEmptyException(context.Id(), ModuleData.File);
-                }
-
-                var method = new MethodNameTableItem
-                {
-                    AccessModifier = modifier,
-                    Column = symbol.Column,
-                    Header = header,
-                    IsAbstract = isAbstract,
-                    IsOverride = isOverride,
-                    Line = symbol.Line,
-                    Name = name,
-                    NameOfThis = nameOfThis,
-                    Params = args,
-                    ReturnType = null
-                };
-                if (modifier == AccessModifier.Public)
-                {
-                    CheckLevelAccessForMethods(method, context.Id(), classData);
-                }
-                if (foundClass.Fields.ContainsKey(method.Name))
-                {
-                    ThrowConflictNameException(ModuleData.File, context.Id());
-                }
-
-                foundClass.Methods.Add(method);
-            }
-            else
-            {
-                if (moduleItem.Routines.Any(r => r.Name == name && r.Params.SequenceEqual(args)))
-                {
-                    ThrowRoutineExistsException(context.Id(), ModuleData.File);
-                }
-
-                var routine = new RoutineNameTableItem
-                {
-                    AccessModifier = modifier,
-                    Column = symbol.Column,
-                    Line = symbol.Line,
-                    Header = header,
-                    Name = name,
-                    Params = args,
-                    ReturnType = null
-                };
-
-                if (modifier == AccessModifier.Public)
-                {
-                    CheckLevelAccessForRoutines(routine, context.Id(), name);
-                }
-                if (moduleItem.Fields.ContainsKey(routine.Name))
-                {
-                    ThrowConflictNameException(ModuleData.File, context.Id());
-                }
-
-                moduleItem.Routines.Add(routine);
-            }
             return base.VisitProcedureDecl(context);
         }
 
