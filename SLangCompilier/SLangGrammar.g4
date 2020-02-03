@@ -66,7 +66,7 @@ signedFactor: (AddOp | SubOp)? factor;
 factor:  designator | ( IntValue | RealValue | BoolValue | StringLiteral | SingleCharacter ) | (BoolNot factor) | newC | (LBrace exp RBrace);
 newC: New LBrace customType RBrace;
 designator: Id (designatorStatement)*;
-designatorStatement: (Point Id | LSBrace exprList RSBrace | LBrace exprList RBrace);
+designatorStatement: (Point Id | LSBrace exp RSBrace | LBrace exprList RBrace);
 qualident: (Id Point)? Id;
 
 // Арифметика и булевы токены

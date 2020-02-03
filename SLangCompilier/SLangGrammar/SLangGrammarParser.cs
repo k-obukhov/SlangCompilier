@@ -2936,7 +2936,6 @@ public partial class SLangGrammarParser : Parser {
 				}
 				break;
 			case RBrace:
-			case RSBrace:
 				{
 				}
 				break;
@@ -3439,11 +3438,14 @@ public partial class SLangGrammarParser : Parser {
 		public ITerminalNode Point() { return GetToken(SLangGrammarParser.Point, 0); }
 		public ITerminalNode Id() { return GetToken(SLangGrammarParser.Id, 0); }
 		public ITerminalNode LSBrace() { return GetToken(SLangGrammarParser.LSBrace, 0); }
-		public ExprListContext exprList() {
-			return GetRuleContext<ExprListContext>(0);
+		public ExpContext exp() {
+			return GetRuleContext<ExpContext>(0);
 		}
 		public ITerminalNode RSBrace() { return GetToken(SLangGrammarParser.RSBrace, 0); }
 		public ITerminalNode LBrace() { return GetToken(SLangGrammarParser.LBrace, 0); }
+		public ExprListContext exprList() {
+			return GetRuleContext<ExprListContext>(0);
+		}
 		public ITerminalNode RBrace() { return GetToken(SLangGrammarParser.RBrace, 0); }
 		public DesignatorStatementContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -3484,7 +3486,7 @@ public partial class SLangGrammarParser : Parser {
 			case LSBrace:
 				{
 				State = 458; Match(LSBrace);
-				State = 459; exprList();
+				State = 459; exp();
 				State = 460; Match(RSBrace);
 				}
 				break;
@@ -3745,7 +3747,7 @@ public partial class SLangGrammarParser : Parser {
 		"\x2\x2\x1C3\x1C7\a\x42\x2\x2\x1C4\x1C6\x5\x64\x33\x2\x1C5\x1C4\x3\x2\x2"+
 		"\x2\x1C6\x1C9\x3\x2\x2\x2\x1C7\x1C5\x3\x2\x2\x2\x1C7\x1C8\x3\x2\x2\x2"+
 		"\x1C8\x63\x3\x2\x2\x2\x1C9\x1C7\x3\x2\x2\x2\x1CA\x1CB\a\x18\x2\x2\x1CB"+
-		"\x1D5\a\x42\x2\x2\x1CC\x1CD\a\x30\x2\x2\x1CD\x1CE\x5T+\x2\x1CE\x1CF\a"+
+		"\x1D5\a\x42\x2\x2\x1CC\x1CD\a\x30\x2\x2\x1CD\x1CE\x5V,\x2\x1CE\x1CF\a"+
 		"\x31\x2\x2\x1CF\x1D5\x3\x2\x2\x2\x1D0\x1D1\a.\x2\x2\x1D1\x1D2\x5T+\x2"+
 		"\x1D2\x1D3\a/\x2\x2\x1D3\x1D5\x3\x2\x2\x2\x1D4\x1CA\x3\x2\x2\x2\x1D4\x1CC"+
 		"\x3\x2\x2\x2\x1D4\x1D0\x3\x2\x2\x2\x1D5\x65\x3\x2\x2\x2\x1D6\x1D7\a\x42"+
