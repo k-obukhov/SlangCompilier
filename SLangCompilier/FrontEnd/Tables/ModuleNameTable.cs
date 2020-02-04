@@ -45,5 +45,12 @@ namespace SLangCompiler.FrontEnd.Tables
             }
         }
 
+        public void CheckCommonNamesConflicts(string name, int line, int column)
+        {
+            if (Classes.ContainsKey(name) || Routines.Any(i => i.Name == name) || Fields.ContainsKey(name) || ImportedModules.Contains(name) || ModuleData.Name == name)
+            {
+                ThrowConflictNameException(ModuleData.File, line, column);
+            }
+        }
     }
 }

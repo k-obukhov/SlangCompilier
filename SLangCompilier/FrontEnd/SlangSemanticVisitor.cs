@@ -15,7 +15,7 @@ using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd
 {
-    public class SlangSemanticVisitor: SlangBaseVisitor
+    public class SlangSemanticVisitor : SlangBaseVisitor
     {
         private readonly ModuleNameTable moduleItem;
         private RoutineNameTableItem currentRoutine;
@@ -33,6 +33,7 @@ namespace SLangCompiler.FrontEnd
         {
             var symbol = context.Id().Symbol;
             InitializeRoutineStates(context.thisHeader(), symbol);
+            CheckParamsNameConflicts(context.thisHeader(), context.routineArgList());
 
             var result = Visit(context.statementSeq()) as StatementResult;
             // функция, которая не импортируется извне и не является абстрактным методом?
@@ -50,6 +51,7 @@ namespace SLangCompiler.FrontEnd
         {
             var symbol = context.Id().Symbol;
             InitializeRoutineStates(context.thisHeader(), symbol);
+            CheckParamsNameConflicts(context.thisHeader(), context.routineArgList());
             // some work... need to call visit()?
             currentType = null;
             currentRoutine = null;
@@ -73,6 +75,11 @@ namespace SLangCompiler.FrontEnd
         {
             currentType = new SlangCustomType(ModuleData.Name, context.Id().GetText());
             // ToDo checks expressions in fields
+
+            foreach (var field in context.typeFieldDecl())
+            {
+                // ToDo check field name does not used from another context
+            }
             currentType = null;
             return base.VisitTypeDecl(context);
         }
@@ -92,47 +99,79 @@ namespace SLangCompiler.FrontEnd
             return base.VisitModuleFieldDecl(context);
         }
 
-        private VariableNameTableItem FindVariable(string name)
+        private void CheckParamsNameConflicts(SLangGrammarParser.ThisHeaderContext thisHeader, SLangGrammarParser.RoutineArgListContext argList)
         {
-            // в функции?
-            if (currentRoutine is RoutineNameTableItem routine)
+            if (thisHeader != null)
             {
-                if (currentRoutine is MethodNameTableItem method)
+                var token = thisHeader.Id().Symbol;
+                moduleItem.CheckCommonNamesConflicts(token.Text, token.Line, token.Column);
+            }
+            foreach (var arg in argList.routineArg())
+            {
+                var token = arg.Id().Symbol;
+                moduleItem.CheckCommonNamesConflicts(token.Text, token.Line, token.Column);
+            }
+        }
+
+        private BaseNameTableItem[] FindItemsByName(string name)
+        {
+            var result = scope.FindVariable(name); // заходим во внешние блоки
+            if (result == null)
+            {
+                // мы сейчас находимся в функции?
+                if (currentRoutine is RoutineNameTableItem routine)
                 {
-                    if (method.NameOfThis == name)
+                    // в методе?
+                    if (currentRoutine is MethodNameTableItem method)
                     {
-                        return new VariableNameTableItem { IsConstant = false, Type = currentType };
+                        // может это имя this метода?
+                        if (method.NameOfThis == name)
+                        {
+                            return new VariableNameTableItem[] { new VariableNameTableItem { IsConstant = false, Type = currentType } };
+                        }
                     }
+                    // неважно, в функции или методе -- проверяем его параметры
                     foreach (var param in routine.Params)
                     {
                         if (param.Name == name)
                         {
-                            return new VariableNameTableItem { IsConstant = false, Type = param.TypeArg.Type };
+                            return new VariableNameTableItem[] { new VariableNameTableItem { IsConstant = false, Type = param.TypeArg.Type } };
                         }
                     }
                 }
-            }
-            // если сейчас в контексте типа - может в полях типа?
-            // в методах обращение будет идти через this.name, а мы ищем по одному имени
-            if (currentType != null && currentRoutine == null)
-            {
-                var classData = Table.FindClass(currentType);
-                if (classData.Fields.ContainsKey(name))
+                // если сейчас в контексте типа - может в полях типа?
+                // в методах обращение будет идти через this.name, а мы ищем по одному имени -- нужно например для 
+                if (currentType != null && currentRoutine == null)
                 {
-                    return classData.Fields[name];
+                    var classData = Table.FindClass(currentType);
+                    if (classData.Fields.ContainsKey(name))
+                    {
+                        return new BaseNameTableItem[] { classData.Fields[name] };
+                    }
                 }
-            }
-
-            var result = scope.FindVariable(name);
-            if (result == null)
-            {
                 // ну тогда может в контексте полей нашего модуля?
                 if (moduleItem.Fields.ContainsKey(name))
                 {
-                    return moduleItem.Fields[name];
+                    return new BaseNameTableItem[] { moduleItem.Fields[name] };
                 }
+                // либо это процедура-функция (взять все сигнатуры) ?
+                if (moduleItem.Routines.Any(i => i.Name == name))
+                {
+                    return moduleItem.Routines.Where(r => r.Name == name).ToArray();
+                }
+                // ну либо это другой модуль?
+                if (moduleItem.ImportedModules.Contains(name))
+                {
+                    return new BaseNameTableItem[] { Table.Modules[name] };
+                }
+
+                return null;
+                // иначе ничего не остается кроме как отдать пустоту
             }
-            return result;
+            else
+            {
+                return new BaseNameTableItem[] { result };
+            }
         }
 
         public override object VisitStatementSeq([NotNull] SLangGrammarParser.StatementSeqContext context)
@@ -291,6 +330,35 @@ namespace SLangCompiler.FrontEnd
 
             SlangType resultType = null;
             ExpressionValueType valueType = ExpressionValueType.Variable;
+            var items = FindItemsByName(context.Id().GetText());
+
+            foreach (var statement in context.designatorStatement())
+            {
+                // also check current contexts
+                if (statement.Id() != null)
+                {
+                    // get a field or smth
+
+                    // moduleItem -> field or routine items (checks if exists)
+                    // classItem -> get fieldItem (checks if public and exists or if in class context)
+                    // fieldItem -> get field of field (checks if exists and public ...)
+
+                    // checks at private field or routines if used import
+                }
+                else if (statement.exp() != null)
+                {
+                    // array element
+                    // if current field has array type - return array element type
+                    
+                }
+                else if (statement.exprList() != null)
+                {
+                    // function or method call
+                    // check parameters, check val or ref modifiers, etc
+                    // returns -> returningType
+                }
+            }
+
 
             return new ExpressionResult(resultType, valueType);
         }

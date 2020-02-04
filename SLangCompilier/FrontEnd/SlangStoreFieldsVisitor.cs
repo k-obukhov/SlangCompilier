@@ -49,6 +49,7 @@ namespace SLangCompiler.FrontEnd
                 {
                     ThrowException($"Field {item.Name} already defined in class {context.Id().GetText()}", ModuleData.File, fieldContext.variableDecl().Start);
                 }
+
                 // check level of access
                 if (item.Type is SlangCustomType || item.Type is SlangPointerType)
                 {
