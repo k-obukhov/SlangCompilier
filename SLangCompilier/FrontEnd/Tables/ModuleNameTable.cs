@@ -23,7 +23,7 @@ namespace SLangCompiler.FrontEnd.Tables
         // basic checks (only for checking name conflicts)
         public void CheckRoutineConflicts(RoutineNameTableItem routineItem)
         {
-            if (Fields.ContainsKey(routineItem.Name) || Classes.ContainsKey(routineItem.Name) || ImportedModules.Contains(routineItem.Name) || module.Name == routineItem.Name)
+            if (Fields.ContainsKey(routineItem.Name) || Classes.ContainsKey(routineItem.Name) || ImportedModules.Contains(routineItem.Name) || ModuleData.Name == routineItem.Name)
             {
                 ThrowConflictNameException(ModuleData.File, routineItem.Line, routineItem.Column);
             }
@@ -31,7 +31,7 @@ namespace SLangCompiler.FrontEnd.Tables
 
         public void CheckFieldConflicts(ModuleFieldNameTableItem fieldItem)
         {
-            if (Routines.Any(i => i.Name == fieldItem.Name) || Classes.ContainsKey(fieldItem.Name) || ImportedModules.Contains(fieldItem.Name) || module.Name == fieldItem.Name)
+            if (Routines.Any(i => i.Name == fieldItem.Name) || Classes.ContainsKey(fieldItem.Name) || ImportedModules.Contains(fieldItem.Name) || ModuleData.Name == fieldItem.Name)
             {
                 ThrowConflictNameException(ModuleData.File, fieldItem.Line, fieldItem.Column);
             }
@@ -39,7 +39,7 @@ namespace SLangCompiler.FrontEnd.Tables
 
         public void CheckClassConflicts(ClassNameTableItem classItem)
         {
-            if (Routines.Any(i => i.Name == classItem.TypeIdent.Name) || Fields.ContainsKey(classItem.TypeIdent.Name) || ImportedModules.Contains(classItem.TypeIdent.Name) || module.Name == classItem.TypeIdent.Name)
+            if (Routines.Any(i => i.Name == classItem.TypeIdent.Name) || Fields.ContainsKey(classItem.TypeIdent.Name) || ImportedModules.Contains(classItem.TypeIdent.Name) || ModuleData.Name == classItem.TypeIdent.Name)
             {
                 ThrowConflictNameException(ModuleData.File, classItem.Line, classItem.Column);
             }
