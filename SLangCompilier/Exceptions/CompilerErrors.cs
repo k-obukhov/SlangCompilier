@@ -46,10 +46,10 @@ namespace SLangCompiler.Exceptions
 
         public static void ThrowAbstractEmptyException(Antlr4.Runtime.Tree.ITerminalNode terminalNode, FileInfo file) => ThrowException("Abstract methods cannot have a body", file, terminalNode.Symbol);
 
-        public static void ThrowConflictNameException(FileInfo file, int line, int column) => ThrowException("Method or routine name conflicts with one of field name", file, line, column);
+        public static void ThrowConflictNameException(FileInfo file, int line, int column) => ThrowException("name conflicts with another name in current context or with current module name or included modules", file, line, column);
         public static void ThrowConflictNameException(FileInfo file, Antlr4.Runtime.Tree.ITerminalNode terminalNode) => ThrowConflictNameException(file, terminalNode.Symbol.Line, terminalNode.Symbol.Column);
 
-        public static void ThrowNotFoundInContextException(FileInfo file, IToken symbol) => ThrowException($"Variable or constant with name {symbol.Text} not found in thecurrent context", file, symbol);
+        public static void ThrowNotFoundInContextException(FileInfo file, IToken symbol) => ThrowException($"Variable or constant with name {symbol.Text} not found in the current context", file, symbol);
 
         public static void ThrowInvalidTypesForBinaryOperationException(IToken symbol, FileInfo file, SlangType leftType, SlangType rightType) => ThrowException($"Operation {symbol.Text} not allowed for types {leftType} and {rightType}", file, symbol);
 

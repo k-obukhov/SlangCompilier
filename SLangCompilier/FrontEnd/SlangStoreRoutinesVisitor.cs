@@ -191,11 +191,8 @@ namespace SLangCompiler.FrontEnd
                 {
                     CheckLevelAccessForMethods(method, Id, classData);
                 }
-                if (foundClass.Fields.ContainsKey(method.Name))
-                {
-                    ThrowConflictNameException(ModuleData.File, Id);
-                }
 
+                foundClass.CheckRoutineConflicts(moduleItem.ModuleData, method);
                 foundClass.Methods.Add(method);
             }
             else
@@ -220,11 +217,8 @@ namespace SLangCompiler.FrontEnd
                 {
                     CheckLevelAccessForRoutines(routine, Id, name);
                 }
-                if (moduleItem.Fields.ContainsKey(routine.Name))
-                {
-                    ThrowConflictNameException(ModuleData.File, Id);
-                }
 
+                moduleItem.CheckRoutineConflicts(routine);
                 moduleItem.Routines.Add(routine);
             }
         }

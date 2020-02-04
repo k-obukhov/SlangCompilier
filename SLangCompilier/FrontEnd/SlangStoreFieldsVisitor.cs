@@ -68,6 +68,7 @@ namespace SLangCompiler.FrontEnd
                         ThrowException($"Level of accessibility of field {item.Name} more than type {usedType.TypeIdent}", ModuleData.File, fieldContext.variableDecl().Start);
                     }
                 }
+                classItem.CheckFieldConflicts(ModuleData, item);
                 classItem.Fields.Add(item.Name, item);
             }
 
@@ -106,6 +107,7 @@ namespace SLangCompiler.FrontEnd
                 }
             }
 
+            moduleItem.CheckFieldConflicts(item);
             moduleItem.Fields[data.Name] = item;
 
             return base.VisitModuleFieldDecl(context);

@@ -92,7 +92,7 @@ namespace SLangCompiler.FrontEnd
             return base.VisitModuleFieldDecl(context);
         }
 
-        private VariableNameTableItem FindVariable(string name, IToken symbol)
+        private VariableNameTableItem FindVariable(string name)
         {
             // в функции?
             if (currentRoutine is RoutineNameTableItem routine)
@@ -131,8 +131,6 @@ namespace SLangCompiler.FrontEnd
                 {
                     return moduleItem.Fields[name];
                 }
-                // ничего не нашли.. кидаем исключение
-                ThrowNotFoundInContextException(file, symbol);
             }
             return result;
         }
@@ -290,7 +288,11 @@ namespace SLangCompiler.FrontEnd
             // TODO designator logic -- call funcs, indexers (array, string), fields etc
             // first step -- find in context or in imported modules
             // maybe use states
-            return null;
+
+            SlangType resultType = null;
+            ExpressionValueType valueType = ExpressionValueType.Variable;
+
+            return new ExpressionResult(resultType, valueType);
         }
 
         public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)

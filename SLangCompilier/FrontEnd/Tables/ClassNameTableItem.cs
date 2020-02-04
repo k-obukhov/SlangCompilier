@@ -1,7 +1,9 @@
-﻿using SLangCompiler.FrontEnd.Types;
+﻿using SLangCompiler.FileServices;
+using SLangCompiler.FrontEnd.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
@@ -17,6 +19,21 @@ namespace SLangCompiler.FrontEnd.Tables
 
         public bool IsAbstract() => Methods.Any(m => m.IsAbstract);
 
+        public void CheckRoutineConflicts(ModuleData module, MethodNameTableItem routineItem)
+        {
+            if (Fields.ContainsKey(routineItem.Name))
+            {
+                ThrowConflictNameException(module.File, routineItem.Line, routineItem.Column);
+            }
+        }
+
+        public void CheckFieldConflicts(ModuleData module, FieldNameTableItem fieldItem)
+        {
+            if (Methods.Any(i => i.Name == fieldItem.Name))
+            {
+                ThrowConflictNameException(module.File, fieldItem.Line, fieldItem.Column);
+            }
+        }
     }
 
     public class MethodNameTableItem: RoutineNameTableItem, ICloneable
