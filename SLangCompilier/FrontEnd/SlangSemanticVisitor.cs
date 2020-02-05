@@ -139,17 +139,7 @@ namespace SLangCompiler.FrontEnd
                         }
                     }
                 }
-                // если сейчас в контексте типа - может в полях типа?
-                // в методах обращение будет идти через this.name, а мы ищем по одному имени -- нужно например для 
-                if (currentType != null && currentRoutine == null)
-                {
-                    var classData = Table.FindClass(currentType);
-                    if (classData.Fields.ContainsKey(name))
-                    {
-                        return new BaseNameTableItem[] { classData.Fields[name] };
-                    }
-                }
-                // ну тогда может в контексте полей нашего модуля?
+                
                 if (moduleItem.Fields.ContainsKey(name))
                 {
                     return new BaseNameTableItem[] { moduleItem.Fields[name] };

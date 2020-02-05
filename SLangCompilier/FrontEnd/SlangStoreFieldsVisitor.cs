@@ -44,6 +44,10 @@ namespace SLangCompiler.FrontEnd
             foreach (var fieldContext in context.typeFieldDecl())
             {
                 var item = Visit(fieldContext) as FieldNameTableItem;
+                if (fieldContext.variableDecl().exp() != null)
+                {
+                    ThrowException("Expressions not allowed for fields in types", ModuleData.File, fieldContext.variableDecl().exp().Start);
+                }
                 ThrowIfReservedWord(item.Name, ModuleData.File, fieldContext.variableDecl().Start);
                 if (classItem.Fields.ContainsKey(item.Name))
                 {
