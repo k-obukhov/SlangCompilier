@@ -1,4 +1,5 @@
 ﻿using SLangCompiler.FileServices;
+using SLangCompiler.FrontEnd.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +20,8 @@ namespace SLangCompiler.FrontEnd.Tables
         public IList<RoutineNameTableItem> Routines { get; set; } = new List<RoutineNameTableItem>();
         public Dictionary<string, ModuleFieldNameTableItem> Fields { get; set; } = new Dictionary<string, ModuleFieldNameTableItem>();
         public Dictionary<string, ClassNameTableItem> Classes { get; set; } = new Dictionary<string, ClassNameTableItem>();
+
+        public override SlangType ToSlangType() => null;
 
         // basic checks (only for checking name conflicts)
         public void CheckRoutineConflicts(RoutineNameTableItem routineItem)

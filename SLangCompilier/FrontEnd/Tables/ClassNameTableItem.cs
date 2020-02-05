@@ -19,6 +19,8 @@ namespace SLangCompiler.FrontEnd.Tables
 
         public bool IsAbstract() => Methods.Any(m => m.IsAbstract);
 
+        public override SlangType ToSlangType() => TypeIdent;
+
         public void CheckRoutineConflicts(ModuleData module, MethodNameTableItem routineItem)
         {
             if (Fields.ContainsKey(routineItem.Name))

@@ -119,7 +119,7 @@ namespace SLangCompiler.FrontEnd
             if (result == null)
             {
                 // мы сейчас находимся в функции?
-                if (currentRoutine is RoutineNameTableItem routine)
+                if (currentRoutine != null && currentRoutine is RoutineNameTableItem routine)
                 {
                     // в методе?
                     if (currentRoutine is MethodNameTableItem method)
@@ -325,6 +325,9 @@ namespace SLangCompiler.FrontEnd
 
             if (items.Length == 1)
             {
+                // нашли по имени импортированного или текущего модуля
+                // если имя модуля не совпадает с текущим -- значит импортируем из другого модуля
+                // при этом в некоторых случаях (а именно при обращении от модуля) нужно брать только публичные члены (поля и функции)
                 if (items[0] is ModuleNameTable module && module.ModuleData.Name != moduleItem.ModuleData.Name)
                 {
                     fromCurrentModule = false;
@@ -333,127 +336,63 @@ namespace SLangCompiler.FrontEnd
                 {
                     valueType = ExpressionValueType.Value;
                 }
+                resultType = items[0].ToSlangType();
             }
-
+            
             foreach (var statement in context.designatorStatement())
             {
-                // also check current contexts
                 if (statement.Id() != null)
                 {
-                    // get a field or smth
+                    var node = statement.Id();
+                    // обращение к полю
+                    // возможные варианты
 
-                    // moduleItem -> field or routine items (checks if exists)
-                    // fieldItem/varItem, etc -> get field of field (checks if exists and public ...)
+                    // переменная.Id 
+                    // -- переменная из текущего контекста
+                    // -- если константа то тип выражения val
+                    // -- тип -- определенный пользователем или указатель на него
+                    // вернем ссылку на методы или поле, проверка что мы в контексте данного типа для взятия только public например
 
-                    var token = statement.Id();
+                    // полетекущегомодуля.Id
+                    // -- проверки как у предыдущего
+                    // -- тип -- определенный пользователем или указатель на него
+                    // -- на readonly все равно, т.к поле из нашего модуля
+                    // вернем ссылку на методы или поле, проверка что мы в контексте данного типа для взятия только public например
+
+                    // модуль.Id
+                    // взять переменную или функции с соотв.именем
+                    // если берем из чужого модуля -- проверка на публичные-приватные
+                    
                     if (items.Length == 1)
                     {
-                        var item = items[0];
-                        // это переменная из области видимости нашего модуля?
-                        if (item.GetType() == typeof(VariableNameTableItem))
+                        var item = items.First();
+                        if (item is VariableNameTableItem variable)
                         {
-                            var variableName = items[0] as VariableNameTableItem;
-
-                            if (variableName.IsConstant)
-                            {
-                                valueType = ExpressionValueType.Variable;
-                            }
-
-                            if (variableName.Type is SlangCustomType type)
-                            {
-                                // есть ли поле или метод у заданного типа?
-                                // если мы в контексте этого типа, смотрим у public и private
-
-                                var classItem = Table.FindClass(type);
-                                if (currentType != null && currentType == type)
-                                {
-                                    // есть поле?
-                                    if (classItem.Fields.ContainsKey(token.GetText()))
-                                    {
-                                        items = new BaseNameTableItem[] { classItem.Fields[token.GetText()] };
-                                    }
-                                    // есть метод?
-                                    else if (classItem.Methods.Any(m => m.Name == token.GetText()))
-                                    {
-                                        items = classItem.Methods.Where(m => m.Name == token.GetText()).ToArray();
-                                    }
-                                    else
-                                    {
-                                        // exception, no such attr
-                                    }
-                                }
-                                else
-                                {
-                                    // есть поле?
-                                    if (classItem.Fields.ContainsKey(token.GetText()))
-                                    {
-                                        var foundItem = classItem.Fields[token.GetText()];
-                                        if (foundItem.AccessModifier == AccessModifier.Public)
-                                        {
-                                            items = new BaseNameTableItem[] { foundItem };
-                                        }
-                                        else
-                                        {
-                                            // exception, use private field
-                                        }
-                                    }
-                                    // есть метод?
-                                    else if (classItem.Methods.Any(m => m.Name == token.GetText() && m.AccessModifier == AccessModifier.Public))
-                                    {
-                                        items = classItem.Methods.Where(m => m.Name == token.GetText() && m.AccessModifier == AccessModifier.Public).ToArray();
-                                    }
-                                    else
-                                    {
-                                        // exception, no such attr
-                                    }
-                                }
-                                // иначе смотрим только у public
-                            }
-                            else
-                            {
-                                // exception, no such attr
-                            }
+                            // toDO ...
                         }
-                        else if (item.GetType() == typeof(ModuleNameTable))
+                        else if (item is ModuleNameTable module)
                         {
-                            // find field or routine
-                            // check if field or routine from another module and public
-                            // if readonly field -- use val as expr result
-                        }
-                        else if (item.GetType() == typeof(FieldNameTableItem))
-                        {
-                            // readonly field from other module -- use val
-                        }
-                        else if (item.GetType() == typeof(ModuleFieldNameTableItem))
-                        {
-
+                            // toDO ...
                         }
                         else
                         {
-                            // exception??
+                            // exception ...
                         }
                     }
                     else
                     {
                         // exception
                     }
-
-                    // checks at private field or routines if used import
                 }
                 else if (statement.exp() != null)
                 {
-                    // array element
-                    // if current field has array type - return array element type
-                    
+                    // check if array type
                 }
                 else if (statement.exprList() != null)
                 {
-                    // function or method call
-                    // check parameters, check val or ref modifiers, etc (abstract)
-                    // returns -> returningType
+                    // check params ... 
                 }
             }
-            // check type etc
 
             return new ExpressionResult(resultType, valueType);
         }
