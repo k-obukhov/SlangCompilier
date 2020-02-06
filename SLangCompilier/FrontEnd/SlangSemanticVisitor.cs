@@ -184,6 +184,16 @@ namespace SLangCompiler.FrontEnd
             return result;
         }
 
+        public override object VisitExprList([NotNull] SLangGrammarParser.ExprListContext context)
+        {
+            var expressionResults = new List<ExpressionResult>();
+            foreach (var expr in context.exp())
+            {
+                expressionResults.Add(Visit(expr) as ExpressionResult);
+            }
+            return expressionResults;
+        }
+
         public override object VisitExp([NotNull] SLangGrammarParser.ExpContext context)
         {
             // что можно сравнивать в языке?
@@ -310,7 +320,7 @@ namespace SLangCompiler.FrontEnd
             }
             else if (context.Nil() != null)
             {
-                return new ExpressionResult(new SlangPointerType(SlangCustomType.Object), ExpressionValueType.Value);
+                return new ExpressionResult(new SlangNullType(), ExpressionValueType.Value);
             }
 
             return null;
@@ -470,6 +480,10 @@ namespace SLangCompiler.FrontEnd
             else if (type is SlangPointerType pt && expressionType is SlangPointerType pet)
             {
                 result = CanAssignCustomType(pt.PtrType, pet.PtrType);
+            }
+            else if (type is SlangPointerType && expressionType is SlangNullType)
+            {
+                result = true;
             }
             else
             {
