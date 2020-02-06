@@ -308,6 +308,10 @@ namespace SLangCompiler.FrontEnd
                 var type = Visit(context.newC().customType()) as SlangCustomType;
                 return new ExpressionResult(new SlangPointerType(type), ExpressionValueType.Value); // value or var? hmm
             }
+            else if (context.Nil() != null)
+            {
+                return new ExpressionResult(new SlangPointerType(SlangCustomType.Object), ExpressionValueType.Value);
+            }
 
             return null;
         }
