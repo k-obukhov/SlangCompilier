@@ -80,7 +80,7 @@ namespace SLangCompiler.FrontEnd.Tables
             bool result = true;
 
             // находимся в контексте этого типа
-            if (classContext.Equals(destType))
+            if (classContext != null && classContext.Equals(destType))
             {
                 var classItem = FindClass(destType);
                 if (classItem.Methods.Any(m => m.Name == name))

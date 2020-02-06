@@ -18,6 +18,20 @@ namespace SLangCompiler.FrontEnd.Types
             Dimension = dimension;
         }
 
+        public SlangType ArrayElementType()
+        {
+            SlangType result = null;
+            if (Dimension > 1)
+            {
+                result = new SlangArrayType(Type, Dimension - 1);
+            }
+            else
+            {
+                result = Type;
+            }
+            return result;
+        }
+
         public override bool Equals(SlangType other) => other is SlangArrayType arr && arr.Type.Equals(Type) && (arr.Dimension == Dimension);
 
         public override string ToString()

@@ -323,20 +323,25 @@ namespace SLangCompiler.FrontEnd
             var items = FindItemsByName(context.Id().GetText());
             bool fromCurrentModule = true;
 
-            if (items.Length == 1)
+            if (items?.Length == 1)
             {
-                // нашли по имени импортированного или текущего модуля
-                // если имя модуля не совпадает с текущим -- значит импортируем из другого модуля
-                // при этом в некоторых случаях (а именно при обращении от модуля) нужно брать только публичные члены (поля и функции)
                 if (items[0] is ModuleNameTable module && module.ModuleData.Name != moduleItem.ModuleData.Name)
                 {
                     fromCurrentModule = false;
                 }
-                if ((items[0] is VariableNameTableItem var && var.IsConstant)) // константа?
+                else if (items[0] is VariableNameTableItem var) 
                 {
-                    valueType = ExpressionValueType.Value;
+                    if (var.IsConstant) // константа
+                    {
+                        valueType = ExpressionValueType.Value;
+                    }
                 }
+                
                 resultType = items[0].ToSlangType();
+            }
+            else if (items == null)
+            {
+                // exception
             }
             
             foreach (var statement in context.designatorStatement())
@@ -344,57 +349,152 @@ namespace SLangCompiler.FrontEnd
                 if (statement.Id() != null)
                 {
                     var node = statement.Id();
-                    // обращение к полю
-                    // возможные варианты
-
-                    // переменная.Id 
-                    // -- переменная из текущего контекста
-                    // -- если константа то тип выражения val
-                    // -- тип -- определенный пользователем или указатель на него
-                    // вернем ссылку на методы или поле, проверка что мы в контексте данного типа для взятия только public например
-
-                    // полетекущегомодуля.Id
-                    // -- проверки как у предыдущего
-                    // -- тип -- определенный пользователем или указатель на него
-                    // -- на readonly все равно, т.к поле из нашего модуля
-                    // вернем ссылку на методы или поле, проверка что мы в контексте данного типа для взятия только public например
-
-                    // модуль.Id
-                    // взять переменную или функции с соотв.именем
-                    // если берем из чужого модуля -- проверка на публичные-приватные
                     
                     if (items.Length == 1)
                     {
                         var item = items.First();
-                        if (item is VariableNameTableItem variable)
+                        if (item is VariableNameTableItem varItem)
                         {
-                            // toDO ...
+                            // переменная.поле -- для указателей и кастомных типов
+                            // если попали в этот кейс -- значит это самое первое выражение
+                            // либо это поле класса или модуля 
+                            SlangCustomType typeIdent = null;
+                            if (item.ToSlangType() is SlangCustomType t)
+                            {
+                                typeIdent = t;
+                            }
+                            else if (item.ToSlangType() is SlangPointerType pt)
+                            {
+                                typeIdent = pt.PtrType;
+                            }
+                            else
+                            {
+                                // exception, invalid use of type
+                            }
+
+                            if (Table.TryFoundClassItemsByName(node.GetText(), currentType, typeIdent, out BaseNameTableItem[] foundItems))
+                            {
+                                items = foundItems;
+                            }
                         }
                         else if (item is ModuleNameTable module)
                         {
-                            // toDO ...
+                            if (Table.TryFindModuleItemsByName(node.GetText(), ModuleData.Name, module.ModuleData.Name, out BaseNameTableItem[] foundItems))
+                            {
+                                items = foundItems;
+                                // если вытянули из модуля readonly-переменную и она константа или же readonly из другого модуля
+                                if (items.Length == 1 && 
+                                    (items.First() is ModuleFieldNameTableItem moduleField 
+                                    && (moduleField.IsConstant || (moduleField.IsReadonly && !fromCurrentModule))))
+                                {
+                                    valueType = ExpressionValueType.Value; // такие вещи иожно передать только по значению
+                                }
+                            }
+                            else
+                            {
+                                // exception, not found
+                            }
                         }
                         else
                         {
-                            // exception ...
+                            // exception, invalid use of type
                         }
                     }
                     else
                     {
-                        // exception
+                        // exception, invalid use of type
                     }
                 }
                 else if (statement.exp() != null)
                 {
-                    // check if array type
+                    var errToken = statement.LSBrace().Symbol;
+                    if (items.Length == 1 && items.First() is VariableNameTableItem varItem)
+                    {
+                        if (varItem.ToSlangType() is SlangArrayType arrayType)
+                        {
+                            items = new BaseNameTableItem[] { new VariableNameTableItem { Type = arrayType.ArrayElementType(),
+                                Column = errToken.Column,
+                                Line = errToken.Line,
+                                Name = $"{varItem.Name}[]",
+                                IsConstant = false
+                            } };
+                        }
+                        else if (varItem.ToSlangType() is SlangSimpleType st && st.Equals(SlangSimpleType.String))
+                        {
+                            items = new BaseNameTableItem[] { new VariableNameTableItem { Type = SlangSimpleType.Character,
+                                Column = errToken.Column,
+                                Line = errToken.Line,
+                                Name = $"{varItem.Name}[]",
+                                IsConstant = false
+                            } };
+                        }
+                        else
+                        {
+                            // exception, invalid use of type
+                        }
+                    }
+                    else
+                    {
+                        // exception, invalid use of type
+                    }
                 }
                 else if (statement.exprList() != null)
                 {
                     // check params ... 
+                    if (items.All(r => r.ToSlangType() is SlangRoutineType))
+                    {
+
+                    }
+                    else
+                    {
+                        // exception, invalid use of type
+                    }
                 }
             }
-
+            // get result type
+            // if routine type or many alternatives -- throw exception
             return new ExpressionResult(resultType, valueType);
+        }
+
+        private bool CanAssignToType(SlangType type, SlangType expressionType)
+        {
+            bool result;
+            if (type is SlangCustomType t && expressionType is SlangCustomType et)
+            {
+                result = CanAssignCustomType(t, et);
+            }
+            else if (type is SlangPointerType pt && expressionType is SlangPointerType pet)
+            {
+                result = CanAssignCustomType(pt.PtrType, pet.PtrType);
+            }
+            else
+            {
+                result = type.Equals(expressionType);
+            }
+            return result;
+        }
+
+        private bool CanAssignCustomType(SlangCustomType type, SlangCustomType expressionType)
+        {
+            // true, если type является базовым или совпадает с expressionType
+            var result = false;
+            if (type.Equals(expressionType) || type.Equals(SlangCustomType.Object))
+            {
+                result = true;
+            }
+            else
+            {
+                var classItem = Table.FindClass(expressionType);
+                while (!classItem.Base.Equals(SlangCustomType.Object))
+                {
+                    classItem = Table.FindClass(classItem.Base);
+                    if (classItem.TypeIdent.Equals(type))
+                    {
+                        result = true;
+                    }
+                }
+            }
+            return result;
         }
 
         public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
