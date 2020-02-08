@@ -4,17 +4,13 @@ using System.Text;
 
 namespace SLangCompiler.FrontEnd.Types
 {
-    public class SlangNullType : SlangType
+    public class SlangVoidType : SlangType
     {
+        public override string ToString() => "void";
+
         public override bool Equals(SlangType other)
         {
-            if (other is SlangPointerType)
-            {
-                return true;
-            }
             return false;
         }
-
-        public override string ToString() => CompilerConstants.NullType;
     }
 }

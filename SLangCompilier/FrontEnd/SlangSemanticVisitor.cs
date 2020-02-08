@@ -330,7 +330,7 @@ namespace SLangCompiler.FrontEnd
             // first step -- find in context or in imported modules
             // maybe use states
 
-            SlangType resultType = null;
+            SlangType resultType;
             ExpressionValueType valueType = ExpressionValueType.Variable;
             var item = FindItemByName(context.Id().GetText());
             bool fromCurrentModule = true;
@@ -348,8 +348,6 @@ namespace SLangCompiler.FrontEnd
                         valueType = ExpressionValueType.Value;
                     }
                 }
-
-                resultType = item.ToSlangType();
             }
             else
             {
@@ -469,8 +467,8 @@ namespace SLangCompiler.FrontEnd
                         {
                             ThrowNoSuchOverrloadingException(file, routine.Name, routine.Line, routine.Column);
                         }
-
-                        item = new VariableNameTableItem { Name = string.Empty, Column = errToken.Column, Line = errToken.Line, IsConstant = true, Type = routine.ReturnType };
+                        // item для результата вызова
+                        item = new VariableNameTableItem { Name = string.Empty, Column = errToken.Column, Line = errToken.Line, IsConstant = true, Type = routine.ReturnType ?? new SlangVoidType() };
 
                         if (routine.IsFunction())
                         {
@@ -484,12 +482,12 @@ namespace SLangCompiler.FrontEnd
                     }
                     else
                     {
-                        // exception, invalid use of type
+                        ThrowInvalidUseOfTypeException(item.ToSlangType(), file, errToken.Line, errToken.Column);
                     }
                 }
             }
-            // get result type
-            // if routine type or many alternatives -- throw exception
+
+            resultType = item.ToSlangType();
             return new ExpressionResult(resultType, valueType);
         }
         private bool CanAssignToType(SlangType type, SlangType expressionType)
