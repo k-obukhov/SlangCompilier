@@ -1,6 +1,5 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
-using Antlr4.Runtime.Tree;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
@@ -9,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 using static SLangCompiler.Exceptions.CompilerErrors;
 
@@ -63,11 +61,11 @@ namespace SLangCompiler.FrontEnd
             currentType = context != null ? Visit(context.customType()) as SlangCustomType : null;
             if (currentType != null)
             {
-                currentRoutine = Table.FindClass(currentType).Methods.First(m => m.Line == symbol.Line && m.Column == symbol.Column);
+                currentRoutine = Table.FindClass(currentType).Methods[symbol.Text];
             }
             else
             {
-                currentRoutine = moduleItem.Routines.First(r => r.Line == symbol.Line && r.Column == symbol.Column);
+                currentRoutine = moduleItem.Routines[symbol.Text];
             }
         }
 
@@ -113,7 +111,7 @@ namespace SLangCompiler.FrontEnd
             }
         }
 
-        private BaseNameTableItem[] FindItemsByName(string name)
+        private BaseNameTableItem FindItemByName(string name)
         {
             var result = scope.FindVariable(name); // заходим во внешние блоки
             if (result == null)
@@ -127,7 +125,7 @@ namespace SLangCompiler.FrontEnd
                         // может это имя this метода?
                         if (method.NameOfThis == name)
                         {
-                            return new VariableNameTableItem[] { new VariableNameTableItem { IsConstant = false, Type = currentType } };
+                            return new VariableNameTableItem { IsConstant = false, Type = currentType };
                         }
                     }
                     // неважно, в функции или методе -- проверяем его параметры
@@ -135,24 +133,24 @@ namespace SLangCompiler.FrontEnd
                     {
                         if (param.Name == name)
                         {
-                            return new VariableNameTableItem[] { new VariableNameTableItem { IsConstant = false, Type = param.TypeArg.Type } };
+                            return new VariableNameTableItem { IsConstant = false, Type = param.TypeArg.Type };
                         }
                     }
                 }
 
                 if (moduleItem.Fields.ContainsKey(name))
                 {
-                    return new BaseNameTableItem[] { moduleItem.Fields[name] };
+                    return moduleItem.Fields[name];
                 }
                 // либо это процедура-функция (взять все сигнатуры) ?
-                if (moduleItem.Routines.Any(i => i.Name == name))
+                if (moduleItem.Routines.ContainsKey(name))
                 {
-                    return moduleItem.Routines.Where(r => r.Name == name).ToArray();
+                    return moduleItem.Routines[name];
                 }
                 // ну либо это другой модуль?
                 if (moduleItem.ImportedModules.Contains(name))
                 {
-                    return new BaseNameTableItem[] { Table.Modules[name] };
+                    return Table.Modules[name];
                 }
 
                 return null;
@@ -160,7 +158,7 @@ namespace SLangCompiler.FrontEnd
             }
             else
             {
-                return new BaseNameTableItem[] { result };
+                return result;
             }
         }
 
@@ -334,16 +332,16 @@ namespace SLangCompiler.FrontEnd
 
             SlangType resultType = null;
             ExpressionValueType valueType = ExpressionValueType.Variable;
-            var items = FindItemsByName(context.Id().GetText());
+            var item = FindItemByName(context.Id().GetText());
             bool fromCurrentModule = true;
 
-            if (items?.Length == 1)
+            if (item != null)
             {
-                if (items[0] is ModuleNameTable module && module.ModuleData.Name != moduleItem.ModuleData.Name)
+                if (item is ModuleNameTable module && module.ModuleData.Name != moduleItem.ModuleData.Name)
                 {
                     fromCurrentModule = false;
                 }
-                else if (items[0] is VariableNameTableItem var)
+                else if (item is VariableNameTableItem var)
                 {
                     if (var.IsConstant) // константа
                     {
@@ -351,9 +349,9 @@ namespace SLangCompiler.FrontEnd
                     }
                 }
 
-                resultType = items[0].ToSlangType();
+                resultType = item.ToSlangType();
             }
-            else if (items == null)
+            else
             {
                 // exception
             }
@@ -369,55 +367,45 @@ namespace SLangCompiler.FrontEnd
                 {
                     var node = statement.Id();
 
-                    if (items.Length == 1)
+                    if (item is VariableNameTableItem varItem)
                     {
-                        var item = items.First();
-
-                        if (item is VariableNameTableItem varItem)
+                        // переменная.поле -- для указателей и кастомных типов
+                        // если попали в этот кейс -- значит это самое первое выражение
+                        // либо это поле класса или модуля 
+                        SlangCustomType typeIdent = null;
+                        if (item.ToSlangType() is SlangCustomType t)
                         {
-                            // переменная.поле -- для указателей и кастомных типов
-                            // если попали в этот кейс -- значит это самое первое выражение
-                            // либо это поле класса или модуля 
-                            SlangCustomType typeIdent = null;
-                            if (item.ToSlangType() is SlangCustomType t)
-                            {
-                                typeIdent = t;
-                            }
-                            else if (item.ToSlangType() is SlangPointerType pt)
-                            {
-                                typeIdent = pt.PtrType;
-                            }
-                            else
-                            {
-                                // exception, invalid use of type
-                            }
-
-                            if (Table.TryFoundClassItemsByName(node.GetText(), currentType, typeIdent, out BaseNameTableItem[] foundItems))
-                            {
-                                items = foundItems;
-                            }
+                            typeIdent = t;
                         }
-                        else if (item is ModuleNameTable module)
+                        else if (item.ToSlangType() is SlangPointerType pt)
                         {
-                            if (Table.TryFindModuleItemsByName(node.GetText(), ModuleData.Name, module.ModuleData.Name, out BaseNameTableItem[] foundItems))
-                            {
-                                items = foundItems;
-                                // если вытянули из модуля readonly-переменную и она константа или же readonly из другого модуля
-                                if (items.Length == 1 &&
-                                    (items.First() is ModuleFieldNameTableItem moduleField
-                                    && (moduleField.IsConstant || (moduleField.IsReadonly && !fromCurrentModule))))
-                                {
-                                    valueType = ExpressionValueType.Value; // такие вещи иожно передать только по значению
-                                }
-                            }
-                            else
-                            {
-                                // exception, not found
-                            }
+                            typeIdent = pt.PtrType;
                         }
                         else
                         {
                             // exception, invalid use of type
+                        }
+
+                        if (Table.TryFoundClassItemsByName(node.GetText(), currentType, typeIdent, out BaseNameTableItem foundItem))
+                        {
+                            item = foundItem;
+                        }
+                    }
+                    else if (item is ModuleNameTable module)
+                    {
+                        if (Table.TryFindModuleItemsByName(node.GetText(), ModuleData.Name, module.ModuleData.Name, out BaseNameTableItem foundItem))
+                        {
+                            item = foundItem;
+                            // если вытянули из модуля readonly-переменную и она константа или же readonly из другого модуля
+                            if (item is ModuleFieldNameTableItem moduleField
+                                && (moduleField.IsConstant || (moduleField.IsReadonly && !fromCurrentModule)))
+                            {
+                                valueType = ExpressionValueType.Value; // такие вещи иожно передать только по значению
+                            }
+                        }
+                        else
+                        {
+                            // exception, not found
                         }
                     }
                     else
@@ -428,25 +416,25 @@ namespace SLangCompiler.FrontEnd
                 else if (statement.exp() != null)
                 {
                     var errToken = statement.LSBrace().Symbol;
-                    if (items.Length == 1 && items.First() is VariableNameTableItem varItem)
+                    if (item is VariableNameTableItem varItem)
                     {
                         if (varItem.ToSlangType() is SlangArrayType arrayType)
                         {
-                            items = new BaseNameTableItem[] { new VariableNameTableItem { Type = arrayType.ArrayElementType(),
+                            item = new VariableNameTableItem { Type = arrayType.ArrayElementType(),
                                 Column = errToken.Column,
                                 Line = errToken.Line,
                                 Name = $"{varItem.Name}[]",
                                 IsConstant = false
-                            } };
+                            };
                         }
                         else if (varItem.ToSlangType() is SlangSimpleType st && st.Equals(SlangSimpleType.String))
                         {
-                            items = new BaseNameTableItem[] { new VariableNameTableItem { Type = SlangSimpleType.Character,
+                            item = new VariableNameTableItem { Type = SlangSimpleType.Character,
                                 Column = errToken.Column,
                                 Line = errToken.Line,
                                 Name = $"{varItem.Name}[]",
                                 IsConstant = false
-                            } };
+                            };
                         }
                         else
                         {
@@ -461,85 +449,36 @@ namespace SLangCompiler.FrontEnd
                 else if (statement.exprList() != null)
                 {
                     var errToken = statement.exprList().Start;
-                    if (items.All(r => r.ToSlangType() is SlangRoutineType))
-                    {
-                        // get routines
-                        var allRoutines = new List<RoutineNameTableItem>();
-                        foreach (var item in items)
-                        {
-                            allRoutines.Add(item as RoutineNameTableItem);
-                        }
 
-                        var routinesWithComparedNumParams = new List<RoutineNameTableItem>();
+                    if (item is RoutineNameTableItem routine)
+                    {
                         var exprTypes = Visit(statement.exprList()) as List<ExpressionResult>;
                         // найти функции-процедуры, у которых столько же параметров и типами, которые можно кастануть неявно 
-                        foreach (var routine in allRoutines)
-                        {
-                            if (routine.Params.Count == exprTypes.Count)
-                            {
-                                bool isOverload = true;
-                                for (int i = 0; i < exprTypes.Count; ++i)
-                                {
-                                    if (!CanAssignToType(routine.Params[i].TypeArg.Type, exprTypes[i].Type))
-                                    {
-                                        isOverload = false;
-                                    }
-                                }
-                                if (isOverload)
-                                {
-                                    routinesWithComparedNumParams.Add(routine);
-                                }
-                            }
-                        }
-                        RoutineNameTableItem mostCommonCall = null;
-                        if (routinesWithComparedNumParams.Count == 1)
-                        {
-                            mostCommonCall = routinesWithComparedNumParams[0];
-                        }
-                        else if (routinesWithComparedNumParams.Count > 1)
-                        {
-                            // если нашли более одной перегрузки -- проверка на ambigious call
-                            // пусть имеется m перегрузок по n параметров
-                            // при первом проходе цикла выбираем перегрузку с более близким к кастованию типом (для классов)
-                            // только для классов, так как логика других типов описана жестко
-                            // в случае если для других параметов более будет подходить другая сигнатура -- то кидаем ошибку о неоднозначности
 
-                            var tmpRoutines = new List<RoutineNameTableItem>();
-                            for (int i = 0; i < routinesWithComparedNumParams.Count; ++i)
-                            {
-                                for (int j = 0; j < exprTypes.Count; ++j)
-                                {
-
-                                }
-                            }
-                        }
-
-
-                        if (mostCommonCall != null)
+                        if (routine.Params.Count == exprTypes.Count)
                         {
-                            // сразу проверяем на val и ref - модификаторы
-                            for (int i = 0; i < mostCommonCall.Params.Count; ++i)
+                            for (int i = 0; i < exprTypes.Count; ++i)
                             {
-                                if (mostCommonCall.Params[i].TypeArg.Modifier == ParamModifier.Ref &&
-                                    exprTypes[i].ExpressionType != ExpressionValueType.Variable)
+                                if (!CanAssignToType(routine.Params[i].TypeArg.Type, exprTypes[i].Type))
                                 {
-                                    // throw exception, expr cannot be assign to val
+                                    // exception
                                 }
-                            }
-                            // указываем resultType в items
-                            items = new BaseNameTableItem[] { new VariableNameTableItem { Name = string.Empty, Column = errToken.Column, Line = errToken.Line, IsConstant = true, Type = mostCommonCall.ReturnType } };
-                            if (mostCommonCall.IsFunction())
-                            {
-                                valueType = ExpressionValueType.Value;
-                            }
-                            else
-                            {
-                                valueType = ExpressionValueType.Nothing;
                             }
                         }
                         else
                         {
-                            // throw exception, not found overrload
+                            // exception
+                        }
+
+                        item = new VariableNameTableItem { Name = string.Empty, Column = errToken.Column, Line = errToken.Line, IsConstant = true, Type = routine.ReturnType };
+
+                        if (routine.IsFunction())
+                        {
+                            valueType = ExpressionValueType.Value;
+                        }
+                        else
+                        {
+                            valueType = ExpressionValueType.Nothing;
                         }
 
                     }
@@ -552,42 +491,6 @@ namespace SLangCompiler.FrontEnd
             // get result type
             // if routine type or many alternatives -- throw exception
             return new ExpressionResult(resultType, valueType);
-        }
-
-        private int GetCastProirity(SlangType type, SlangType exprType)
-        {
-            // 0 -- если типы равны
-            // в противном случае -- число типов по иерархии, чем оно больше -- тем дальше тип по иерархии находится
-
-            int result = 0;
-            ClassNameTableItem item = null;
-            if (type is SlangCustomType && exprType is SlangCustomType t)
-            {
-                item = Table.FindClass(t);
-
-                while (!item.TypeIdent.Equals(type))
-                {
-                    item = Table.FindClass(item.Base);
-                    ++result;
-                }
-            }
-            else if (type is SlangPointerType pt && exprType is SlangPointerType ptEx)
-            {
-                item = Table.FindClass(ptEx.PtrType);
-
-                while (!item.TypeIdent.Equals(pt.PtrType))
-                {
-                    item = Table.FindClass(item.Base);
-                    ++result;
-                }
-            }
-            else if (type is SlangPointerType && exprType is SlangNullType)
-            {
-                result = int.MaxValue;
-            }
-            e
-            
-            return result;
         }
 
         private bool CanAssignToType(SlangType type, SlangType expressionType)

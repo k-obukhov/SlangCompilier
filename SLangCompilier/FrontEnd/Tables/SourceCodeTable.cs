@@ -32,23 +32,23 @@ namespace SLangCompiler.FrontEnd.Tables
         /// <param name="name">name identifier</param>
         /// <param name="moduleCaller">module where need to call</param>
         /// <param name="moduleDest">module to find</param>
-        /// <param name="items">result (array, because routine may have many overrides)</param>
+        /// <param name="item">result (array, because routine may have many overrides)</param>
         /// <returns>bool value -- true if something was found</returns>
-        public bool TryFindModuleItemsByName(string name, string moduleCaller, string moduleDest, out BaseNameTableItem[] items)
+        public bool TryFindModuleItemsByName(string name, string moduleCaller, string moduleDest, out BaseNameTableItem item)
         {
             bool result = true;
-            items = null;
+            item = null;
             // можно взять как public, так private
             if (moduleCaller == moduleDest)
             {
                 var tableDest = Modules[moduleDest];
-                if (tableDest.Routines.Any(r => r.Name == name))
+                if (tableDest.Routines.ContainsKey(name))
                 {
-                    items = tableDest.Routines.Where(r => r.Name == name).ToArray();
+                    item = tableDest.Routines[name];
                 }
                 else if (tableDest.Fields.ContainsKey(name))
                 {
-                    items = new BaseNameTableItem[] { tableDest.Fields[name] };
+                    item = tableDest.Fields[name];
                 }
                 else
                 {
@@ -58,13 +58,13 @@ namespace SLangCompiler.FrontEnd.Tables
             else
             {
                 var tableDest = Modules[moduleDest];
-                if (tableDest.Routines.Any(r => r.Name == name && r.AccessModifier == AccessModifier.Public))
+                if (tableDest.Routines.ContainsKey(name) && tableDest.Routines[name].AccessModifier == AccessModifier.Public)
                 {
-                    items = tableDest.Routines.Where(r => r.Name == name).ToArray();
+                    item = tableDest.Routines[name];
                 }
                 else if (tableDest.Fields.ContainsKey(name) && tableDest.Fields[name].AccessModifier == AccessModifier.Public)
                 {
-                    items = new BaseNameTableItem[] { tableDest.Fields[name] };
+                    item = tableDest.Fields[name];
                 }
                 else
                 {
@@ -74,22 +74,22 @@ namespace SLangCompiler.FrontEnd.Tables
             return result;
         }
 
-        public bool TryFoundClassItemsByName(string name, SlangCustomType classContext, SlangCustomType destType, out BaseNameTableItem[] items)
+        public bool TryFoundClassItemsByName(string name, SlangCustomType classContext, SlangCustomType destType, out BaseNameTableItem item)
         {
-            items = null;
+            item = null;
             bool result = true;
 
             // находимся в контексте этого типа
             if (classContext != null && classContext.Equals(destType))
             {
                 var classItem = FindClass(destType);
-                if (classItem.Methods.Any(m => m.Name == name))
+                if (classItem.Methods.ContainsKey(name))
                 {
-                    items = classItem.Methods.Where(m => m.Name == name).ToArray();
+                    item = classItem.Methods[name];
                 }
                 else if (classItem.Fields.ContainsKey(name))
                 {
-                    items = new BaseNameTableItem[] { classItem.Fields[name] };
+                    item = classItem.Fields[name];
                 }
                 else
                 {
@@ -99,13 +99,13 @@ namespace SLangCompiler.FrontEnd.Tables
             else
             {
                 var classItem = FindClass(destType);
-                if (classItem.Methods.Any(m => m.Name == name && m.AccessModifier == AccessModifier.Public))
+                if (classItem.Methods.ContainsKey(name) && classItem.Methods[name].AccessModifier == AccessModifier.Public)
                 {
-                    items = classItem.Methods.Where(m => m.Name == name).ToArray();
+                    item = classItem.Methods[name];
                 }
                 else if (classItem.Fields.ContainsKey(name) && classItem.Fields[name].AccessModifier == AccessModifier.Public)
                 {
-                    items = new BaseNameTableItem[] { classItem.Fields[name] };
+                    item = classItem.Fields[name];
                 }
                 else
                 {

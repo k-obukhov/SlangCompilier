@@ -164,7 +164,7 @@ namespace SLangCompiler.FrontEnd
                 var classData = Visit(thisHeader) as SlangCustomType;
                 var foundClass = Table.FindClass(classData);
 
-                if (foundClass.Methods.Any(m => m.Name == name && m.Params.SequenceEqual(args)))
+                if (foundClass.Methods.ContainsKey(name))
                 {
                     ThrowMethodSignatureExistsException(classData, Id, ModuleData.File);
                 }
@@ -193,11 +193,11 @@ namespace SLangCompiler.FrontEnd
                 }
 
                 foundClass.CheckRoutineConflicts(moduleItem.ModuleData, method);
-                foundClass.Methods.Add(method);
+                foundClass.Methods.Add(method.Name, method);
             }
             else
             {
-                if (moduleItem.Routines.Any(r => r.Name == name && r.Params.SequenceEqual(args)))
+                if (moduleItem.Routines.ContainsKey(name))
                 {
                     ThrowRoutineExistsException(Id, ModuleData.File);
                 }
@@ -218,8 +218,8 @@ namespace SLangCompiler.FrontEnd
                     CheckLevelAccessForRoutines(routine, Id, name);
                 }
 
-                moduleItem.CheckRoutineConflicts(routine);
-                moduleItem.Routines.Add(routine);
+                moduleItem.CheckCommonNamesConflicts(routine.Name, routine.Line, routine.Column);
+                moduleItem.Routines.Add(routine.Name, routine);
             }
         }
 

@@ -15,9 +15,9 @@ namespace SLangCompiler.FrontEnd.Tables
         public bool CanBeBase { get; set; } = false; // от класса можно отнаследоваться 
 
         public Dictionary<string, FieldNameTableItem> Fields { get; set; } = new Dictionary<string, FieldNameTableItem>();
-        public IList<MethodNameTableItem> Methods { get; set; } = new List<MethodNameTableItem>();
+        public Dictionary<string, MethodNameTableItem> Methods { get; set; } = new Dictionary<string, MethodNameTableItem>();
 
-        public bool IsAbstract() => Methods.Any(m => m.IsAbstract);
+        public bool IsAbstract() => Methods.Values.Any(m => m.IsAbstract);
 
         public override SlangType ToSlangType() => TypeIdent;
 
@@ -31,7 +31,7 @@ namespace SLangCompiler.FrontEnd.Tables
 
         public void CheckFieldConflicts(ModuleData module, FieldNameTableItem fieldItem)
         {
-            if (Methods.Any(i => i.Name == fieldItem.Name))
+            if (Methods.ContainsKey(fieldItem.Name))
             {
                 ThrowConflictNameException(module.File, fieldItem.Line, fieldItem.Column);
             }

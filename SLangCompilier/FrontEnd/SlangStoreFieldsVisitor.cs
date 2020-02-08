@@ -112,7 +112,7 @@ namespace SLangCompiler.FrontEnd
                 }
             }
 
-            moduleItem.CheckFieldConflicts(item);
+            moduleItem.CheckCommonNamesConflicts(item.Name, item.Line, item.Column);
             moduleItem.Fields[data.Name] = item;
 
             return base.VisitModuleFieldDecl(context);

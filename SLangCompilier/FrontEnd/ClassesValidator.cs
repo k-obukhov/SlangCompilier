@@ -61,32 +61,40 @@ namespace SLangCompiler.FrontEnd
             }
             // check methods
             // method marked override but does not override
-            foreach (var item in derivedClass.Methods)
+            foreach (var item in derivedClass.Methods.Values)
             {
                 if (item.IsOverride)
                 {
-                    if (!baseClass.Methods.Any(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params)))
+                    if (!baseClass.Methods.Values.Any(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params)))
                     {
                         throw new CompilerException($"Method {item.Name} marked override but does not override", GetFileOfClass(derivedClass.TypeIdent), item.Line, item.Column);
                     }
                 }
             }
 
-            foreach (var item in baseClass.Methods)
+            foreach (var item in baseClass.Methods.Values)
             {
                 // для каждого публичного метода из базового класса проверяем, есть ли перегрузка
                 // если есть -- то базовый метод нет смысла добавлять
                 if (item.AccessModifier == AccessModifier.Public)
                 {
-                    if (!derivedClass.Methods.Any(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params)))
+                    if (!derivedClass.Methods.Values.Any(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params)))
                     {
                         var copy = item.Clone() as MethodNameTableItem;
                         copy.IsDerived = true;
-                        derivedClass.Methods.Add(copy);
+
+                        if (!derivedClass.Methods.ContainsKey(copy.Name))
+                        {
+                            derivedClass.Methods.Add(copy.Name, copy);
+                        }
+                        else
+                        {
+                            ThrowConflictMethodException(GetFileOfClass(derivedClass.TypeIdent), derivedClass.TypeIdent.ToString(), derivedClass.Line, derivedClass.Column);
+                        }
                     }
                     else
                     {
-                        var methodOverriden = derivedClass.Methods.First(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params));
+                        var methodOverriden = derivedClass.Methods.Values.First(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params));
                         if (!methodOverriden.IsOverride)
                         {
                             throw new CompilerException($"Method {methodOverriden.Name} does not marked override", GetFileOfClass(derivedClass.TypeIdent), methodOverriden.Line, methodOverriden.Column);
@@ -146,7 +154,7 @@ namespace SLangCompiler.FrontEnd
             {
                 foreach (var key in classItem.Fields.Keys)
                 {
-                    if (classItem.Methods.Any((method) => method.Name == key))
+                    if (classItem.Methods.Values.Any((method) => method.Name == key))
                     {
                         ThrowConflictNameException(GetFileOfClass(classItem.TypeIdent), classItem.Line, classItem.Column);
                     }

@@ -54,5 +54,7 @@ namespace SLangCompiler.Exceptions
         public static void ThrowInvalidTypesForBinaryOperationException(IToken symbol, FileInfo file, SlangType leftType, SlangType rightType) => ThrowException($"Operation {symbol.Text} not allowed for types {leftType} and {rightType}", file, symbol);
 
         public static void ThrowInvalidTypesForUnaryOperationException(ITerminalNode terminalNode, FileInfo file, SlangType type) => ThrowException($"Operation {terminalNode.GetText()} is not allowed for type {type}", file, terminalNode.Symbol);
+
+        public static void ThrowConflictMethodException(FileInfo fileInfo, string name, int line, int column) => ThrowException($"Method {name} - name conflict with class methods", fileInfo, line, column);
     }
 }
