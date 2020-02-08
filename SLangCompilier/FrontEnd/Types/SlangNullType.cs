@@ -14,5 +14,7 @@ namespace SLangCompiler.FrontEnd.Types
             }
             return false;
         }
+
+        public override string ToString() => CompilerConstants.NullType;
     }
 }

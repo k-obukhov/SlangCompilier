@@ -47,5 +47,7 @@ namespace SLangCompiler
         public static string[] SlangKeywords => new string[] { "variable", "const", "let", "return", "input", "output", "call", "if", "then", "else", "while", "repeat", "elseif", "do", "raw", "module", "import", "start", "end", "function", "procedure", "integer", "real", "character", "boolean", "string", "new", "nil", "pointer", "true", "false", "array", "val", "ref", "public", "private", "class", "inherit", "base", "abstract", "override", "readonly" };
 
         public static string SystemModuleName => "System";
+
+        public static string NullType => "Nil";
     }
 }
