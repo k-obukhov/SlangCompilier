@@ -56,5 +56,17 @@ namespace SLangCompiler.Exceptions
         public static void ThrowInvalidTypesForUnaryOperationException(ITerminalNode terminalNode, FileInfo file, SlangType type) => ThrowException($"Operation {terminalNode.GetText()} is not allowed for type {type}", file, terminalNode.Symbol);
 
         public static void ThrowConflictMethodException(FileInfo fileInfo, string name, int line, int column) => ThrowException($"Method {name} - name conflict with class methods", fileInfo, line, column);
+
+
+        public static void ThrowNoSuchOverrloadingException(FileInfo file, string name, int line, int column) => ThrowException($"No such overrload for routine {name}", file, line, column);
+
+        public static void ThrowItemNotFoundException(string name, FileInfo file, int line, int column) => ThrowException($"Item {name} not found in module context", file, line, column);
+
+
+        public static void ThrowModuleItemNotFoundException(string itemName, string moduleName, FileInfo file, int line, int column) => ThrowException($"routine or item with name {itemName} in module {moduleName} not found or marked private", file, line, column);
+
+        public static void ThrowInvalidUseOfTypeException(SlangType slangType, FileInfo file, int line, int column) => ThrowException($"Invalid use of type {slangType}", file, line, column);
+
+        public static void ThrowProcedureReturnException(FileInfo file, int line, int column) => ThrowException("Procedure return value must be empty", file, line, column);
     }
 }

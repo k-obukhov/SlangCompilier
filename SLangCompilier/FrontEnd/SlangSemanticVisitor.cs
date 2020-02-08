@@ -353,14 +353,14 @@ namespace SLangCompiler.FrontEnd
             }
             else
             {
-                // exception
+                ThrowItemNotFoundException(context.Id().GetText(), file, context.Id().Symbol.Line, context.Id().Symbol.Column);
             }
 
             foreach (var statement in context.designatorStatement())
             {
                 if (valueType == ExpressionValueType.Nothing)
                 {
-                    // throw exception...
+                    ThrowProcedureReturnException(file, statement.Start.Line, statement.Start.Column);
                 }
 
                 if (statement.Id() != null)
@@ -383,7 +383,7 @@ namespace SLangCompiler.FrontEnd
                         }
                         else
                         {
-                            // exception, invalid use of type
+                            ThrowInvalidUseOfTypeException(varItem.ToSlangType(), file, node.Symbol.Line, node.Symbol.Column);
                         }
 
                         if (Table.TryFoundClassItemsByName(node.GetText(), currentType, typeIdent, out BaseNameTableItem foundItem))
@@ -405,12 +405,12 @@ namespace SLangCompiler.FrontEnd
                         }
                         else
                         {
-                            // exception, not found
+                            ThrowModuleItemNotFoundException(node.GetText(), module.ModuleData.Name, file, node.Symbol.Line, node.Symbol.Column);
                         }
                     }
                     else
                     {
-                        // exception, invalid use of type
+                        ThrowInvalidUseOfTypeException(item.ToSlangType(), file, node.Symbol.Line, node.Symbol.Column);
                     }
                 }
                 else if (statement.exp() != null)
@@ -438,12 +438,12 @@ namespace SLangCompiler.FrontEnd
                         }
                         else
                         {
-                            // exception, invalid use of type
+                            ThrowInvalidUseOfTypeException(varItem.ToSlangType(), file, errToken.Line, errToken.Column);
                         }
                     }
                     else
                     {
-                        // exception, invalid use of type
+                        ThrowInvalidUseOfTypeException(item.ToSlangType(), file, errToken.Line, errToken.Column);
                     }
                 }
                 else if (statement.exprList() != null)
@@ -461,13 +461,13 @@ namespace SLangCompiler.FrontEnd
                             {
                                 if (!CanAssignToType(routine.Params[i].TypeArg.Type, exprTypes[i].Type))
                                 {
-                                    // exception
+                                    ThrowNoSuchOverrloadingException(file, routine.Name, routine.Line, routine.Column);
                                 }
                             }
                         }
                         else
                         {
-                            // exception
+                            ThrowNoSuchOverrloadingException(file, routine.Name, routine.Line, routine.Column);
                         }
 
                         item = new VariableNameTableItem { Name = string.Empty, Column = errToken.Column, Line = errToken.Line, IsConstant = true, Type = routine.ReturnType };
@@ -492,7 +492,6 @@ namespace SLangCompiler.FrontEnd
             // if routine type or many alternatives -- throw exception
             return new ExpressionResult(resultType, valueType);
         }
-
         private bool CanAssignToType(SlangType type, SlangType expressionType)
         {
             bool result;
