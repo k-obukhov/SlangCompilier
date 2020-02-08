@@ -32,7 +32,6 @@ namespace SLangCompiler.FrontEnd
         {
             return (ParamModifier)Enum.Parse(typeof(ParamModifier), name, true);
         }
-
         // Type Visit
         public override object VisitSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context)
         {

@@ -37,7 +37,7 @@ namespace SLangCompiler.FrontEnd
             // функция, которая не импортируется извне и не является абстрактным методом?
             if (!result.Returning && currentRoutine.Header == null && !(currentRoutine is MethodNameTableItem method && method.IsAbstract))
             {
-                ThrowException("not all code paths returns value", file, context.statementSeq().Start);
+                ThrowException("Not all code paths returns value", file, context.statementSeq().Start);
             }
 
             currentType = null;
@@ -67,19 +67,6 @@ namespace SLangCompiler.FrontEnd
             {
                 currentRoutine = moduleItem.Routines[symbol.Text];
             }
-        }
-
-        public override object VisitTypeDecl([NotNull] SLangGrammarParser.TypeDeclContext context)
-        {
-            currentType = new SlangCustomType(ModuleData.Name, context.Id().GetText());
-            // ToDo checks expressions in fields
-
-            foreach (var field in context.typeFieldDecl())
-            {
-                // ToDo check field name does not used from another context
-            }
-            currentType = null;
-            return base.VisitTypeDecl(context);
         }
 
         public override object VisitModuleStatementsSeq([NotNull] SLangGrammarParser.ModuleStatementsSeqContext context)
@@ -533,6 +520,57 @@ namespace SLangCompiler.FrontEnd
                 }
             }
             return result;
+        }
+
+        // declares -- check context -- current routine or start-block (need check)
+        public override object VisitVariableDecl([NotNull] SLangGrammarParser.VariableDeclContext context)
+        {
+            return base.VisitVariableDecl(context);
+        }
+
+        public override object VisitConstDecl([NotNull] SLangGrammarParser.ConstDeclContext context)
+        {
+            return base.VisitConstDecl(context);
+        }
+
+        public override object VisitSimpleDecl([NotNull] SLangGrammarParser.SimpleDeclContext context)
+        {
+            return base.VisitSimpleDecl(context);
+        }
+
+        public override object VisitArrayDecl([NotNull] SLangGrammarParser.ArrayDeclContext context)
+        {
+            return base.VisitArrayDecl(context);
+        }
+
+        public override object VisitPtrDecl([NotNull] SLangGrammarParser.PtrDeclContext context)
+        {
+            return base.VisitPtrDecl(context);
+        }
+
+        public override object VisitIfC([NotNull] SLangGrammarParser.IfCContext context)
+        {
+            return base.VisitIfC(context);
+        }
+
+        public override object VisitCall([NotNull] SLangGrammarParser.CallContext context)
+        {
+            return base.VisitCall(context);
+        }
+
+        public override object VisitReturnC([NotNull] SLangGrammarParser.ReturnCContext context)
+        {
+            return base.VisitReturnC(context);
+        }
+
+        public override object VisitInput([NotNull] SLangGrammarParser.InputContext context)
+        {
+            return base.VisitInput(context);
+        }
+
+        public override object VisitOutput([NotNull] SLangGrammarParser.OutputContext context)
+        {
+            return base.VisitOutput(context);
         }
 
         public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
