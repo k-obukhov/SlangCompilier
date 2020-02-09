@@ -609,6 +609,14 @@ namespace SLangCompiler.FrontEnd
         {
             var name = context.Id();
             var type = Visit(context.arrayDeclType()) as SlangType;
+            foreach (var exp in context.arrayDeclType().exp())
+            {
+                var res = Visit(exp) as ExpressionResult;
+                if (!res.ExpressionType.Equals(SlangSimpleType.Int))
+                {
+                    ThrowException($"Array length expression must have integer type", file, exp.Start);
+                }
+            }
 
             return new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
         }
@@ -623,7 +631,41 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitIfC([NotNull] SLangGrammarParser.IfCContext context)
         {
-            return base.VisitIfC(context);
+            foreach (var exp in context.exp())
+            {
+                CheckExpIsBoolean(exp);
+            }
+            bool result = true;
+            foreach (var statementSeq in context.statementSeq())
+            {
+                var res = Visit(statementSeq) as StatementResult;
+                if (!res.Returning)
+                {
+                    result = false;
+                }
+            }
+            return new StatementResult(result);
+        }
+
+        private void CheckExpIsBoolean(SLangGrammarParser.ExpContext exp)
+        {
+            var res = Visit(exp) as ExpressionResult;
+            if (!res.Type.Equals(SlangSimpleType.Boolean))
+            {
+                ThrowCannotAssignException(SlangSimpleType.Boolean, res.Type, file, exp.Start.Line, exp.Start.Column);
+            }
+        }
+
+        public override object VisitWhileC([NotNull] SLangGrammarParser.WhileCContext context)
+        {
+            CheckExpIsBoolean(context.exp());
+            return Visit(context.statementSeq()) as StatementResult;
+        }
+
+        public override object VisitRepeatC([NotNull] SLangGrammarParser.RepeatCContext context)
+        {
+            CheckExpIsBoolean(context.exp());
+            return Visit(context.statementSeq()) as StatementResult;
         }
 
         public override object VisitCall([NotNull] SLangGrammarParser.CallContext context)
@@ -631,24 +673,61 @@ namespace SLangCompiler.FrontEnd
             var exprRes = Visit(context.designator()) as ExpressionResult;
             if (exprRes.ExpressionType != ExpressionValueType.Nothing)
             {
-                ThrowException($"call instruction is only for procedures and method-procedures", file, context.designator().Start);
+                ThrowException($"Call instruction is only for procedures and method-procedures", file, context.designator().Start);
             }
             return null;
         }
 
         public override object VisitReturnC([NotNull] SLangGrammarParser.ReturnCContext context)
         {
-            return base.VisitReturnC(context);
+            if (currentRoutine == null)
+            {
+                ThrowException($"Return statement allowed only for routines", file, context.Start);
+            }
+            if (currentRoutine.IsFunction() && context.exp() == null)
+            {
+                ThrowException($"Function must have an expression for return", file, context.Start);
+            }
+            else if (currentRoutine.IsProcedure() && context.exp() != null)
+            {
+                ThrowException($"Procedures must not have an expression for return", file, context.Start);
+            }
+
+            if (context.exp() != null)
+            {
+                var res = Visit(context.exp()) as ExpressionResult;
+                if (!CanAssignToType(currentRoutine.ReturnType, res.Type))
+                {
+                    ThrowCannotAssignException(currentRoutine.ReturnType, res.Type, file, context.exp().Start.Line, context.exp().Start.Column);
+                }
+            }
+            return new StatementResult(true);
         }
 
         public override object VisitInput([NotNull] SLangGrammarParser.InputContext context)
         {
-            return base.VisitInput(context);
+            foreach (var exp in context.designator())
+            {
+                var res = Visit(exp) as ExpressionResult;
+                if (!(res.ExpressionType == ExpressionValueType.Variable && res.Type is SlangSimpleType))
+                {
+                    ThrowException($"Input is allowed only for non-constant simple types", file, exp.Start);
+                }
+            }
+            return null;
         }
 
         public override object VisitOutput([NotNull] SLangGrammarParser.OutputContext context)
         {
-            return base.VisitOutput(context);
+            foreach (var exp in context.exp())
+            {
+                var res = Visit(exp) as ExpressionResult;
+                if (!(res.Type is SlangSimpleType))
+                {
+                    ThrowException($"Output is allowed only for simple types", file, exp.Start);
+                }
+            }
+            return null;
         }
 
         public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
