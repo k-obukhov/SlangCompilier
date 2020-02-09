@@ -17,6 +17,7 @@ namespace SLangCompiler.FrontEnd
     {
         private readonly ModuleNameTable moduleItem;
         private RoutineNameTableItem currentRoutine;
+        private bool inProgramBlock = false;
         private Scope scope;
         private SlangCustomType currentType;
         private readonly FileInfo file;
@@ -73,6 +74,7 @@ namespace SLangCompiler.FrontEnd
         {
             // state -- work in module statements
             currentRoutine = null;
+            inProgramBlock = true;
             currentType = null;
             //ToDo checks expressions in fields
             return base.VisitModuleStatementsSeq(context);
@@ -525,27 +527,89 @@ namespace SLangCompiler.FrontEnd
         // declares -- check context -- current routine or start-block (need check)
         public override object VisitVariableDecl([NotNull] SLangGrammarParser.VariableDeclContext context)
         {
-            return base.VisitVariableDecl(context);
+            // maybe need checks for context
+            VariableNameTableItem variable;
+            if (context.simpleDecl() != null)
+            {
+                variable = Visit(context.simpleDecl()) as VariableNameTableItem;
+            }
+            else if (context.arrayDecl() != null)
+            {
+                variable = Visit(context.arrayDecl()) as VariableNameTableItem;
+            }
+            else
+            {
+                variable = Visit(context.ptrDecl()) as VariableNameTableItem;
+            }
+
+            CheckDeclareContext(context.exp(), variable);
+
+            return null;
+        }
+
+        private void CheckDeclareContext(SLangGrammarParser.ExpContext context, VariableNameTableItem variable)
+        {
+            // проверяем какой-то контекст?
+            if (inProgramBlock || currentRoutine != null)
+            {
+                if (FindItemByName(variable.Name) != null)
+                {
+                    ThrowNameAlreadyDefinedException(variable.Name, file, variable.Line, variable.Column);
+                    CheckExpressionContext(context, variable);
+                }
+                else
+                {
+                    scope.PutVariable(variable);
+                }
+            }
+            else // проверяем переменные модуля?
+            {
+                CheckExpressionContext(context, variable);
+            }
+        }
+
+        private void CheckExpressionContext(SLangGrammarParser.ExpContext context, VariableNameTableItem variable)
+        {
+            var exprRes = Visit(context) as ExpressionResult;
+            if (!CanAssignToType(variable.Type, exprRes.Type))
+            {
+                ThrowCannotAssignException(variable.Type, exprRes.Type, file, variable.Line, variable.Column);
+            }
         }
 
         public override object VisitConstDecl([NotNull] SLangGrammarParser.ConstDeclContext context)
         {
-            return base.VisitConstDecl(context);
+            var name = context.Id();
+            var type = Visit(context.typeName()) as SlangCustomType;
+            var constant = new VariableNameTableItem { Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, IsConstant = true, Type = type };
+
+            CheckDeclareContext(context.exp(), constant);
+
+            return null;
         }
 
         public override object VisitSimpleDecl([NotNull] SLangGrammarParser.SimpleDeclContext context)
         {
-            return base.VisitSimpleDecl(context);
+            var name = context.Id();
+            var type = context.simpleType() != null ? Visit(context.simpleType()) as SlangType : Visit(context.customType()) as SlangType;
+
+            return new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
         }
 
         public override object VisitArrayDecl([NotNull] SLangGrammarParser.ArrayDeclContext context)
         {
-            return base.VisitArrayDecl(context);
+            var name = context.Id();
+            var type = Visit(context.arrayDeclType()) as SlangType;
+
+            return new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
         }
 
         public override object VisitPtrDecl([NotNull] SLangGrammarParser.PtrDeclContext context)
         {
-            return base.VisitPtrDecl(context);
+            var name = context.Id();
+            var type = Visit(context.ptrType()) as SlangType;
+
+            return new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
         }
 
         public override object VisitIfC([NotNull] SLangGrammarParser.IfCContext context)

@@ -68,5 +68,9 @@ namespace SLangCompiler.Exceptions
         public static void ThrowInvalidUseOfTypeException(SlangType slangType, FileInfo file, int line, int column) => ThrowException($"Invalid use of type {slangType}", file, line, column);
 
         public static void ThrowProcedureReturnException(FileInfo file, int line, int column) => ThrowException("Procedure return value must be empty", file, line, column);
+
+        public static void ThrowCannotAssignException(SlangType type, SlangType exprType, FileInfo file, int line, int column) => ThrowException($"Cannot assign value of type {exprType} to variable or constant with type {type}", file, line, column);
+
+        public static void ThrowNameAlreadyDefinedException(string name, FileInfo file, int line, int column) => ThrowException($"Name {name} already defined in current contexts", file, line, column);
     }
 }
