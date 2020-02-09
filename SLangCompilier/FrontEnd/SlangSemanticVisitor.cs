@@ -619,7 +619,12 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitCall([NotNull] SLangGrammarParser.CallContext context)
         {
-            return base.VisitCall(context);
+            var exprRes = Visit(context.designator()) as ExpressionResult;
+            if (exprRes.ExpressionType != ExpressionValueType.Nothing)
+            {
+                ThrowException($"call instruction is only for procedures and method-procedures", file, context.designator().Start);
+            }
+            return null;
         }
 
         public override object VisitReturnC([NotNull] SLangGrammarParser.ReturnCContext context)
