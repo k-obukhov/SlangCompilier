@@ -303,6 +303,10 @@ namespace SLangCompiler.FrontEnd
             else if (context.newC() != null)
             {
                 var type = Visit(context.newC().customType()) as SlangCustomType;
+                if (Table.FindClass(type).IsAbstract())
+                {
+                    ThrowCannotInitializeAbstractClassException(type, file, context.newC().Start.Line, context.newC().Start.Column);
+                }
                 return new ExpressionResult(new SlangPointerType(type), ExpressionValueType.Value); // value or var? hmm
             }
             else if (context.Nil() != null)
@@ -565,6 +569,11 @@ namespace SLangCompiler.FrontEnd
             else // проверяем переменные модуля?
             {
                 CheckExpressionContext(context, variable);
+            }
+
+            if (variable.Type is SlangCustomType ct && Table.FindClass(ct).IsAbstract())
+            {
+                ThrowCannotInitializeAbstractClassException(variable.Type, file, variable.Line, variable.Column);
             }
         }
 

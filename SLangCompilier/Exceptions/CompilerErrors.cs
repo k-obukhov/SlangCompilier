@@ -72,5 +72,7 @@ namespace SLangCompiler.Exceptions
         public static void ThrowCannotAssignException(SlangType type, SlangType exprType, FileInfo file, int line, int column) => ThrowException($"Cannot assign value of type {exprType} to variable or constant with type {type}", file, line, column);
 
         public static void ThrowNameAlreadyDefinedException(string name, FileInfo file, int line, int column) => ThrowException($"Name {name} already defined in current contexts", file, line, column);
+
+        public static void ThrowCannotInitializeAbstractClassException(SlangType type, FileInfo file, int line, int column) => ThrowException($"Cannot create variable or allocate memory for abstract class {type}", file, line, column);
     }
 }
