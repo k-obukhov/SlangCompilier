@@ -83,6 +83,7 @@ namespace SLangCompiler.FrontEnd
         public override object VisitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context)
         {
             // toDo check expressions
+
             return base.VisitModuleFieldDecl(context);
         }
 
@@ -577,10 +578,13 @@ namespace SLangCompiler.FrontEnd
 
         private void CheckExpressionContext(SLangGrammarParser.ExpContext context, VariableNameTableItem variable)
         {
-            var exprRes = Visit(context) as ExpressionResult;
-            if (!CanAssignToType(variable.Type, exprRes.Type))
+            if (context != null)
             {
-                ThrowCannotAssignException(variable.Type, exprRes.Type, file, variable.Line, variable.Column);
+                var exprRes = Visit(context) as ExpressionResult;
+                if (!CanAssignToType(variable.Type, exprRes.Type))
+                {
+                    ThrowCannotAssignException(variable.Type, exprRes.Type, file, variable.Line, variable.Column);
+                }
             }
         }
 

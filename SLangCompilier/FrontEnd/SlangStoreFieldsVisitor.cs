@@ -82,10 +82,20 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context)
         {
-            var data = Visit(context.variableDecl()) as VariableNameTableItem;
-            var isReadonly = context.Readonly() == null ? true : false;
+            VariableNameTableItem data;
+            if (context.variableDecl() != null)
+            {
+                data = Visit(context.variableDecl()) as VariableNameTableItem;
+                ThrowIfReservedWord(data.Name, ModuleData.File, context.variableDecl().Start);
+            }
+            else
+            {
+                data = Visit(context.constDecl()) as VariableNameTableItem;
+                ThrowIfReservedWord(data.Name, ModuleData.File, context.constDecl().Start);
+            }
+            var isReadonly = context.Readonly() == null;
 
-            ThrowIfReservedWord(data.Name, ModuleData.File, context.variableDecl().Start);
+            
             if (moduleItem.Fields.ContainsKey(data.Name))
             {
                 ThrowIfVariableExistsException(data.Name, ModuleData.File, data.Line, data.Column);
@@ -116,6 +126,12 @@ namespace SLangCompiler.FrontEnd
             moduleItem.Fields[data.Name] = item;
 
             return base.VisitModuleFieldDecl(context);
+        }
+
+        public override object VisitConstDecl([NotNull] SLangGrammarParser.ConstDeclContext context)
+        {
+            var symbol = context.Id();
+            return new VariableNameTableItem { Name = symbol.GetText(), Column = symbol.Symbol.Column, IsConstant = true, Line = symbol.Symbol.Line, Type = Visit(context.typeName()) as SlangType };
         }
 
         public override object VisitVariableDecl([NotNull] SLangGrammarParser.VariableDeclContext context)
