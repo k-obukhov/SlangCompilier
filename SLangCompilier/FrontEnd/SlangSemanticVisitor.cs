@@ -319,9 +319,7 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitDesignator([NotNull] SLangGrammarParser.DesignatorContext context)
         {
-            // TODO designator logic -- call funcs, indexers (array, string), fields etc
             // first step -- find in context or in imported modules
-            // maybe use states
 
             SlangType resultType;
             ExpressionValueType valueType = ExpressionValueType.Variable;
@@ -727,6 +725,23 @@ namespace SLangCompiler.FrontEnd
                     ThrowException($"Output is allowed only for simple types", file, exp.Start);
                 }
             }
+            return null;
+        }
+
+        public override object VisitLet([NotNull] SLangGrammarParser.LetContext context)
+        {
+            var itemType = Visit(context.designator()) as ExpressionResult;
+            var exprType = Visit(context.exp()) as ExpressionResult;
+
+            if (itemType.ExpressionType != ExpressionValueType.Variable)
+            {
+                ThrowException("Cannot use assign for left-side expression", file, context.designator().Start);
+            }
+            if (!CanAssignToType(itemType.Type, exprType.Type))
+            {
+                ThrowCannotAssignException(itemType.Type, exprType.Type, file, context.exp().Start.Line, context.exp().Start.Column);
+            }
+
             return null;
         }
 
