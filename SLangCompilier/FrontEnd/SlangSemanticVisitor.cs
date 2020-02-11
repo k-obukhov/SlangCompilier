@@ -80,13 +80,6 @@ namespace SLangCompiler.FrontEnd
             return base.VisitModuleStatementsSeq(context);
         }
 
-        public override object VisitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context)
-        {
-            // toDo check expressions
-
-            return base.VisitModuleFieldDecl(context);
-        }
-
         private void CheckParamsNameConflicts(SLangGrammarParser.ThisHeaderContext thisHeader, SLangGrammarParser.RoutineArgListContext argList)
         {
             if (thisHeader != null)
