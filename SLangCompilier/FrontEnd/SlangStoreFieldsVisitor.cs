@@ -104,7 +104,7 @@ namespace SLangCompiler.FrontEnd
             var item = new ModuleFieldNameTableItem
             {
                 AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
-                IsConstant = false,
+                IsConstant = data.IsConstant,
                 Column = data.Column,
                 Line = data.Line,
                 IsReadonly = isReadonly,
