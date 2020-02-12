@@ -37,7 +37,7 @@ typeFieldDecl: AccessModifier variableDecl Semicolon;
 functionDecl: (importHead)? AccessModifier (Abstract | Override)? (thisHeader)? Function LBrace routineArgList RBrace Colon typeName Id statementSeq End;
 thisHeader: LBrace customType Id RBrace;
 routineArgList: (routineArg (Comma routineArg)* | /* нет аргументов */ );
-routineArg: FunctionArgModifier Id;
+routineArg: FunctionArgModifier typeName Id;
 procedureDecl: (importHead)? AccessModifier (Abstract | Override)? (thisHeader)? Procedure LBrace routineArgList RBrace Id statementSeq End;
 importHead: LSBrace File StringLiteral Import StringLiteral RSBrace;
 
@@ -57,12 +57,9 @@ call: Call designator;
 exprList: (exp (Comma exp)* | /* nothing*/);
 
 exp: simpleExpr (Relation exp)?; 
-
-simpleExpr: term (AddictiveOp simpleExpr)?;
-
-term: signedFactor (MultiplicativeOp term)?;
+simpleExpr: term ((AddOp | SubOp | BoolOr) simpleExpr)?;
+term: signedFactor ((MulOp | DivOp | BoolAnd) term)?;
 signedFactor: (AddOp | SubOp)? factor;
-
 factor:  designator | ( IntValue | RealValue | BoolValue | StringLiteral | SingleCharacter | Nil ) | (BoolNot factor) | newC | (LBrace exp RBrace);
 newC: New LBrace customType RBrace;
 designator: Id (designatorStatement)*;
@@ -78,9 +75,6 @@ ModOp: '%';
 
 BoolOr: '||';
 BoolAnd: '&&';
-
-AddictiveOp: AddOp | SubOp | BoolOr;
-MultiplicativeOp: MulOp | DivOp | BoolAnd;
 
 BoolEq: '==';
 BoolNeq: '!=';

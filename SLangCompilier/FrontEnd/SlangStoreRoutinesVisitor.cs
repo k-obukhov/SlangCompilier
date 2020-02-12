@@ -241,6 +241,15 @@ namespace SLangCompiler.FrontEnd
             return res;
         }
 
+        public override object VisitRoutineArg([NotNull] SLangGrammarParser.RoutineArgContext context)
+        {
+            var id = context.Id();
+            return new RoutineArgNameTableItem { Column = id.Symbol.Column, 
+                Line = id.Symbol.Line, 
+                Name = id.GetText(), 
+                TypeArg = new SlangRoutineTypeArg(GetParamModifierByName(context.FunctionArgModifier().GetText()), Visit(context.typeName()) as SlangType) };
+        }
+
         // same as functions only without return type (maybe i can optimize that later)
         public override object VisitProcedureDecl([NotNull] SLangGrammarParser.ProcedureDeclContext context)
         {

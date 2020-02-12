@@ -208,14 +208,21 @@ namespace SLangCompiler.FrontEnd
             {
                 var leftResultType = (Visit(context.term()) as ExpressionResult).Type;
                 var rightResultType = (Visit(context.simpleExpr()) as ExpressionResult).Type;
+                var opToken = context.AddOp() ?? context.SubOp() ?? context.BoolOr();
+
+
                 var allowedTypes = new[] { SlangSimpleType.Int, SlangSimpleType.Real };
-                if (leftResultType is SlangSimpleType lt && rightResultType is SlangSimpleType rt && lt.Equals(rt) && allowedTypes.Contains(lt))
+                if (context.BoolOr() == null && (leftResultType is SlangSimpleType lt && rightResultType is SlangSimpleType rt && lt.Equals(rt) && allowedTypes.Contains(lt)))
+                {
+                    return new ExpressionResult(leftResultType, ExpressionValueType.Value);
+                }
+                else if (context.BoolOr() != null && (leftResultType is SlangSimpleType ltB && rightResultType is SlangSimpleType rtB && ltB.Equals(rtB) && ltB.Equals(SlangSimpleType.Boolean)))
                 {
                     return new ExpressionResult(leftResultType, ExpressionValueType.Value);
                 }
                 else
                 {
-                    ThrowInvalidTypesForBinaryOperationException(context.AddictiveOp().Symbol, file, leftResultType, rightResultType);
+                    ThrowInvalidTypesForBinaryOperationException(opToken.Symbol, file, leftResultType, rightResultType);
                 }
             }
             return Visit(context.term()) as ExpressionResult;
@@ -227,14 +234,19 @@ namespace SLangCompiler.FrontEnd
             {
                 var leftResultType = (Visit(context.signedFactor()) as ExpressionResult).Type;
                 var rightResultType = (Visit(context.term()) as ExpressionResult).Type;
+                var opToken = context.MulOp() ?? context.DivOp() ?? context.BoolAnd();
                 var allowedTypes = new[] { SlangSimpleType.Int, SlangSimpleType.Real };
                 if (leftResultType is SlangSimpleType lt && rightResultType is SlangSimpleType rt && lt.Equals(rt) && allowedTypes.Contains(lt))
                 {
                     return new ExpressionResult(leftResultType, ExpressionValueType.Value);
                 }
+                else if (context.BoolAnd() != null && (leftResultType is SlangSimpleType ltB && rightResultType is SlangSimpleType rtB && ltB.Equals(rtB) && ltB.Equals(SlangSimpleType.Boolean)))
+                {
+                    return new ExpressionResult(leftResultType, ExpressionValueType.Value);
+                }
                 else
                 {
-                    ThrowInvalidTypesForBinaryOperationException(context.MultiplicativeOp().Symbol, file, leftResultType, rightResultType);
+                    ThrowInvalidTypesForBinaryOperationException(opToken.Symbol, file, leftResultType, rightResultType);
                 }
             }
             return Visit(context.signedFactor()) as ExpressionResult;

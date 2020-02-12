@@ -11,7 +11,7 @@ namespace SLangCompiler
     {
         static void Main(string[] args)
         {
-            var sourceCodeFolder = @"C:\projects\sldemo";
+            var sourceCodeFolder = @"C:\projects\sldemosem";
             ProjectManager p = new ProjectManager();
             p.LoadCode(new System.IO.DirectoryInfo(sourceCodeFolder));
 

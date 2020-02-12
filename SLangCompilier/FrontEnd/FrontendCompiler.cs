@@ -70,6 +70,16 @@ namespace SLangCompiler.FrontEnd
             var classChecker = new ClassesValidator(SourceCode);
             classChecker.Check();
 
+            modules.Keys.ToList().ForEach((key) =>
+            {
+                SLangGrammarParser parser = GenerateParser(modules[key].Data);
+                SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
+                parser.AddErrorListener(errorListener);
+
+                var semanticVisitor = new SlangSemanticVisitor(SourceCode, modules[key]);
+                // store data step
+                semanticVisitor.Visit(parser.start());
+            });
         }
     }
 }
