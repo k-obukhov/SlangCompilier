@@ -61,7 +61,7 @@ namespace SLangCompiler.FrontEnd.Tables
                 {
                     if (outer.Names.ContainsKey(name))
                     {
-                        res = Names[name];
+                        res = outer.Names[name];
                         break;
                     }
                     else

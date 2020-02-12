@@ -705,7 +705,7 @@ namespace SLangCompiler.FrontEnd
             {
                 ThrowException($"Return statement allowed only for routines", file, context.Start);
             }
-            if (currentRoutine.IsFunction() && context.exp() == null)
+            else if (currentRoutine.IsFunction() && context.exp() == null)
             {
                 ThrowException($"Function must have an expression for return", file, context.Start);
             }
