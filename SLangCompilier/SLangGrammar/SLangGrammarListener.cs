@@ -406,39 +406,6 @@ public interface ISLangGrammarListener : IParseTreeListener {
 	void ExitLet([NotNull] SLangGrammarParser.LetContext context);
 
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterIfC([NotNull] SLangGrammarParser.IfCContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitIfC([NotNull] SLangGrammarParser.IfCContext context);
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterWhileC([NotNull] SLangGrammarParser.WhileCContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitWhileC([NotNull] SLangGrammarParser.WhileCContext context);
-
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterRepeatC([NotNull] SLangGrammarParser.RepeatCContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitRepeatC([NotNull] SLangGrammarParser.RepeatCContext context);
-
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.input"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -481,6 +448,39 @@ public interface ISLangGrammarListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitCall([NotNull] SLangGrammarParser.CallContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterIfC([NotNull] SLangGrammarParser.IfCContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitIfC([NotNull] SLangGrammarParser.IfCContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterWhileC([NotNull] SLangGrammarParser.WhileCContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitWhileC([NotNull] SLangGrammarParser.WhileCContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterRepeatC([NotNull] SLangGrammarParser.RepeatCContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitRepeatC([NotNull] SLangGrammarParser.RepeatCContext context);
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.exprList"/>.

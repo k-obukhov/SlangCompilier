@@ -271,27 +271,6 @@ public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitLet([NotNull] SLangGrammarParser.LetContext context);
 
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitIfC([NotNull] SLangGrammarParser.IfCContext context);
-
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitWhileC([NotNull] SLangGrammarParser.WhileCContext context);
-
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitRepeatC([NotNull] SLangGrammarParser.RepeatCContext context);
-
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.input"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -318,6 +297,27 @@ public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitCall([NotNull] SLangGrammarParser.CallContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.ifC"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIfC([NotNull] SLangGrammarParser.IfCContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.whileC"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitWhileC([NotNull] SLangGrammarParser.WhileCContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.repeatC"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRepeatC([NotNull] SLangGrammarParser.RepeatCContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.exprList"/>.

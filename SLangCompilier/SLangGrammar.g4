@@ -42,21 +42,22 @@ procedureDecl: (importHead)? AccessModifier (Abstract | Override)? (thisHeader)?
 importHead: LSBrace File StringLiteral Import StringLiteral RSBrace;
 
 statementSeq: (statement)*;
-statement: (simpleStatement | complexStatement);
+statement: simpleStatement | complexStatement;
 simpleStatement: (declare | let | input | output | returnC | call) Semicolon;
 complexStatement: ifC | whileC | repeatC;
 
 let: Let designator Assign exp;
-ifC: If LBrace exp RBrace Then statementSeq (Elseif LBrace exp RBrace Then statementSeq)* (Else statementSeq)? End;
-whileC: While LBrace exp RBrace Do statementSeq End;
-repeatC: Repeat statementSeq While LBrace exp RBrace;
 input: Input designator (Comma designator)*;
 output: Output exp (Comma exp)*;
 returnC: Return (exp)?;
 call: Call designator;
-exprList: (exp (Comma exp)* | /* nothing*/);
 
-exp: simpleExpr (Relation exp)?; 
+ifC: If LBrace exp RBrace Then statementSeq (Elseif LBrace exp RBrace Then statementSeq)* (Else statementSeq)? End;
+whileC: While LBrace exp RBrace Do statementSeq End;
+repeatC: Repeat statementSeq While LBrace exp RBrace;
+
+exprList: (exp (Comma exp)* | /* nothing*/);
+exp: simpleExpr ((BoolEq | BoolNeq | BoolG | BoolL | BoolLeq | BoolGeq) exp)?; 
 simpleExpr: term ((AddOp | SubOp | BoolOr) simpleExpr)?;
 term: signedFactor ((MulOp | DivOp | BoolAnd) term)?;
 signedFactor: (AddOp | SubOp)? factor;
@@ -83,8 +84,6 @@ BoolL: '<';
 BoolGeq: '>=';
 BoolLeq: '<=';
 BoolNot: '!';
-
-Relation: BoolEq | BoolNeq | BoolG | BoolL | BoolLeq | BoolGeq;
 
 // Базовые символы и имена
 Colon: ':';

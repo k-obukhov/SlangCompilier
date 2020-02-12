@@ -187,6 +187,7 @@ namespace SLangCompiler.FrontEnd
                 var leftResultType = (Visit(context.simpleExpr()) as ExpressionResult).Type;
                 var rightResultType = (Visit(context.exp()) as ExpressionResult).Type;
                 var allowedTypes = new[] { SlangSimpleType.Int, SlangSimpleType.Real, SlangSimpleType.Boolean, SlangSimpleType.Character };
+                var relOp = context.BoolEq() ?? context.BoolNeq() ?? context.BoolG() ?? context.BoolGeq() ?? context.BoolL() ?? context.BoolLeq();
 
                 if ((leftResultType is SlangSimpleType lt && rightResultType is SlangSimpleType rt
                     && lt.Equals(rt) && allowedTypes.Contains(lt))
@@ -196,7 +197,7 @@ namespace SLangCompiler.FrontEnd
                 }
                 else
                 {
-                    ThrowInvalidTypesForBinaryOperationException(context.Relation().Symbol, file, leftResultType, rightResultType);
+                    ThrowInvalidTypesForBinaryOperationException(relOp.Symbol, file, leftResultType, rightResultType);
                 }
 
             }
@@ -493,7 +494,10 @@ namespace SLangCompiler.FrontEnd
                     }
                 }
             }
-
+            if (item is ModuleNameTable)
+            {
+                ThrowException("Using an imported module without field access is not supported", file, context.Id().Symbol);
+            }
             resultType = item.ToSlangType();
             return new ExpressionResult(resultType, valueType);
         }
