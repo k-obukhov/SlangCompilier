@@ -255,13 +255,22 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitSignedFactor([NotNull] SLangGrammarParser.SignedFactorContext context)
         {
-            var type = (Visit(context.factor()) as ExpressionResult).Type;
+            var exprRes = (Visit(context.factor()) as ExpressionResult);
+            var type = exprRes.Type;
+            var signToken = context.AddOp() ?? context.SubOp();
 
-            if (type is SlangSimpleType t && (t.Equals(SlangSimpleType.Real) || t.Equals(SlangSimpleType.Int)))
+            if (signToken != null)
             {
-                return new ExpressionResult(type, ExpressionValueType.Value);
+                if (type is SlangSimpleType t && (t.Equals(SlangSimpleType.Real) || t.Equals(SlangSimpleType.Int)))
+                {
+                    return new ExpressionResult(type, ExpressionValueType.Value);
+                }
+                ThrowInvalidTypesForUnaryOperationException(signToken, file, type);
             }
-            ThrowInvalidTypesForUnaryOperationException(context.AddOp() ?? context.SubOp(), file, type);
+            else
+            {
+                return new ExpressionResult(type, exprRes.ExpressionType);
+            }
             return null;
         }
 

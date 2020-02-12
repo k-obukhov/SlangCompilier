@@ -106,22 +106,22 @@ namespace SLangCompiler.FrontEnd
 
         public void Check()
         {
-            var dictID = new Dictionary<SlangCustomType, int>();
+            var dictID = new Dictionary<string, int>();
             var visited = new bool[allClasses.Count()];
             var listAdj = new List<List<int>>();
 
             for (int i = 0; i < allClasses.Count(); ++i)
             {
                 listAdj.Add(new List<int>());
-                dictID[allClasses[i].TypeIdent] = i;
+                dictID[allClasses[i].TypeIdent.ToString()] = i;
             }
 
             for (int i = 0; i < allClasses.Count(); ++i)
             {
                 if (!allClasses[i].TypeIdent.Equals(SlangCustomType.Object))
                 {
-                    int classId = dictID[allClasses[i].TypeIdent];
-                    int baseClassId = dictID[allClasses[i].Base];
+                    int classId = dictID[allClasses[i].TypeIdent.ToString()];
+                    int baseClassId = dictID[allClasses[i].Base.ToString()];
 
                     //listAdj[classId].Add(baseClassId);
                     listAdj[baseClassId].Add(classId);
