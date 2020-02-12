@@ -14,7 +14,7 @@ namespace SLangCompiler.FrontEnd.Tables
         private IList<SlangRoutineTypeArg> ToSlangArgs() => Params.Select(p => p.TypeArg).ToList();
         public AccessModifier AccessModifier { get; set; }
 
-        public bool IsFunction() => ReturnType == null;
+        public bool IsFunction() => ReturnType != null;
         public bool IsProcedure() => ReturnType == null;
     }
 

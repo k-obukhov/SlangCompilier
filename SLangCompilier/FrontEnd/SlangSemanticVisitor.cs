@@ -43,7 +43,7 @@ namespace SLangCompiler.FrontEnd
 
             currentType = null;
             currentRoutine = null;
-            return base.VisitFunctionDecl(context);
+            return null;
         }
 
         public override object VisitProcedureDecl([NotNull] SLangGrammarParser.ProcedureDeclContext context)
@@ -52,9 +52,10 @@ namespace SLangCompiler.FrontEnd
             InitializeRoutineStates(context.thisHeader(), symbol);
             CheckParamsNameConflicts(context.thisHeader(), context.routineArgList());
             // some work... need to call visit()?
+            Visit(context.statementSeq());
             currentType = null;
             currentRoutine = null;
-            return base.VisitProcedureDecl(context);
+            return null;
         }
 
         private void InitializeRoutineStates(SLangGrammarParser.ThisHeaderContext context, IToken symbol)

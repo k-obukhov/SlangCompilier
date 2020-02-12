@@ -115,14 +115,14 @@ namespace SLangCompiler.FrontEnd
             if (isMethod)
             {
                 nameOfThis = thisHeader.Id().GetText();
-                ThrowIfReservedWord(nameOfThis, ModuleData.File,thisHeader.Id().Symbol);
+                ThrowIfReservedWord(nameOfThis, ModuleData.File, thisHeader.Id().Symbol);
                 if (importHead != null)
                 {
                     ThrowImportHeaderMethodsException(ModuleData.File, Id);
                 }
             }
             var name = Id.GetText();
-            ThrowIfReservedWord(name, ModuleData.File, thisHeader.Id().Symbol);
+            ThrowIfReservedWord(name, ModuleData.File, symbol);
             var args = Visit(routineArgList) as List<RoutineArgNameTableItem>;
             ImportHeader header = null;
             if (importHead != null)
@@ -130,7 +130,7 @@ namespace SLangCompiler.FrontEnd
                 header = Visit(importHead) as ImportHeader;
             }
 
-            var returnType = Visit(typeName) as SlangType;
+            SlangType returnType = typeName != null ? Visit(typeName) as SlangType : null;
             var modifier = GetModifierByName(accessModifier.GetText());
 
             var isAbstract = abstractToken != null;
