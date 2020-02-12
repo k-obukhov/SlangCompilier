@@ -151,19 +151,19 @@ namespace SLangCompiler.FrontEnd
             var newScope = new Scope(scope);
             scope = newScope;
 
-            var result = new StatementResult(false);
+            var returning = false;
 
             foreach (var statement in context.statement())
             {
-                var res = Visit(statement);
-                if (res != null && res is StatementResult stRes && stRes.Returning)
+                var res = Visit(statement) as StatementResult;
+                if (res?.Returning == true || statement?.simpleStatement()?.returnC() != null)
                 {
-                    result.Returning = true;
+                    returning = true;
                 }
             }
 
             scope = scope?.Outer;
-            return result;
+            return new StatementResult(returning);
         }
 
         public override object VisitExprList([NotNull] SLangGrammarParser.ExprListContext context)

@@ -10,7 +10,7 @@ namespace SLangCompiler.FrontEnd
     /// </summary>
     class StatementResult
     {
-        public bool Returning { get; set; }
+        public bool Returning { get; }
         public StatementResult(bool returning)
         {
             Returning = returning;
