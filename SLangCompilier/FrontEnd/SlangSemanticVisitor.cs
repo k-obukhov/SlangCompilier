@@ -21,11 +21,16 @@ namespace SLangCompiler.FrontEnd
         private Scope scope;
         private SlangCustomType currentType;
         private readonly FileInfo file;
+        private Dictionary<string, bool> checksDefined = new Dictionary<string, bool>();
         public SlangSemanticVisitor(SourceCodeTable table, ModuleData module) : base(table, module)
         {
             moduleItem = table.Modules[module.Name];
             scope = new Scope(); // не включает в себя глобальную область видимости
             file = moduleItem.ModuleData.File;
+            foreach (var field in moduleItem.Fields)
+            {
+                checksDefined.Add(field.Key, false);
+            }
         }
 
         public override object VisitFunctionDecl([NotNull] SLangGrammarParser.FunctionDeclContext context)
@@ -77,7 +82,7 @@ namespace SLangCompiler.FrontEnd
             currentRoutine = null;
             inProgramBlock = true;
             currentType = null;
-            //ToDo checks expressions in fields
+
             return base.VisitModuleStatementsSeq(context);
         }
 
@@ -122,7 +127,7 @@ namespace SLangCompiler.FrontEnd
                     }
                 }
 
-                if (moduleItem.Fields.ContainsKey(name))
+                if (moduleItem.Fields.ContainsKey(name) && checksDefined[name] != false)
                 {
                     return moduleItem.Fields[name];
                 }
@@ -587,6 +592,7 @@ namespace SLangCompiler.FrontEnd
             else // проверяем переменные модуля?
             {
                 CheckExpressionContext(context, variable);
+                checksDefined[variable.Name] = true;
             }
 
             if (variable.Type is SlangCustomType ct && Table.FindClass(ct).IsAbstract())
