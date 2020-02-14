@@ -21,11 +21,34 @@ namespace SLangCompiler.FrontEnd
         private Scope scope;
         private SlangCustomType currentType;
         private readonly FileInfo file;
+        // проверка определений для классов, функций и переменных модуля -- нельзя использовать их до их объявления, как в С++!
+        private Dictionary<string, bool> checkDefinitions = new Dictionary<string, bool>(); 
         public SlangSemanticVisitor(SourceCodeTable table, ModuleData module) : base(table, module)
         {
             moduleItem = table.Modules[module.Name];
             scope = new Scope(); // не включает в себя глобальную область видимости
             file = moduleItem.ModuleData.File;
+
+            foreach (var field in moduleItem.Fields)
+            {
+                checkDefinitions.Add(field.Key, false);
+            }
+
+            foreach (var routine in moduleItem.Routines)
+            {
+                checkDefinitions.Add(routine.Key, false);
+            }
+
+            foreach (var classItem in moduleItem.Classes)
+            {
+                checkDefinitions.Add(classItem.Key, false);
+            }
+        }
+
+        public override object VisitTypeDecl([NotNull] SLangGrammarParser.TypeDeclContext context)
+        {
+            checkDefinitions[context.Id().GetText()] = true;
+            return base.VisitTypeDecl(context);
         }
 
         public override object VisitFunctionDecl([NotNull] SLangGrammarParser.FunctionDeclContext context)
@@ -68,6 +91,7 @@ namespace SLangCompiler.FrontEnd
             else
             {
                 currentRoutine = moduleItem.Routines[symbol.Text];
+                checkDefinitions[symbol.Text] = true;
             }
         }
 
@@ -122,12 +146,12 @@ namespace SLangCompiler.FrontEnd
                     }
                 }
 
-                if (moduleItem.Fields.ContainsKey(name))
+                if (moduleItem.Fields.ContainsKey(name) && checkDefinitions[name])
                 {
                     return moduleItem.Fields[name];
                 }
                 // либо это процедура-функция (взять все сигнатуры) ?
-                if (moduleItem.Routines.ContainsKey(name))
+                if (moduleItem.Routines.ContainsKey(name) && checkDefinitions[name])
                 {
                     return moduleItem.Routines[name];
                 }
@@ -586,6 +610,7 @@ namespace SLangCompiler.FrontEnd
             }
             else // проверяем переменные модуля?
             {
+                checkDefinitions[variable.Name] = true;
                 CheckExpressionContext(context, variable);
             }
 
@@ -772,6 +797,13 @@ namespace SLangCompiler.FrontEnd
         {
             var classItem = base.VisitCustomType(context) as SlangCustomType;
             CheckClassExists(classItem.ModuleName, classItem.Name, context.qualident().Id().First().Symbol);
+            if (classItem.ModuleName == ModuleData.Name)
+            {
+                if (checkDefinitions[classItem.Name] == false)
+                {
+                    ThrowException($"Invalid use of incomplete type {classItem}", file, context.Start);
+                }
+            }
             return classItem;
         }
     }
