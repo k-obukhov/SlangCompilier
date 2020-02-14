@@ -215,7 +215,7 @@ namespace SLangCompiler.FrontEnd
 
                 if ((leftResultType is SlangSimpleType lt && rightResultType is SlangSimpleType rt
                     && lt.Equals(rt) && allowedTypes.Contains(lt))
-                    || (leftResultType is SlangPointerType && rightResultType is SlangPointerType))
+                    || ((leftResultType is SlangPointerType || leftResultType is SlangNullType) && (rightResultType is SlangPointerType || rightResultType is SlangNullType)))
                 {
                     return new ExpressionResult(SlangSimpleType.Boolean, ExpressionValueType.Value);
                 }
