@@ -690,6 +690,10 @@ namespace SLangCompiler.FrontEnd
                     result = false;
                 }
             }
+            if (context.Else() == null) // без ветки else не считается
+            {
+                result = false;
+            }
             return new StatementResult(result);
         }
 
@@ -705,13 +709,15 @@ namespace SLangCompiler.FrontEnd
         public override object VisitWhileC([NotNull] SLangGrammarParser.WhileCContext context)
         {
             CheckExpIsBoolean(context.exp());
-            return Visit(context.statementSeq()) as StatementResult;
+            Visit(context.statementSeq());
+            return null;
         }
 
         public override object VisitRepeatC([NotNull] SLangGrammarParser.RepeatCContext context)
         {
             CheckExpIsBoolean(context.exp());
-            return Visit(context.statementSeq()) as StatementResult;
+            Visit(context.statementSeq());
+            return null;
         }
 
         public override object VisitCall([NotNull] SLangGrammarParser.CallContext context)
