@@ -48,7 +48,10 @@ namespace SLangCompiler.FrontEnd
         public override object VisitTypeDecl([NotNull] SLangGrammarParser.TypeDeclContext context)
         {
             checkDefinitions[context.Id().GetText()] = true;
-            return base.VisitTypeDecl(context);
+            currentType = Table.FindClass(ModuleData.Name, context.Id().GetText()).TypeIdent;
+            base.VisitTypeDecl(context);
+            currentType = null;
+            return null;
         }
 
         public override object VisitFunctionDecl([NotNull] SLangGrammarParser.FunctionDeclContext context)
@@ -608,7 +611,7 @@ namespace SLangCompiler.FrontEnd
                     scope.PutVariable(variable);
                 }
             }
-            else // проверяем переменные модуля?
+            else if (currentType == null)// проверяем переменные модуля?
             {
                 checkDefinitions[variable.Name] = true;
                 CheckExpressionContext(context, variable);

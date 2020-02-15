@@ -134,6 +134,20 @@ namespace SLangCompiler.FrontEnd
             return new VariableNameTableItem { Name = symbol.GetText(), Column = symbol.Symbol.Column, IsConstant = true, Line = symbol.Symbol.Line, Type = Visit(context.typeName()) as SlangType };
         }
 
+        public override object VisitTypeFieldDecl([NotNull] SLangGrammarParser.TypeFieldDeclContext context)
+        {
+            var item = Visit(context.variableDecl()) as VariableNameTableItem;
+            return new FieldNameTableItem
+            {
+                AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
+                Column = item.Column,
+                IsConstant = item.IsConstant,
+                Line = item.Line,
+                Name = item.Name,
+                Type = item.Type
+            };
+        }
+
         public override object VisitVariableDecl([NotNull] SLangGrammarParser.VariableDeclContext context)
         {
             if (context.arrayDecl() != null)
