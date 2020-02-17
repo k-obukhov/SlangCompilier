@@ -435,6 +435,10 @@ namespace SLangCompiler.FrontEnd
                             {
                                 valueType = ExpressionValueType.Value; // такие вещи иожно передать только по значению
                             }
+                            if (fromCurrentModule && checkDefinitions[node.GetText()] == false)
+                            {
+                                ThrowModuleItemNotFoundException(node.GetText(), module.ModuleData.Name, file, node.Symbol.Line, node.Symbol.Column);
+                            }
                         }
                         else
                         {
