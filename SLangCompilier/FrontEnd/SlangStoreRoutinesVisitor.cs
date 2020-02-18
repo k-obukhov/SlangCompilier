@@ -53,7 +53,7 @@ namespace SLangCompiler.FrontEnd
                     var classItem = Table.Modules[customType.ModuleName].Classes[customType.Name];
                     if (classItem.AccessModifier == AccessModifier.Private)
                     {
-                        ThrowLevelAccessibilityException(routineToken, ModuleData.File, customType.ToString(), routineName);
+                        ThrowLevelAccessibilityForRoutineException(routineToken, ModuleData.File, customType.ToString(), routineName);
                     }
                 }
             }
@@ -65,7 +65,7 @@ namespace SLangCompiler.FrontEnd
                     var classItem = Table.Modules[type.ModuleName].Classes[type.Name];
                     if (classItem.AccessModifier == AccessModifier.Private)
                     {
-                        ThrowLevelAccessibilityException(routineToken, ModuleData.File, type.ToString(), routineName);
+                        ThrowLevelAccessibilityForRoutineException(routineToken, ModuleData.File, type.ToString(), routineName);
                     }
                 }
             }
@@ -82,7 +82,7 @@ namespace SLangCompiler.FrontEnd
                     var classItem = Table.Modules[customType.ModuleName].Classes[customType.Name];
                     if (classItem.AccessModifier == AccessModifier.Private && customType != classIdent)
                     {
-                        ThrowLevelAccessibilityException(routineToken, ModuleData.File, customType.ToString(), method.Name);
+                        ThrowLevelAccessibilityForRoutineException(routineToken, ModuleData.File, customType.ToString(), method.Name);
                     }
                 }
             }
@@ -93,7 +93,7 @@ namespace SLangCompiler.FrontEnd
                     var classItem = Table.Modules[type.ModuleName].Classes[type.Name];
                     if (classItem.AccessModifier == AccessModifier.Private)
                     {
-                        ThrowLevelAccessibilityException(routineToken, ModuleData.File, type.ToString(), method.Name);
+                        ThrowLevelAccessibilityForRoutineException(routineToken, ModuleData.File, type.ToString(), method.Name);
                     }
                 }
             }
@@ -233,7 +233,7 @@ namespace SLangCompiler.FrontEnd
                 ThrowIfReservedWord(routineArg.Name, ModuleData.File, arg.Id().Symbol);
                 if (res.Any(a => a.Name == routineArg.Name))
                 {
-                    ThrowException($"Parameter with name {routineArg.Name} already defined", ModuleData.File, arg.Id().Symbol);
+                    ThrowParameterAlreadyDefinedException(routineArg.Name, ModuleData.File, arg.Id().Symbol);
                 }
                 res.Add(routineArg);
             }

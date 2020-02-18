@@ -62,19 +62,19 @@ namespace SLangCompiler.FrontEnd
         {
             if (!Table.Modules.ContainsKey(moduleName)) // модуля нет
             {
-                ThrowException($"Module {moduleName} not found", ModuleData.File, errToken);
+                ThrowModuleNotFoundException(moduleName, ModuleData.File, errToken);
             }
             else if (!Table.Modules[ModuleData.Name].ImportedModules.Contains(moduleName) && moduleName != ModuleData.Name)
             {
-                ThrowException($"Module {moduleName} not imported", ModuleData.File, errToken);
+                ThrowModuleNotImportedException(moduleName, ModuleData.File, errToken);
             }
             else if (!Table.Modules[moduleName].Classes.ContainsKey(typeName))
             {
-                ThrowException($"Class {typeName} not found in module {moduleName}", ModuleData.File, errToken);
+                ThrowClassNotFoundException(moduleName, typeName, ModuleData.File, errToken);
             }
             else if (Table.Modules[moduleName].Classes[typeName].AccessModifier == AccessModifier.Private && moduleName != ModuleData.Name)
             {
-                ThrowException($"Class {typeName} from module {moduleName} is private", ModuleData.File, errToken);
+                ThrowClassIsPrivateException(moduleName, typeName, ModuleData.File, errToken);
             }
         }
 

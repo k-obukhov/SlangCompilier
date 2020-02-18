@@ -22,7 +22,7 @@ namespace SLangCompiler.FrontEnd
         private SlangCustomType currentType;
         private readonly FileInfo file;
         // проверка определений для классов, функций и переменных модуля -- нельзя использовать их до их объявления, как в С++!
-        private Dictionary<string, bool> checkDefinitions = new Dictionary<string, bool>(); 
+        private readonly Dictionary<string, bool> checkDefinitions = new Dictionary<string, bool>(); 
         public SlangSemanticVisitor(SourceCodeTable table, ModuleData module) : base(table, module)
         {
             moduleItem = table.Modules[module.Name];
@@ -64,7 +64,7 @@ namespace SLangCompiler.FrontEnd
             // функция, которая не импортируется извне и не является абстрактным методом?
             if (!result.Returning && currentRoutine.Header == null && !(currentRoutine is MethodNameTableItem method && method.IsAbstract))
             {
-                ThrowException("Not all code paths returns value", file, context.statementSeq().Start);
+                ThrowNotAllCodePathException(file, context.statementSeq().Start);
             }
 
             currentType = null;
@@ -527,7 +527,7 @@ namespace SLangCompiler.FrontEnd
             }
             if (item is ModuleNameTable)
             {
-                ThrowException("Using an imported module without field access is not supported", file, context.Id().Symbol);
+                ThrowUsingModuleAsVariableException(file, context.Id().Symbol);
             }
             resultType = item.ToSlangType();
             return new ExpressionResult(resultType, valueType);
@@ -605,6 +605,7 @@ namespace SLangCompiler.FrontEnd
             // проверяем какой-то контекст?
             if (inProgramBlock || currentRoutine != null)
             {
+                ThrowIfReservedWord(variable.Name, file, variable.Line, variable.Column);
                 if (FindItemByName(variable.Name) != null)
                 {
                     ThrowNameAlreadyDefinedException(variable.Name, file, variable.Line, variable.Column);
@@ -667,7 +668,7 @@ namespace SLangCompiler.FrontEnd
                 var res = Visit(exp) as ExpressionResult;
                 if (!res.ExpressionType.Equals(SlangSimpleType.Int))
                 {
-                    ThrowException($"Array length expression must have integer type", file, exp.Start);
+                    ThrowArrayElementException(file, exp.Start);
                 }
             }
 
@@ -732,7 +733,7 @@ namespace SLangCompiler.FrontEnd
             var exprRes = Visit(context.designator()) as ExpressionResult;
             if (exprRes.ExpressionType != ExpressionValueType.Nothing)
             {
-                ThrowException($"Call instruction is only for procedures and method-procedures", file, context.designator().Start);
+                ThrowCallException(file, context.designator().Start);
             }
             return null;
         }
@@ -741,15 +742,15 @@ namespace SLangCompiler.FrontEnd
         {
             if (currentRoutine == null)
             {
-                ThrowException($"Return statement allowed only for routines", file, context.Start);
+                ThrowReturnException(file, context.Start);
             }
             else if (currentRoutine.IsFunction() && context.exp() == null)
             {
-                ThrowException($"Function must have an expression for return", file, context.Start);
+                ThrowFunctionReturnException(file, context.Start);
             }
             else if (currentRoutine.IsProcedure() && context.exp() != null)
             {
-                ThrowException($"Procedures must not have an expression for return", file, context.Start);
+                ThrowProcedureReturnException(file, context.Start.Line, context.start.Column);
             }
 
             if (context.exp() != null)
@@ -770,7 +771,7 @@ namespace SLangCompiler.FrontEnd
                 var res = Visit(exp) as ExpressionResult;
                 if (!(res.ExpressionType == ExpressionValueType.Variable && res.Type is SlangSimpleType))
                 {
-                    ThrowException($"Input is allowed only for non-constant simple types", file, exp.Start);
+                    ThrowInputTypeException(file, exp.Start);
                 }
             }
             return null;
@@ -783,7 +784,7 @@ namespace SLangCompiler.FrontEnd
                 var res = Visit(exp) as ExpressionResult;
                 if (!(res.Type is SlangSimpleType))
                 {
-                    ThrowException($"Output is allowed only for simple types", file, exp.Start);
+                    ThrowOutputTypeException(file, exp.Start);
                 }
             }
             return null;
@@ -796,7 +797,7 @@ namespace SLangCompiler.FrontEnd
 
             if (itemType.ExpressionType != ExpressionValueType.Variable)
             {
-                ThrowException("Cannot use assign for left-side expression", file, context.designator().Start);
+                ThrowLetForValueException(file, context.designator().Start);
             }
             if (!CanAssignToType(itemType.Type, exprType.Type))
             {
@@ -814,7 +815,7 @@ namespace SLangCompiler.FrontEnd
             {
                 if (checkDefinitions[classItem.Name] == false)
                 {
-                    ThrowException($"Invalid use of incomplete type {classItem}", file, context.Start);
+                    ThrowInvalidUseIncompleteTypeException(classItem, file, context.Start);
                 }
             }
             return classItem;

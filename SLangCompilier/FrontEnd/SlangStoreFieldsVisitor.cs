@@ -37,7 +37,7 @@ namespace SLangCompiler.FrontEnd
 
             if (!Table.Modules[classItem.Base.ModuleName].Classes[classItem.Base.Name].CanBeBase)
             {
-                ThrowException($"Class {classItem.Base} is not marked as base", ModuleData.File, errToken);
+                ThrowClassNotMarkedAsBaseException(classItem.Base, ModuleData.File, errToken);
             }
 
             // store fields
@@ -46,12 +46,12 @@ namespace SLangCompiler.FrontEnd
                 var item = Visit(fieldContext) as FieldNameTableItem;
                 if (fieldContext.variableDecl().exp() != null)
                 {
-                    ThrowException("Expressions not allowed for fields in types", ModuleData.File, fieldContext.variableDecl().exp().Start);
+                    ThrowClassFieldExprException(ModuleData.File, fieldContext.variableDecl().exp().Start);
                 }
                 ThrowIfReservedWord(item.Name, ModuleData.File, fieldContext.variableDecl().Start);
                 if (classItem.Fields.ContainsKey(item.Name))
                 {
-                    ThrowException($"Field {item.Name} already defined in class {context.Id().GetText()}", ModuleData.File, fieldContext.variableDecl().Start);
+                    ThrowClassFieldAlreadyDefinedException(item.Name, context.Id().GetText(), ModuleData.File, fieldContext.variableDecl().Start);
                 }
 
                 // check level of access
@@ -70,7 +70,7 @@ namespace SLangCompiler.FrontEnd
                     // если поле класса публично, а тип поля приватный, но при этом тип поля не тип класса
                     if (item.AccessModifier == AccessModifier.Public && usedType.AccessModifier == AccessModifier.Private && (usedType.TypeIdent != classItem.TypeIdent))
                     {
-                        ThrowException($"Level of accessibility of field {item.Name} more than type {usedType.TypeIdent}", ModuleData.File, fieldContext.variableDecl().Start);
+                        ThrowLevelAccessibilityForFieldsException(fieldContext.variableDecl().Start, ModuleData.File, usedType.TypeIdent.ToString(), item.Name);
                     }
                 }
                 classItem.CheckFieldConflicts(ModuleData, item);
@@ -118,7 +118,7 @@ namespace SLangCompiler.FrontEnd
                 // если поле класса публично, а тип поля приватный, но при этом тип поля не тип класса
                 if (item.AccessModifier == AccessModifier.Public && typeOfItem.AccessModifier == AccessModifier.Private)
                 {
-                    ThrowException($"Level of accessibility of field {item.Name} more than type {t}", ModuleData.File, data.Line, data.Column);
+                    ThrowLevelAccessibilityForFieldsException(context.Start, ModuleData.File, t.ToString(), item.Name);
                 }
             }
 

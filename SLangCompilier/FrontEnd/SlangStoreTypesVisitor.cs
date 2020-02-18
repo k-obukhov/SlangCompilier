@@ -49,19 +49,19 @@ namespace SLangCompiler.FrontEnd
                 var moduleName = module.GetText();
                 if (moduleTable.ImportedModules.Contains(moduleName))
                 {
-                    ThrowException($"Repeating import of module ${moduleName}", ModuleData.File, module.Symbol);
+                    ThrowRepeatingModuleException(moduleName, ModuleData.File, module.Symbol);
                 }
                 if (!allModuleNames.Contains(moduleName))
                 {
-                    ThrowException($"Module {moduleName} not found", ModuleData.File, module.Symbol);
+                    ThrowModuleNotFoundException(moduleName, ModuleData.File, module.Symbol);
                 }
                 if (moduleName == ModuleData.Name)
                 {
-                    ThrowException($"Module {moduleName} imports itself", ModuleData.File, module.Symbol);
+                    ThrowModuleImportsItselfException(moduleName, ModuleData.File, module.Symbol);
                 }
                 if (moduleName == CompilerConstants.MainModuleName)
                 {
-                    ThrowException($"Unable to import main module from other!", ModuleData.File, module.Symbol);
+                    ThrowUnableImportMainException(ModuleData.File, module.Symbol);
                 }
                 moduleTable.ImportedModules.Add(moduleName);
             }
@@ -75,12 +75,12 @@ namespace SLangCompiler.FrontEnd
 
             if (moduleName != ModuleData.Name)
             {
-                ThrowException($"Module name \"{moduleName}\" doest not match \"{ModuleData.Name}\"", ModuleData.File, moduleToken);
+                ThrowModuleNameConflictFileNameException(moduleName, ModuleData.Name, ModuleData.File, moduleToken);
             }
 
             if (moduleName != CompilerConstants.MainModuleName && context.moduleStatementsSeq() != null)
             {
-                ThrowException($"Module {moduleName} is not main module but have an entry point", ModuleData.File, context.moduleStatementsSeq().Start().Symbol);
+                ThrowEntryPointException(moduleName, ModuleData.File, context.moduleStatementsSeq().Start().Symbol);
             }
 
             return base.VisitModule(context);
@@ -93,7 +93,7 @@ namespace SLangCompiler.FrontEnd
 
             if (moduleTable.Classes.ContainsKey(className))
             {
-                ThrowException($"Redefinition of class \"{className}\"", ModuleData.File, context.Id().Symbol);
+                ThrowClassRedefinitionException(className, ModuleData.File, context.Id().Symbol);
             }
 
             var isBase = context.Base() != null;
