@@ -52,7 +52,7 @@ namespace SLangCompiler.FrontEnd
                     if (derivedClass.Fields.ContainsKey(item.Key))
                     {
                         var field = derivedClass.Fields[item.Key];
-                        throw new CompilerException($"Trying to override field {item.Key} from base class {baseClass.TypeIdent} in derived class {derivedClass.TypeIdent}", GetFileOfClass(derivedClass.TypeIdent), field.Line, field.Column);
+                        ThrowClassFieldOverrideException(item.Key, baseClass.TypeIdent, derivedClass.TypeIdent, GetFileOfClass(derivedClass.TypeIdent), field.Line, field.Column);
                     }
                     var cloneField = item.Value.Clone() as FieldNameTableItem;
                     cloneField.IsDerived = true;
@@ -67,7 +67,8 @@ namespace SLangCompiler.FrontEnd
                 {
                     if (!baseClass.Methods.Values.Any(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params)))
                     {
-                        throw new CompilerException($"Method {item.Name} marked override but does not override", GetFileOfClass(derivedClass.TypeIdent), item.Line, item.Column);
+                        ThrowClassMethodDoesNotOverrideException(item, GetFileOfClass(derivedClass.TypeIdent));
+                        return;
                     }
                 }
             }
@@ -97,7 +98,7 @@ namespace SLangCompiler.FrontEnd
                         var methodOverriden = derivedClass.Methods.Values.First(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params));
                         if (!methodOverriden.IsOverride)
                         {
-                            throw new CompilerException($"Method {methodOverriden.Name} does not marked override", GetFileOfClass(derivedClass.TypeIdent), methodOverriden.Line, methodOverriden.Column);
+                            ThrowClassMethodNotMarkedOverrideException(methodOverriden, GetFileOfClass(derivedClass.TypeIdent));
                         }
                     }
                 }
@@ -136,7 +137,7 @@ namespace SLangCompiler.FrontEnd
                 if (visited[index])
                 {
                     var foundClass = allClasses[index];
-                    throw new CompilerException($"Class {foundClass.TypeIdent} is in inheritance cycle", GetFileOfClass(foundClass.TypeIdent), foundClass.Line, foundClass.Column);
+                    ThrowClassInheritanceCycleException(foundClass, GetFileOfClass(foundClass.TypeIdent));
                 }
                 else
                 {
