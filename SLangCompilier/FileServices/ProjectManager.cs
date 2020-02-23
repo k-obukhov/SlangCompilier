@@ -43,6 +43,11 @@ namespace SLangCompiler.FileServices
 
                 FileModules.Add(module.Name, module);
             }
+
+            if (!ContainsMainModule())
+            {
+                throw new FileNotFoundException("Main module not found", CompilerConstants.MainModuleNameWithExt);
+            }
         }
         /// <summary>
         /// Check main module contains in project
