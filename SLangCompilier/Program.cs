@@ -1,7 +1,6 @@
 ﻿using SLangCompiler.Exceptions;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd;
-using SLangCompiler.FrontEnd.Tables;
 using System;
 using System.IO;
 
@@ -11,17 +10,17 @@ namespace SLangCompiler
     {
         static void Main(string[] args)
         {
-            var sourceCodeFolder = @"C:\projects\sldemosem";
-            ProjectManager p = new ProjectManager();
+            var defaultTestSourceFolder = @"C:\projects\sldemosem";
+            var sourceCodeFolder = args.Length == 0 ? defaultTestSourceFolder : args[0];
+            var p = new ProjectManager();
             p.LoadCode(new System.IO.DirectoryInfo(sourceCodeFolder));
 
             var frontend = new FrontendCompiler();
-
-            frontend.CheckErrors(p);
-            /*
+            
             try
             {
-                
+                frontend.CheckErrors(p);
+                Console.WriteLine($"No errors found");
             }
             catch (CompilerException e)
             {
@@ -34,9 +33,9 @@ namespace SLangCompiler
             catch (Exception e)
             {
                 // all others
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"Compiler error: {e.Message}");
+                throw;
             }
-            */
         }
     }
 }
