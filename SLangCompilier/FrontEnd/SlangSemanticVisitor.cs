@@ -609,10 +609,10 @@ namespace SLangCompiler.FrontEnd
                 if (FindItemByName(variable.Name) != null)
                 {
                     ThrowNameAlreadyDefinedException(variable.Name, file, variable.Line, variable.Column);
-                    CheckExpressionContext(context, variable);
                 }
                 else
                 {
+                    CheckExpressionContext(context, variable);
                     scope.PutVariable(variable);
                 }
             }
