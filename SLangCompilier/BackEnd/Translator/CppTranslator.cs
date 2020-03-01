@@ -81,7 +81,7 @@ namespace SLangCompiler.BackEnd.Translator
             TranslateClassData(typeData, AccessModifier.Public);
             headerText.Indent--;
 
-            headerText.WriteLine($"private");
+            headerText.WriteLine($"private:");
             headerText.Indent++;
             TranslateClassData(typeData, AccessModifier.Private);
             headerText.Indent--;
@@ -160,7 +160,7 @@ namespace SLangCompiler.BackEnd.Translator
             {
                 for (int i = 0; i < at.Dimension; ++i)
                 {
-                    res += "vector<";
+                    res += "std::vector<";
                 }
                 res += GetStringFromType(at.Type);
                 for (int i = 0; i < at.Dimension; ++i)
