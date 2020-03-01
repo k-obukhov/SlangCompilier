@@ -621,6 +621,13 @@ namespace SLangCompiler.FrontEnd
                 checkDefinitions[variable.Name] = true;
                 CheckExpressionContext(context, variable);
             }
+            else if (currentType != null)
+            {
+                if (variable.Type.Equals(currentType))
+                {
+                    ThrowFieldOfClassTypeException(file, variable);
+                }
+            }
 
             if (variable.Type is SlangCustomType ct && Table.FindClass(ct).IsAbstract())
             {

@@ -18,7 +18,7 @@ namespace SLangCompiler.Exceptions
         public static void ThrowIfReservedWord(string name, FileInfo file, IToken token) => ThrowIfReservedWord(name, file, token.Line, token.Column);
         public static void ThrowIfReservedWord(string name, FileInfo file, int line, int column)
         {
-            if (CompilerConstants.CppKeywords.Contains(name) || CompilerConstants.SlangKeywords.Contains(name))
+            if (CompilerConstants.CppKeywords.Contains(name) || CompilerConstants.SlangKeywords.Contains(name) || CompilerConstants.OtherKeywords.Contains(name))
             {
                 ThrowException($"Name {name} is reserved", file, line, column);
             }
@@ -84,5 +84,6 @@ namespace SLangCompiler.Exceptions
         public static void ThrowClassMethodDoesNotOverrideException(MethodNameTableItem item, FileInfo file) => throw new CompilerException($"Method {item.Name} marked override but does not override", file, item.Line, item.Column);
         public static void ThrowClassFieldOverrideException(string fieldName, SlangCustomType baseClass, SlangCustomType derivedClass, FileInfo fileInfo, int line, int column) => throw new CompilerException($"Trying to override field {fieldName} from base class {baseClass} in derived class {derivedClass}", fileInfo, line, column);
         public static void ThrowClassInheritanceCycleException(ClassNameTableItem classItem, FileInfo fileInfo) => throw new CompilerException($"Class {classItem.TypeIdent} is in inheritance cycle", fileInfo, classItem.Line, classItem.Column);
+        public static void ThrowFieldOfClassTypeException(FileInfo file, VariableNameTableItem item) => ThrowException($"Invalid use of variable with type {item.Type} in class {item.Type}, only pointers allowed", file, item.Line, item.Column);
     }
 }
