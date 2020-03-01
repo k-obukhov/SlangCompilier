@@ -36,6 +36,26 @@ namespace SLangCompiler.FrontEnd.Tables
                 ThrowConflictNameException(module.File, fieldItem.Line, fieldItem.Column);
             }
         }
+
+        internal IEnumerable<object> GetItems(AccessModifier modifier)
+        {
+            var res = new List<object>();
+            foreach (var key in Methods.Keys)
+            {
+                if (Methods[key].AccessModifier == modifier && !Methods[key].IsDerived)
+                {
+                    res.Add(Methods[key] as object);
+                }
+            }
+            foreach (var key in Fields.Keys)
+            {
+                if (Fields[key].AccessModifier == modifier && !Fields[key].IsDerived)
+                {
+                    res.Add(Fields[key] as object);
+                }
+            }
+            return res;
+        }
     }
 
     public class MethodNameTableItem: RoutineNameTableItem, ICloneable
