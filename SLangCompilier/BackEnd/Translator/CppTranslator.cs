@@ -158,10 +158,10 @@ namespace SLangCompiler.BackEnd.Translator
                 moduleName = ids[0];
                 typeName = ids[1];
 
-                WriteAll($"{ids[0]}::");
             }
-            WriteAll(typeName);
-            return new SlangCustomType(moduleName, typeName);
+            var res = new SlangCustomType(moduleName, typeName);
+            WriteAll(GetStringFromType(res));
+            return res;
         }
 
         public void TranslateCustomType(string typeName)
