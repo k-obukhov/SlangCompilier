@@ -242,6 +242,11 @@ namespace SLangCompiler.BackEnd.Translator
         }
 
         // helpers
+        /// <summary>
+        /// uses only for routines/fields declaration, another declares should use Visit() for types
+        /// </summary>
+        /// <param name="returnType"></param>
+        /// <returns></returns>
         private string GetStringFromType(SlangType returnType)
         {
             var res = "";
@@ -259,9 +264,15 @@ namespace SLangCompiler.BackEnd.Translator
             }
             else if (returnType is SlangArrayType at)
             {
-                WriteVectorTypeStart(at.Dimension);
+                for (int i = 0; i < at.Dimension; ++i)
+                {
+                    res += "std::vector<";
+                }
                 res += GetStringFromType(at.Type);
-                WriteVectorTypeEnd(at.Dimension);
+                for (int i = 0; i < at.Dimension; ++i)
+                {
+                    res += ">";
+                }
             }
             else if (returnType is SlangCustomType ct)
             {
