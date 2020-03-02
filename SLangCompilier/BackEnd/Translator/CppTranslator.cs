@@ -59,6 +59,7 @@ namespace SLangCompiler.BackEnd.Translator
             
             base.VisitStart(context);
 
+            headerText.WriteLine();
             headerText.WriteLine($"#endif");
 
             return null;
@@ -91,17 +92,16 @@ namespace SLangCompiler.BackEnd.Translator
 
         public override object VisitFunctionDecl([NotNull] SLangGrammarParser.FunctionDeclContext context)
         {
+            // init states, check of abstract methods or imported functions
+            // add entries in h & cpp
+            // visit sequence
+            // think about arrays -> remove assign for arrays
             return base.VisitFunctionDecl(context);
         }
 
         public override object VisitProcedureDecl([NotNull] SLangGrammarParser.ProcedureDeclContext context)
         {
             return base.VisitProcedureDecl(context);
-        }
-
-        public override object VisitRoutineArgList([NotNull] SLangGrammarParser.RoutineArgListContext context)
-        {
-            return base.VisitRoutineArgList(context);
         }
 
         public override object VisitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context)

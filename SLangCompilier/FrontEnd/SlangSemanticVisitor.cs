@@ -645,6 +645,13 @@ namespace SLangCompiler.FrontEnd
                     ThrowCannotAssignException(variable.Type, exprRes.Type, file, variable.Line, variable.Column);
                 }
             }
+            else
+            {
+                if (variable.Type is SlangArrayType)
+                {
+                    ThrowCannotAssignArrayDeclareException(file, variable.Line, variable.Column);
+                }
+            }
         }
 
         public override object VisitConstDecl([NotNull] SLangGrammarParser.ConstDeclContext context)
