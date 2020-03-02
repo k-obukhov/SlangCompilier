@@ -1,31 +1,42 @@
-﻿using SLangCompiler.FrontEnd.Tables;
-using SLangCompiler.FrontEnd.Types;
+﻿using Antlr4.Runtime.Misc;
+using SLangCompiler.FrontEnd.Tables;
+using SLangGrammar;
 using System;
 using System.CodeDom.Compiler;
+using SLangCompiler.FrontEnd.Types;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
+using System.Linq;
 
 namespace SLangCompiler.BackEnd.Translator
 {
-    public class CppTranslator: BaseBackEndTranslator
+    public class CppTranslator: SLangGrammarBaseVisitor<object>
     {
         private readonly IndentedTextWriter headerText;
         private readonly IndentedTextWriter cppText;
         private readonly SourceCodeTable source;
-        private ModuleNameTable currentModule;
 
-        public CppTranslator(TextWriter headerWriter, TextWriter cppWriter, SourceCodeTable src)
+        private Scope scope;
+        private RoutineNameTableItem currentRoutine;
+        private bool inProgramBlock = false;
+        private string moduleName;
+
+        private ModuleNameTable currentModule;
+        private bool canWriteHeader = true;
+
+        public CppTranslator(TextWriter headerWriter, TextWriter cppWriter, SourceCodeTable src, ModuleNameTable curModule)
         {
             headerText = new IndentedTextWriter(headerWriter);
             cppText = new IndentedTextWriter(cppWriter);
             source = src;
+            moduleName = currentModule.ModuleData.Name;
+
+            scope = new Scope();
         }
 
-        public void TranslateOnStart(string moduleName)
+        public override object VisitStart([NotNull] SLangGrammarParser.StartContext context)
         {
-            currentModule = source.Modules[moduleName];
             headerText.WriteLine($"#ifndef {moduleName}_H");
             headerText.WriteLine($"#define {moduleName}_H");
 
@@ -34,11 +45,6 @@ namespace SLangCompiler.BackEnd.Translator
             headerText.WriteLine("#include <vector>");
             headerText.WriteLine("#include <memory>");
             headerText.WriteLine("#include <string>");
-
-            foreach (var module in currentModule.ImportedModules)
-            {
-                headerText.WriteLine($"#include \"{module}.h\"");
-            }
 
             foreach (var key in currentModule.Routines.Keys)
             {
@@ -50,33 +56,123 @@ namespace SLangCompiler.BackEnd.Translator
 
             // cpp includes
             cppText.WriteLine($"#include \"{moduleName}.h\"");
+            
+            base.VisitStart(context);
+
+            headerText.WriteLine($"#endif");
+
+            return null;
         }
 
-        public void TranslateInitalizeBlockOnStart()
+        public override object VisitModuleImport([NotNull] SLangGrammarParser.ModuleImportContext context)
         {
-            WriteLineAll($"namespace {currentModule.ModuleData.Name}");
+            headerText.WriteLine($"#include \"{context.Id().GetText()}.h\"");
+            return null;
+        }
+
+        public override object VisitModuleDeclareSeq([NotNull] SLangGrammarParser.ModuleDeclareSeqContext context)
+        {
+            WriteLineAll($"namespace {moduleName}");
             WriteLineAll("{");
             headerText.Indent++;
             cppText.Indent++;
-            // all declarations starts here...
-        }
-
-        public void TranslateInitializeBlockOnFinish()
-        {
-            headerText.Indent--;
+            base.VisitModuleDeclareSeq(context);
             cppText.Indent--;
+            headerText.Indent--;
             WriteLineAll("}");
+            return null;
+        }
+        // declares 
+        public override object VisitTypeDecl([NotNull] SLangGrammarParser.TypeDeclContext context)
+        {
+            TranslateCustomType(context.Id().GetText());
+            return null;
         }
 
-        public void TranslateOnFinish()
+        public override object VisitFunctionDecl([NotNull] SLangGrammarParser.FunctionDeclContext context)
         {
-            headerText.WriteLine($"#endif");
+            return base.VisitFunctionDecl(context);
+        }
+
+        public override object VisitProcedureDecl([NotNull] SLangGrammarParser.ProcedureDeclContext context)
+        {
+            return base.VisitProcedureDecl(context);
+        }
+
+        public override object VisitRoutineArgList([NotNull] SLangGrammarParser.RoutineArgListContext context)
+        {
+            return base.VisitRoutineArgList(context);
+        }
+
+        public override object VisitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context)
+        {
+            return base.VisitModuleFieldDecl(context);
+        }
+        // types logic
+        public override object VisitSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context)
+        {
+            var res = new SlangSimpleType(context.SimpleType().GetText());
+            WriteAll(GetStringFromType(res));
+            return res;
+        }
+
+        public override object VisitArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context)
+        {
+            var dimension = context.arrayDimention().Length;
+            WriteVectorTypeStart(dimension);
+            var type = Visit(context.scalarType()) as SlangType;
+            WriteVectorTypeEnd(dimension);
+
+            return new SlangArrayType(type, dimension);
+        }
+
+        public override object VisitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context)
+        {
+            WriteAll("std::shared_ptr<");
+            SlangCustomType customType = null;
+            if (context.customType() != null)
+            {
+                customType = Visit(context.customType()) as SlangCustomType;
+            } 
+            else 
+            {
+                customType = SlangCustomType.Object;
+                WriteAll(GetStringFromType(customType));
+            };
+            WriteAll(">");
+            return new SlangPointerType(customType);
+        }
+
+        public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
+        {
+            string moduleName = "", typeName = "";
+            var ids = context.qualident().Id().Select(x => x.GetText()).ToArray();
+
+            if (ids.Count() == 1)
+            {
+                moduleName = this.moduleName;
+                typeName = ids[0];
+            }
+            else if (ids.Count() == 2)
+            {
+                moduleName = ids[0];
+                typeName = ids[1];
+
+                WriteAll($"{ids[0]}::");
+            }
+            WriteAll(typeName);
+            return new SlangCustomType(moduleName, typeName);
         }
 
         public void TranslateCustomType(string typeName)
         {
             var typeData = currentModule.Classes[typeName];
-            headerText.WriteLine($"class {typeName}");
+            headerText.Write($"class {typeName}");
+            if (!typeData.TypeIdent.Equals(SlangCustomType.Object))
+            {
+                headerText.Write($": public {GetStringFromType(typeData.Base)}");
+            }
+            headerText.WriteLine();
             headerText.WriteLine("{");
             headerText.Indent++;
 
@@ -109,12 +205,12 @@ namespace SLangCompiler.BackEnd.Translator
             }
         }
 
-        public void TranslateClassFieldDecl(VariableNameTableItem field)
+        private void TranslateClassFieldDecl(VariableNameTableItem field)
         {
             headerText.Write($"{GetStringFromType(field.Type)} {field.Name};");
         }
 
-        public void TranslateMethodDecl(MethodNameTableItem method)
+        private void TranslateMethodDecl(MethodNameTableItem method)
         {
             headerText.Write("virtual ");
             headerText.Write(method.IsFunction() ? GetStringFromType(method.ReturnType) : "void");
@@ -145,22 +241,7 @@ namespace SLangCompiler.BackEnd.Translator
             }
         }
 
-        private void TranslateRoutineDecl(RoutineNameTableItem routine)
-        {
-            headerText.Write(routine.IsFunction() ? GetStringFromType(routine.ReturnType) : "void");
-            headerText.Write($" {routine.Name}(");
-            WriteParameters(headerText, routine.Params);
-            headerText.Write(");");
-            headerText.WriteLine();
-        }
-
-        private void TranslateFieldDecl(ModuleFieldNameTableItem item)
-        {
-            headerText.WriteLine($"extern {GetStringFromType(item.Type)} {item.Name};");
-        }
-
-        // common functions
-
+        // helpers
         private string GetStringFromType(SlangType returnType)
         {
             var res = "";
@@ -178,19 +259,13 @@ namespace SLangCompiler.BackEnd.Translator
             }
             else if (returnType is SlangArrayType at)
             {
-                for (int i = 0; i < at.Dimension; ++i)
-                {
-                    res += "std::vector<";
-                }
+                WriteVectorTypeStart(at.Dimension);
                 res += GetStringFromType(at.Type);
-                for (int i = 0; i < at.Dimension; ++i)
-                {
-                    res += '>';
-                }
+                WriteVectorTypeEnd(at.Dimension);
             }
             else if (returnType is SlangCustomType ct)
             {
-                res = $"{ct.ModuleName}::{ct.Name}";
+                res = ct.ModuleName == moduleName ? ct.Name : $"{ct.ModuleName}::{ct.Name}";
             }
             else if (returnType is SlangPointerType pt)
             {
@@ -199,16 +274,43 @@ namespace SLangCompiler.BackEnd.Translator
             return res;
         }
 
+        private void WriteEverywhere() => canWriteHeader = true;
+        private void WriteNotInHeader() => canWriteHeader = false;
+
         private void WriteAll(string text)
         {
-            headerText.Write(text);
+            if (canWriteHeader)
+            {
+                headerText.Write(text);
+            }
+            
             cppText.Write(text);
         }
 
         private void WriteLineAll(string text)
         {
-            headerText.WriteLine(text);
+            if (canWriteHeader)
+            {
+                headerText.WriteLine(text);
+            }
+
             cppText.WriteLine(text);
+        }
+
+        private void WriteVectorTypeStart(int dimension)
+        {
+            for (int i = 0; i < dimension; ++i)
+            {
+                WriteAll("std::vector<");
+            }
+        }
+
+        private void WriteVectorTypeEnd(int dimension)
+        {
+            for (int i = 0; i < dimension; ++i)
+            {
+                WriteAll(">");
+            }
         }
     }
 }

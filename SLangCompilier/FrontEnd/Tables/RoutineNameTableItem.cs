@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
-    public class RoutineNameTableItem: BaseNameTableItem
+    public class RoutineNameTableItem: BaseNameTableItem, IImportable
     {
         public ImportHeader Header { get; set; }
         public string Name { get; set; }
