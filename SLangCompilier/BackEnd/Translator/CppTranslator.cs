@@ -33,6 +33,7 @@ namespace SLangCompiler.BackEnd.Translator
             headerText.WriteLine("#include <iostream>");
             headerText.WriteLine("#include <vector>");
             headerText.WriteLine("#include <memory>");
+            headerText.WriteLine("#include <string>");
 
             foreach (var module in currentModule.ImportedModules)
             {
@@ -53,15 +54,18 @@ namespace SLangCompiler.BackEnd.Translator
 
         public void TranslateInitalizeBlockOnStart()
         {
-            headerText.WriteLine($"namespace {currentModule.ModuleData.Name}");
-            headerText.WriteLine("{");
+            WriteLineAll($"namespace {currentModule.ModuleData.Name}");
+            WriteLineAll("{");
             headerText.Indent++;
+            cppText.Indent++;
+            // all declarations starts here...
         }
 
         public void TranslateInitializeBlockOnFinish()
         {
             headerText.Indent--;
-            headerText.WriteLine("}");
+            cppText.Indent--;
+            WriteLineAll("}");
         }
 
         public void TranslateOnFinish()
@@ -105,17 +109,17 @@ namespace SLangCompiler.BackEnd.Translator
             }
         }
 
-        private void TranslateClassFieldDecl(VariableNameTableItem field)
+        public void TranslateClassFieldDecl(VariableNameTableItem field)
         {
             headerText.Write($"{GetStringFromType(field.Type)} {field.Name};");
         }
 
-        private void TranslateMethodDecl(MethodNameTableItem method)
+        public void TranslateMethodDecl(MethodNameTableItem method)
         {
             headerText.Write("virtual ");
             headerText.Write(method.IsFunction() ? GetStringFromType(method.ReturnType) : "void");
-            headerText.Write(" (");
-            WriteParameters(method.Params);
+            headerText.Write($" {method.Name}(");
+            WriteParameters(headerText, method.Params);
             headerText.Write(")");
             if (method.IsAbstract)
             {
@@ -124,22 +128,38 @@ namespace SLangCompiler.BackEnd.Translator
             headerText.WriteLine(";");
         }
 
-        private void WriteParameters(IList<RoutineArgNameTableItem> args)
+        private void WriteParameters(IndentedTextWriter writer, IList<RoutineArgNameTableItem> args)
         {
             foreach (var arg in args)
             {
-                headerText.Write(GetStringFromType(arg.TypeArg.Type));
+                writer.Write(GetStringFromType(arg.TypeArg.Type));
                 if (arg.TypeArg.Modifier == ParamModifier.Ref)
                 {
                     headerText.Write('&');
                 }
-                headerText.Write($" {arg.Name}");
+                writer.Write($" {arg.Name}");
                 if (arg != args.Last())
                 {
-                    headerText.Write(", ");
+                    writer.Write(", ");
                 }
             }
         }
+
+        private void TranslateRoutineDecl(RoutineNameTableItem routine)
+        {
+            headerText.Write(routine.IsFunction() ? GetStringFromType(routine.ReturnType) : "void");
+            headerText.Write($" {routine.Name}(");
+            WriteParameters(headerText, routine.Params);
+            headerText.Write(");");
+            headerText.WriteLine();
+        }
+
+        private void TranslateFieldDecl(ModuleFieldNameTableItem item)
+        {
+            headerText.WriteLine($"extern {GetStringFromType(item.Type)} {item.Name};");
+        }
+
+        // common functions
 
         private string GetStringFromType(SlangType returnType)
         {
@@ -177,6 +197,18 @@ namespace SLangCompiler.BackEnd.Translator
                 res = $"std::shared_ptr<{GetStringFromType(pt.PtrType)}>";
             }
             return res;
+        }
+
+        private void WriteAll(string text)
+        {
+            headerText.Write(text);
+            cppText.Write(text);
+        }
+
+        private void WriteLineAll(string text)
+        {
+            headerText.WriteLine(text);
+            cppText.WriteLine(text);
         }
     }
 }
