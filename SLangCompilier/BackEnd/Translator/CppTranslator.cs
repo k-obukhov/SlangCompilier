@@ -205,12 +205,13 @@ namespace SLangCompiler.BackEnd.Translator
             // write constructor
             var exps = context.arrayDeclType().exp();
             int dimensionCount = exps.Length;
+            int n = dimensionCount - 1;
             foreach (var exp in context.arrayDeclType().exp())
             {
                 cppText.Write("(");
                 Visit(exp);
 
-                if (dimensionCount > 0)
+                if (n > 0)
                 {
                     cppText.Write(", ");
                     cppText.Write(GetVectorTypeStart(dimensionCount));
@@ -218,7 +219,7 @@ namespace SLangCompiler.BackEnd.Translator
                     cppText.Write(GetVectorTypeEnd(dimensionCount));
                 }
 
-                dimensionCount--;
+                n--;
             }
 
             for (int i = 0; i < exps.Length; ++i)
