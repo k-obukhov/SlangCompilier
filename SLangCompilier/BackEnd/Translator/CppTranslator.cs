@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace SLangCompiler.BackEnd.Translator
 {
-    public class CppTranslator: SLangGrammarBaseVisitor<object>
+    public partial class CppTranslator: SLangGrammarBaseVisitor<object>
     {
         private readonly IndentedTextWriter headerText;
         private readonly IndentedTextWriter cppText;
@@ -30,6 +30,7 @@ namespace SLangCompiler.BackEnd.Translator
             headerText = new IndentedTextWriter(headerWriter);
             cppText = new IndentedTextWriter(cppWriter);
             source = src;
+            currentModule = curModule;
             moduleName = currentModule.ModuleData.Name;
 
             scope = new Scope();
@@ -147,6 +148,9 @@ namespace SLangCompiler.BackEnd.Translator
 
         public override object VisitStatementSeq([NotNull] SLangGrammarParser.StatementSeqContext context)
         {
+            var newScope = new Scope(scope);
+            scope = newScope;
+
             cppText.WriteLine('{');
             cppText.Indent++;
             foreach (var stmt in context.statement())
@@ -155,71 +159,136 @@ namespace SLangCompiler.BackEnd.Translator
             }
             cppText.Indent--;
             cppText.WriteLine('}');
+
+            scope = scope?.Outer;
             return null;
         }
 
-        public override object VisitSimpleStatement([NotNull] SLangGrammarParser.SimpleStatementContext context)
+        public override object VisitModuleStatementsSeq([NotNull] SLangGrammarParser.ModuleStatementsSeqContext context)
         {
-            base.VisitSimpleStatement(context);
-            cppText.Write(';');
+            inProgramBlock = true;
+            cppText.WriteLine("int main()");
+            Visit(context.statementSeq());
             return null;
         }
 
         public override object VisitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context)
         {
-            return base.VisitModuleFieldDecl(context);
-        }
-        // types logic
-        public override object VisitSimpleType([NotNull] SLangGrammarParser.SimpleTypeContext context)
-        {
-            return new SlangSimpleType(context.SimpleType().GetText());
+            headerText.Write("extern ");
+            base.VisitModuleFieldDecl(context);
+            WriteLineAll(";");
+            return null;
         }
 
-        public override object VisitArrayType([NotNull] SLangGrammarParser.ArrayTypeContext context)
+        // declares
+        public override object VisitSimpleDecl([NotNull] SLangGrammarParser.SimpleDeclContext context)
         {
-            var dimension = context.arrayDimention().Length;
-            var type = Visit(context.scalarType()) as SlangType;
-
-            return new SlangArrayType(type, dimension);
-        }
-
-        public override object VisitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context)
-        {
-            SlangCustomType customType;
-            if (context.customType() != null)
-            {
-                customType = GetCustomTypeContext(context.customType());
-            } 
-            else 
-            {
-                customType = SlangCustomType.Object;
-            };
-            return new SlangPointerType(customType);
-        }
-
-        public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
-        {
-            var res = GetCustomTypeContext(context);
+            var type = Visit(context.simpleType()) as SlangType;
+            var nameToken = context.Id().Symbol;
+            var res = new VariableNameTableItem { Type = type, IsConstant = false, Column = nameToken.Column, Line = nameToken.Line, Name = nameToken.Text };
+            PutVariableIfInBlock(res);
             return res;
         }
 
-        private SlangCustomType GetCustomTypeContext(SLangGrammarParser.CustomTypeContext context)
+        public override object VisitArrayDecl([NotNull] SLangGrammarParser.ArrayDeclContext context)
         {
-            string moduleName = "", typeName = "";
-            var ids = context.qualident().Id().Select(x => x.GetText()).ToArray();
+            var type = Visit(context.arrayDeclType()) as SlangType;
+            var nameToken = context.Id().Symbol;
+            var res = new VariableNameTableItem { Type = type, IsConstant = false, Column = nameToken.Column, Line = nameToken.Line, Name = nameToken.Text };
 
-            if (ids.Count() == 1)
+            if (!inProgramBlock && currentRoutine == null)
             {
-                moduleName = this.moduleName;
-                typeName = ids[0];
+                TranslateDeclareHead(res, headerText);
             }
-            else if (ids.Count() == 2)
-            {
-                moduleName = ids[0];
-                typeName = ids[1];
+            TranslateDeclareHead(res, cppText);
 
+            // write constructor
+            var exps = context.arrayDeclType().exp();
+            int dimensionCount = exps.Length;
+            foreach (var exp in context.arrayDeclType().exp())
+            {
+                cppText.Write("(");
+                Visit(exp);
+
+                if (dimensionCount > 0)
+                {
+                    cppText.Write(", ");
+                    cppText.Write(GetVectorTypeStart(dimensionCount));
+                    Visit(context.arrayDeclType().scalarType());
+                    cppText.Write(GetVectorTypeEnd(dimensionCount));
+                }
+
+                dimensionCount--;
             }
-           return new SlangCustomType(moduleName, typeName);
+
+            for (int i = 0; i < exps.Length; ++i)
+            {
+                cppText.Write(")");
+            }
+
+            PutVariableIfInBlock(res);
+            return null;
+        }
+
+        private void PutVariableIfInBlock(VariableNameTableItem res)
+        {
+            if (inProgramBlock || currentRoutine != null)
+            {
+                scope.PutVariable(res);
+            }
+        }
+
+        public override object VisitPtrDecl([NotNull] SLangGrammarParser.PtrDeclContext context)
+        {
+            var type = Visit(context.ptrType()) as SlangType;
+            var nameToken = context.Id().Symbol;
+            var res = new VariableNameTableItem { Type = type, IsConstant = false, Column = nameToken.Column, Line = nameToken.Line, Name = nameToken.Text };
+            PutVariableIfInBlock(res);
+            return res;
+        }
+
+        public override object VisitConstDecl([NotNull] SLangGrammarParser.ConstDeclContext context)
+        {
+            var type = Visit(context.scalarType()) as SlangType;
+            var nameToken = context.Id().Symbol;
+            var item = new VariableNameTableItem { Type = type, IsConstant = false, Column = nameToken.Column, Line = nameToken.Line, Name = nameToken.Text };
+            PutVariableIfInBlock(item);
+            TranslateDeclare(item, context.exp());
+            return null;
+        }
+
+        public override object VisitVariableDecl([NotNull] SLangGrammarParser.VariableDeclContext context)
+        {
+            var item = VisitChildren(context) as VariableNameTableItem;
+            if (item != null)
+            {
+                TranslateDeclare(item, context.exp());
+            }
+            return null;
+        }
+
+        private void TranslateDeclare(VariableNameTableItem item, SLangGrammarParser.ExpContext expContext)
+        {
+            if (!inProgramBlock && currentRoutine == null)
+            {
+                TranslateDeclareHead(item, headerText);
+            }
+            TranslateDeclareHead(item, cppText);
+            if (expContext != null)
+            {
+                cppText.Write(" = ");
+                Visit(expContext);
+            }
+        }
+
+        private void TranslateDeclareHead(VariableNameTableItem item, IndentedTextWriter writer)
+        {
+            // module var
+            if (item.IsConstant)
+            {
+                writer.Write($"const ");
+            }
+            writer.WriteLine($"{GetStringFromType(item.Type)} {item.Name} ");
         }
 
         public void TranslateCustomType(string typeName)
@@ -303,80 +372,6 @@ namespace SLangCompiler.BackEnd.Translator
                 }
             }
             writer.Write(')');
-        }
-
-        // helpers
-        /// <summary>
-        /// uses only for routines/fields declaration, another declares should use Visit() for types
-        /// </summary>
-        /// <param name="returnType"></param>
-        /// <returns></returns>
-        private string GetStringFromType(SlangType returnType)
-        {
-            var res = "";
-            var simpleTypes = new Dictionary<string, string>
-            {
-                { CompilerConstants.IntegerType, "int" },
-                { CompilerConstants.RealType, "float" },
-                { CompilerConstants.CharacterType, "char" },
-                { CompilerConstants.BooleanType, "bool" },
-                { CompilerConstants.StringType, "std::string" }
-            };
-            if (returnType is SlangSimpleType st)
-            {
-                res = simpleTypes[st.Name];
-            }
-            else if (returnType is SlangArrayType at)
-            {
-                res += GetVectorTypeStart(at.Dimension);
-                res += GetStringFromType(at.Type);
-                res += GetVectorTypeEnd(at.Dimension);
-            }
-            else if (returnType is SlangCustomType ct)
-            {
-                res = ct.ModuleName == moduleName ? ct.Name : $"{ct.ModuleName}::{ct.Name}";
-            }
-            else if (returnType is SlangPointerType pt)
-            {
-                res = $"std::shared_ptr<{GetStringFromType(pt.PtrType)}>";
-            }
-            else if (returnType == null)
-            {
-                res = "void";
-            }
-            return res;
-        }
-
-        private void WriteAll(string text)
-        {
-            headerText.Write(text);
-            cppText.Write(text);
-        }
-
-        private void WriteLineAll(string text)
-        {
-            headerText.WriteLine(text);
-            cppText.WriteLine(text);
-        }
-
-        private string GetVectorTypeStart(int dimension)
-        {
-            string res = "";
-            for (int i = 0; i < dimension; ++i)
-            {
-                res += "std::vector<";
-            }
-            return res;
-        }
-
-        private string GetVectorTypeEnd(int dimension)
-        {
-            string res = "";
-            for (int i = 0; i < dimension; ++i)
-            {
-                res += ">";
-            }
-            return res;
         }
     }
 }
