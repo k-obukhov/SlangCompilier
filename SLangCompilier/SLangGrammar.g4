@@ -18,7 +18,7 @@ simpleDecl: Variable (simpleType | customType) Id ;
 arrayDecl: arrayDeclType Id ;
 arrayDeclType: Array (LSBrace exp RSBrace)+ scalarType;
 ptrDecl: ptrType Id ;
-constDecl: Const typeName Id Assign exp;
+constDecl: Const scalarType Id Assign exp;
 moduleFieldDecl: AccessModifier ((Readonly)? variableDecl | constDecl) Semicolon;
 
 typeName: scalarType | arrayType;

@@ -657,7 +657,7 @@ namespace SLangCompiler.FrontEnd
         public override object VisitConstDecl([NotNull] SLangGrammarParser.ConstDeclContext context)
         {
             var name = context.Id();
-            var type = Visit(context.typeName()) as SlangType;
+            var type = Visit(context.scalarType()) as SlangType;
             var constant = new VariableNameTableItem { Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, IsConstant = true, Type = type };
 
             CheckDeclareContext(context.exp(), constant);

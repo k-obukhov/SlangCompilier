@@ -131,7 +131,7 @@ namespace SLangCompiler.FrontEnd
         public override object VisitConstDecl([NotNull] SLangGrammarParser.ConstDeclContext context)
         {
             var symbol = context.Id();
-            return new VariableNameTableItem { Name = symbol.GetText(), Column = symbol.Symbol.Column, IsConstant = true, Line = symbol.Symbol.Line, Type = Visit(context.typeName()) as SlangType };
+            return new VariableNameTableItem { Name = symbol.GetText(), Column = symbol.Symbol.Column, IsConstant = true, Line = symbol.Symbol.Line, Type = Visit(context.scalarType()) as SlangType };
         }
 
         public override object VisitTypeFieldDecl([NotNull] SLangGrammarParser.TypeFieldDeclContext context)
