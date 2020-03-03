@@ -1,9 +1,11 @@
-﻿using Antlr4.Runtime.Misc;
+﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Misc;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangGrammar;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using static SLangCompiler.Exceptions.CompilerErrors;
@@ -81,6 +83,10 @@ namespace SLangCompiler.FrontEnd
             if (moduleName != CompilerConstants.MainModuleName && context.moduleStatementsSeq() != null)
             {
                 ThrowEntryPointException(moduleName, ModuleData.File, context.moduleStatementsSeq().Start().Symbol);
+            }
+            if (moduleName == CompilerConstants.MainModuleName && context.moduleStatementsSeq() == null)
+            {
+                ThrowEntryPointMainException(ModuleData.File, context.Id().Symbol);
             }
 
             return base.VisitModule(context);

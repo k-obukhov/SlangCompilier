@@ -145,6 +145,26 @@ namespace SLangCompiler.BackEnd.Translator
             Visit(ctx);
         }
 
+        public override object VisitStatementSeq([NotNull] SLangGrammarParser.StatementSeqContext context)
+        {
+            cppText.WriteLine('{');
+            cppText.Indent++;
+            foreach (var stmt in context.statement())
+            {
+                Visit(stmt);
+            }
+            cppText.Indent--;
+            cppText.WriteLine('}');
+            return null;
+        }
+
+        public override object VisitSimpleStatement([NotNull] SLangGrammarParser.SimpleStatementContext context)
+        {
+            base.VisitSimpleStatement(context);
+            cppText.Write(';');
+            return null;
+        }
+
         public override object VisitModuleFieldDecl([NotNull] SLangGrammarParser.ModuleFieldDeclContext context)
         {
             return base.VisitModuleFieldDecl(context);
