@@ -3,10 +3,8 @@ using Antlr4.Runtime.Tree;
 using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace SLangCompiler.Exceptions
 {

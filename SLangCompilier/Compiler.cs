@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using SLangCompiler.FileServices;
-using System.Threading.Tasks;
-using SLangCompiler.BackEnd;
-using SLangCompiler.FrontEnd;
+﻿using SLangCompiler.BackEnd;
 using SLangCompiler.Exceptions;
+using SLangCompiler.FileServices;
+using SLangCompiler.FrontEnd;
+using System;
+using System.IO;
 
 namespace SLangCompiler
 {

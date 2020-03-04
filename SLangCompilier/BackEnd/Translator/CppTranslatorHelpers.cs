@@ -1,12 +1,6 @@
-﻿using Antlr4.Runtime.Misc;
-using SLangCompiler.FrontEnd.Tables;
+﻿using SLangCompiler.FrontEnd.Types;
 using SLangGrammar;
-using System;
-using System.CodeDom.Compiler;
-using SLangCompiler.FrontEnd.Types;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Linq;
 
 namespace SLangCompiler.BackEnd.Translator

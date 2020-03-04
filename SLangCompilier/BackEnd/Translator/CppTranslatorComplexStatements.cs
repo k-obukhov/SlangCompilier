@@ -1,6 +1,5 @@
-﻿using SLangGrammar;
-using SLangCompiler.FrontEnd.Types;
-using Antlr4.Runtime.Misc;
+﻿using Antlr4.Runtime.Misc;
+using SLangGrammar;
 using System.Linq;
 
 namespace SLangCompiler.BackEnd.Translator
@@ -54,7 +53,7 @@ namespace SLangCompiler.BackEnd.Translator
             cppText.Write("while (");
             Visit(context.exp());
             cppText.Write(")");
-            
+
             return null;
         }
     }

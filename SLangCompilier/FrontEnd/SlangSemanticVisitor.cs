@@ -15,9 +15,9 @@ namespace SLangCompiler.FrontEnd
 {
     public static class FindItem
     {
-        public static BaseNameTableItem ByName(string name, 
-            Scope scope, 
-            RoutineNameTableItem currentRoutine, 
+        public static BaseNameTableItem ByName(string name,
+            Scope scope,
+            RoutineNameTableItem currentRoutine,
             SlangCustomType currentType,
             ModuleNameTable moduleItem,
             SourceCodeTable Table,
@@ -81,7 +81,7 @@ namespace SLangCompiler.FrontEnd
         private SlangCustomType currentType;
         private readonly FileInfo file;
         // проверка определений для классов, функций и переменных модуля -- нельзя использовать их до их объявления, как в С++!
-        private readonly Dictionary<string, bool> checkDefinitions = new Dictionary<string, bool>(); 
+        private readonly Dictionary<string, bool> checkDefinitions = new Dictionary<string, bool>();
         public SlangSemanticVisitor(SourceCodeTable table, ModuleData module) : base(table, module)
         {
             moduleItem = table.Modules[module.Name];
@@ -467,7 +467,9 @@ namespace SLangCompiler.FrontEnd
                     {
                         if (varItem.ToSlangType() is SlangArrayType arrayType)
                         {
-                            item = new VariableNameTableItem { Type = arrayType.ArrayElementType(),
+                            item = new VariableNameTableItem
+                            {
+                                Type = arrayType.ArrayElementType(),
                                 Column = errToken.Column,
                                 Line = errToken.Line,
                                 Name = $"{varItem.Name}[]",
@@ -476,7 +478,9 @@ namespace SLangCompiler.FrontEnd
                         }
                         else if (varItem.ToSlangType() is SlangSimpleType st && st.Equals(SlangSimpleType.String))
                         {
-                            item = new VariableNameTableItem { Type = SlangSimpleType.Character,
+                            item = new VariableNameTableItem
+                            {
+                                Type = SlangSimpleType.Character,
                                 Column = errToken.Column,
                                 Line = errToken.Line,
                                 Name = $"{varItem.Name}[]",

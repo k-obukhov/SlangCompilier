@@ -1,8 +1,4 @@
-﻿using SLangCompiler.BackEnd.Translator;
-using SLangCompiler.FrontEnd.Tables;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using SLangCompiler.FrontEnd.Tables;
 
 namespace SLangCompiler.BackEnd
 {

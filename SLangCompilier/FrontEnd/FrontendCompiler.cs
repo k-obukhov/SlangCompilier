@@ -1,12 +1,8 @@
-﻿using SLangCompiler.FrontEnd.Tables;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Antlr4.Runtime;
-using System.Linq;
-using SLangGrammar;
-using Antlr4.Runtime.Tree;
+﻿using Antlr4.Runtime;
 using SLangCompiler.FileServices;
+using SLangCompiler.FrontEnd.Tables;
+using SLangGrammar;
+using System.Linq;
 
 namespace SLangCompiler.FrontEnd
 {
@@ -44,7 +40,7 @@ namespace SLangCompiler.FrontEnd
                 // store data step
                 storeStepVisitor.Visit(parser.start());
             });
-            
+
             modules.Keys.ToList().ForEach((key) =>
             {
                 SLangGrammarParser parser = GenerateParser(modules[key].Data);

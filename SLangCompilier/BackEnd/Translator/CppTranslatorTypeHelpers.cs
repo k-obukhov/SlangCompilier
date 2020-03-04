@@ -1,6 +1,6 @@
-﻿using SLangGrammar;
+﻿using Antlr4.Runtime.Misc;
 using SLangCompiler.FrontEnd.Types;
-using Antlr4.Runtime.Misc;
+using SLangGrammar;
 
 namespace SLangCompiler.BackEnd.Translator
 {

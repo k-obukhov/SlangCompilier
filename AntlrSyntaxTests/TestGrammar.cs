@@ -15,7 +15,7 @@ namespace AntlrSyntaxTests
 
         private void TestFiles()
         {
-            for(int i = 0; i < allFiles.Length; ++i)
+            for (int i = 0; i < allFiles.Length; ++i)
             {
                 Console.WriteLine($"Test #{i + 1}");
                 GrammarTester.Test(allFiles[i]);
@@ -25,7 +25,7 @@ namespace AntlrSyntaxTests
         [Test]
         public void TestFilesFound()
         {
-            foreach(var file in allFiles)
+            foreach (var file in allFiles)
             {
                 TestContext.Out.WriteLine(file);
             }

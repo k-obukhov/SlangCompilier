@@ -1,17 +1,15 @@
 ﻿using Antlr4.Runtime.Misc;
 using SLangCompiler.FrontEnd.Tables;
-using SLangGrammar;
-using System;
-using System.CodeDom.Compiler;
 using SLangCompiler.FrontEnd.Types;
+using SLangGrammar;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Linq;
 
 namespace SLangCompiler.BackEnd.Translator
 {
-    public partial class CppTranslator: SLangGrammarBaseVisitor<object>
+    public partial class CppTranslator : SLangGrammarBaseVisitor<object>
     {
         private readonly IndentedTextWriter headerText;
         private readonly IndentedTextWriter cppText;
@@ -57,7 +55,7 @@ namespace SLangCompiler.BackEnd.Translator
 
             // cpp includes
             cppText.WriteLine($"#include \"{moduleName}.h\"");
-            
+
             base.VisitStart(context);
 
             headerText.WriteLine();

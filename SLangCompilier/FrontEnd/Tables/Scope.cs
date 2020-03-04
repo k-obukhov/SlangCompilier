@@ -1,9 +1,4 @@
-﻿using Antlr4.Runtime;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using static SLangCompiler.Exceptions.CompilerErrors;
+﻿using System.Collections.Generic;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
@@ -38,7 +33,7 @@ namespace SLangCompiler.FrontEnd.Tables
 
         public bool VariableExists(string name) => FindVariable(name) != null;
 
-        
+
         public void PutVariable(VariableNameTableItem item)
         {
             // присвоение без проверок, очень зависит от контекста

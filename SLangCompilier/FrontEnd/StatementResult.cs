@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SLangCompiler.FrontEnd
+﻿namespace SLangCompiler.FrontEnd
 {
     /// <summary>
     /// Класс для возврата данных о выражениях

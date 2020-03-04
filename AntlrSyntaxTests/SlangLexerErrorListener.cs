@@ -1,11 +1,9 @@
 ﻿using Antlr4.Runtime;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace AntlrSyntaxTests
 {
-    class SlangLexerErrorListener: IAntlrErrorListener<int>
+    class SlangLexerErrorListener : IAntlrErrorListener<int>
     {
         public List<EditorMessage> ErrorMessages { get; private set; } // Сообщения об ошибке
         public SlangLexerErrorListener()

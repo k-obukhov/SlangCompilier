@@ -1,17 +1,14 @@
-﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Misc;
+﻿using Antlr4.Runtime.Misc;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
 using SLangGrammar;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd
 {
-    public class SlangStoreFieldsVisitor: SlangBaseVisitor
+    public class SlangStoreFieldsVisitor : SlangBaseVisitor
     {
         private readonly ModuleNameTable moduleItem;
         public SlangStoreFieldsVisitor(SourceCodeTable table, ModuleData module) : base(table, module)
@@ -99,7 +96,7 @@ namespace SLangCompiler.FrontEnd
             }
             var isReadonly = context.Readonly() == null;
 
-            
+
             if (moduleItem.Fields.ContainsKey(data.Name))
             {
                 ThrowIfVariableExistsException(data.Name, ModuleData.File, data.Line, data.Column);

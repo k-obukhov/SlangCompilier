@@ -7,7 +7,7 @@ using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
-    public class ClassNameTableItem: BaseNameTableItem
+    public class ClassNameTableItem : BaseNameTableItem
     {
         public new string Name => TypeIdent.Name;
         public AccessModifier AccessModifier { get; set; }
@@ -59,7 +59,7 @@ namespace SLangCompiler.FrontEnd.Tables
         }
     }
 
-    public class MethodNameTableItem: RoutineNameTableItem, ICloneable
+    public class MethodNameTableItem : RoutineNameTableItem, ICloneable
     {
         public bool IsDerived { get; set; } = false;
         public bool IsAbstract { get; set; }

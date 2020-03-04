@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Antlr4.Runtime;
+﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
 using SLangGrammar;
-
+using System;
+using System.Linq;
 using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd
 {
-    public class SlangBaseVisitor: SLangGrammarBaseVisitor<object>
+    public class SlangBaseVisitor : SLangGrammarBaseVisitor<object>
     {
         public SourceCodeTable Table { get; }
         public ModuleData ModuleData { get; }

@@ -1,10 +1,6 @@
-﻿using SLangCompiler.Exceptions;
-using SLangCompiler.FileServices;
-using SLangCompiler.FrontEnd;
-using SLangCompiler.BackEnd;
+﻿using SLangCompiler.BackEnd;
 using SLangCompiler.BackEnd.Translator;
 using System;
-using System.IO;
 
 namespace SLangCompiler
 {
@@ -33,7 +29,7 @@ namespace SLangCompiler
 
                 compiler = new CompilerBuilder().SetPath(sourceCodeFolder).SetCompiler(GetBackendById(lang)).Build();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine($"Invalid cl parameters: Error {e}");
             }

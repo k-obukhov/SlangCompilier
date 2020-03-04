@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SLangCompiler.FrontEnd.Tables
+﻿namespace SLangCompiler.FrontEnd.Tables
 {
     /// <summary>
     /// Необходим для логики импорта извне 

@@ -1,7 +1,4 @@
 ﻿using SLangCompiler.FrontEnd.Types;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SLangCompiler.FrontEnd
 {

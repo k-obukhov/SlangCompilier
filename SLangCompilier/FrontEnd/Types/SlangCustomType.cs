@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SLangCompiler.FrontEnd.Types
+﻿namespace SLangCompiler.FrontEnd.Types
 {
     /// <summary>
     /// base custom type checks
     /// </summary>
-    public class SlangCustomType: SlangType
+    public class SlangCustomType : SlangType
     {
         public static SlangCustomType Object => new SlangCustomType(CompilerConstants.SystemModuleName, CompilerConstants.ObjectClassName);
 

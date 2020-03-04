@@ -1,11 +1,9 @@
-﻿using SLangCompiler.Exceptions;
-using SLangCompiler.FrontEnd.Tables;
+﻿using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd

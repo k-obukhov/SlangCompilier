@@ -1,13 +1,9 @@
-﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Misc;
+﻿using Antlr4.Runtime.Misc;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangGrammar;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd
@@ -20,7 +16,7 @@ namespace SLangCompiler.FrontEnd
     /// Мотивация:
     /// 1) Иметь базовую информацию по типам к следующему проходу, который использует эту информацию при определении функций и методов
     /// </summary>
-    public class SlangStoreTypesVisitor: SlangBaseVisitor
+    public class SlangStoreTypesVisitor : SlangBaseVisitor
     {
         private readonly ModuleNameTable moduleTable = new ModuleNameTable();
         private readonly string[] allModuleNames;

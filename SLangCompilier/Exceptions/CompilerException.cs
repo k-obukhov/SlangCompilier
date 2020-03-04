@@ -7,7 +7,7 @@ namespace SLangCompiler.Exceptions
     /// <summary>
     /// Exception for errors from compilier
     /// </summary>
-    public class CompilerException: ApplicationException
+    public class CompilerException : ApplicationException
     {
         public CompilerException(string message, FileInfo moduleFile, int line, int column) : base(message)
         {

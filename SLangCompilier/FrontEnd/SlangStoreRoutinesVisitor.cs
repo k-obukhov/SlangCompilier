@@ -1,19 +1,16 @@
-﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Misc;
+﻿using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
 using SLangGrammar;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd
 {
-    public class SlangStoreRoutinesVisitor: SlangBaseVisitor
+    public class SlangStoreRoutinesVisitor : SlangBaseVisitor
     {
         private readonly ModuleNameTable moduleItem;
         public SlangStoreRoutinesVisitor(SourceCodeTable table, ModuleData module) : base(table, module)
@@ -102,7 +99,7 @@ namespace SLangCompiler.FrontEnd
         public override object VisitFunctionDecl([NotNull] SLangGrammarParser.FunctionDeclContext context)
         {
             ValidateContext(context.thisHeader(), context.Id(), context.importHead(), context.AccessModifier(), context.Abstract(), context.Override(), context.routineArgList(), context.typeName(), context.statementSeq());
-            
+
             return base.VisitFunctionDecl(context);
         }
 
@@ -244,10 +241,13 @@ namespace SLangCompiler.FrontEnd
         public override object VisitRoutineArg([NotNull] SLangGrammarParser.RoutineArgContext context)
         {
             var id = context.Id();
-            return new RoutineArgNameTableItem { Column = id.Symbol.Column, 
-                Line = id.Symbol.Line, 
-                Name = id.GetText(), 
-                TypeArg = new SlangRoutineTypeArg(GetParamModifierByName(context.FunctionArgModifier().GetText()), Visit(context.typeName()) as SlangType) };
+            return new RoutineArgNameTableItem
+            {
+                Column = id.Symbol.Column,
+                Line = id.Symbol.Line,
+                Name = id.GetText(),
+                TypeArg = new SlangRoutineTypeArg(GetParamModifierByName(context.FunctionArgModifier().GetText()), Visit(context.typeName()) as SlangType)
+            };
         }
 
         // same as functions only without return type (maybe i can optimize that later)

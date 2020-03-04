@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace SLangCompiler.FrontEnd.Types
 {
-    public abstract class SlangRoutineType: SlangType
+    public abstract class SlangRoutineType : SlangType
     {
         public IList<SlangRoutineTypeArg> Args { get; set; }
 

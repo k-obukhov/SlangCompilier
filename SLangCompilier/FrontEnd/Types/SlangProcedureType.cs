@@ -5,9 +5,9 @@ using System.Text;
 
 namespace SLangCompiler.FrontEnd.Types
 {
-    class SlangProcedureType: SlangRoutineType
+    class SlangProcedureType : SlangRoutineType
     {
-        public SlangProcedureType(IList<SlangRoutineTypeArg> args): base(args)
+        public SlangProcedureType(IList<SlangRoutineTypeArg> args) : base(args)
         {
         }
 

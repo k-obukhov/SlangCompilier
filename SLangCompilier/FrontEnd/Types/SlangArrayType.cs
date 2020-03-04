@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
 namespace SLangCompiler.FrontEnd.Types
 {
     /// <summary>
     /// Base class for arrays
     /// </summary>
-    class SlangArrayType: SlangType
+    class SlangArrayType : SlangType
     {
         public SlangType Type { get; set; }
         public int Dimension { get; set; }

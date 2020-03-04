@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
-    public class RoutineNameTableItem: BaseNameTableItem, IImportable
+    public class RoutineNameTableItem : BaseNameTableItem, IImportable
     {
         public ImportHeader Header { get; set; }
         public SlangType ReturnType { get; set; }
@@ -17,7 +17,7 @@ namespace SLangCompiler.FrontEnd.Tables
         public bool IsProcedure() => ReturnType == null;
     }
 
-    public class RoutineArgNameTableItem: BaseNameTableItem
+    public class RoutineArgNameTableItem : BaseNameTableItem
     {
         public SlangRoutineTypeArg TypeArg { get; set; }
 

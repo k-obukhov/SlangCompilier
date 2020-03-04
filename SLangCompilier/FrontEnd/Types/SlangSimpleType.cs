@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SLangCompiler.FrontEnd.Types
+﻿namespace SLangCompiler.FrontEnd.Types
 {
     /// <summary>
     /// Simple types -- int, float, char, bool
     /// </summary>
-    public class SlangSimpleType: SlangType
+    public class SlangSimpleType : SlangType
     {
         public static SlangSimpleType Int => new SlangSimpleType(CompilerConstants.IntegerType);
         public static SlangSimpleType Real => new SlangSimpleType(CompilerConstants.RealType);

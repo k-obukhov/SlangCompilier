@@ -1,10 +1,6 @@
 ﻿using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Types;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd.Tables
@@ -12,7 +8,7 @@ namespace SLangCompiler.FrontEnd.Tables
     /// <summary>
     /// Name table for single module
     /// </summary>
-    public class ModuleNameTable: BaseNameTableItem
+    public class ModuleNameTable : BaseNameTableItem
     {
         public new string Name => ModuleData.Name;
         public ModuleData ModuleData { get; set; }
