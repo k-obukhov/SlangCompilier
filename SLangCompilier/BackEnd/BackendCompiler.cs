@@ -6,17 +6,19 @@ using System.Text;
 
 namespace SLangCompiler.BackEnd
 {
-    public class BackendCompiler
+    public abstract class BackendCompiler
     {
-        private readonly SourceCodeTable table;
+        public SourceCodeTable table;
+        public void SetTable(SourceCodeTable table)
+        {
+            this.table = table;
+        }
+
         public BackendCompiler(SourceCodeTable table)
         {
             this.table = table;
         }
 
-        public void Translate()
-        {
-
-        }
+        public abstract void Translate(System.IO.DirectoryInfo pathToProject);
     }
 }

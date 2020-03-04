@@ -1,6 +1,8 @@
 ﻿using SLangCompiler.Exceptions;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd;
+using SLangCompiler.BackEnd;
+using SLangCompiler.BackEnd.Translator;
 using System;
 using System.IO;
 
@@ -8,34 +10,35 @@ namespace SLangCompiler
 {
     class Program
     {
+        const string cppLang = "cpp";
+        static BackendCompiler GetBackendById(string id)
+        {
+            switch (id)
+            {
+                case cppLang:
+                    return new CppBackendCompiler();
+                default:
+                    throw new Exception($"Invalid language tag: {id}");
+            }
+        }
         static void Main(string[] args)
         {
+            var defaultLang = cppLang;
             var defaultTestSourceFolder = @"C:\projects\sldemosem";
-            var sourceCodeFolder = args.Length == 0 ? defaultTestSourceFolder : args[0];
-            var p = new ProjectManager();
-            p.LoadCode(new System.IO.DirectoryInfo(sourceCodeFolder));
-
-            var frontend = new FrontendCompiler();
-            
+            Compiler compiler = null;
             try
             {
-                frontend.CheckErrors(p);
-                Console.WriteLine($"No errors found");
+                var sourceCodeFolder = args.Length == 0 ? defaultTestSourceFolder : args[0];
+                var lang = args.Length < 2 ? defaultLang : args[1];
+
+                compiler = new CompilerBuilder().SetPath(sourceCodeFolder).SetCompiler(GetBackendById(lang)).Build();
             }
-            catch (CompilerException e)
+            catch(Exception e)
             {
-                Console.WriteLine($"{e.ModuleFile.Name}, [{e.Line}, {e.Column}]: {e.Message}");
+                Console.WriteLine($"Invalid cl parameters: Error {e}");
             }
-            catch (IOException e)
-            {
-                Console.WriteLine($"IOError: {e.Message}");
-            }
-            catch (Exception e)
-            {
-                // all others
-                Console.WriteLine($"Compiler error: {e.Message}");
-                throw;
-            }
+
+            compiler.Translate();
         }
     }
 }
