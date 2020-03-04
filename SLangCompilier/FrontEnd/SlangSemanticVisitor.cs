@@ -13,6 +13,65 @@ using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd
 {
+    public static class FindItem
+    {
+        public static BaseNameTableItem ByName(string name, 
+            Scope scope, 
+            RoutineNameTableItem currentRoutine, 
+            SlangCustomType currentType,
+            ModuleNameTable moduleItem,
+            SourceCodeTable Table,
+            Dictionary<string, bool> checkDefinitions)
+        {
+            var result = scope.FindVariable(name); // заходим во внешние блоки
+            if (result == null)
+            {
+                // мы сейчас находимся в функции?
+                if (currentRoutine != null && currentRoutine is RoutineNameTableItem routine)
+                {
+                    // в методе?
+                    if (currentRoutine is MethodNameTableItem method)
+                    {
+                        // может это имя this метода?
+                        if (method.NameOfThis == name)
+                        {
+                            return new VariableNameTableItem { IsConstant = false, Type = currentType };
+                        }
+                    }
+                    // неважно, в функции или методе -- проверяем его параметры
+                    foreach (var param in routine.Params)
+                    {
+                        if (param.Name == name)
+                        {
+                            return new VariableNameTableItem { IsConstant = false, Type = param.TypeArg.Type };
+                        }
+                    }
+                }
+
+                if (moduleItem.Fields.ContainsKey(name) && (checkDefinitions != null ? checkDefinitions[name] : true))
+                {
+                    return moduleItem.Fields[name];
+                }
+                // либо это процедура-функция (взять все сигнатуры) ?
+                if (moduleItem.Routines.ContainsKey(name) && (checkDefinitions != null ? checkDefinitions[name] : true))
+                {
+                    return moduleItem.Routines[name];
+                }
+                // ну либо это другой модуль?
+                if (moduleItem.ImportedModules.Contains(name) || name == moduleItem.ModuleData.Name)
+                {
+                    return Table.Modules[name];
+                }
+
+                return null;
+                // иначе ничего не остается кроме как отдать пустоту
+            }
+            else
+            {
+                return result;
+            }
+        }
+    }
     public class SlangSemanticVisitor : SlangBaseVisitor
     {
         private readonly ModuleNameTable moduleItem;
@@ -122,56 +181,7 @@ namespace SLangCompiler.FrontEnd
             }
         }
 
-        private BaseNameTableItem FindItemByName(string name)
-        {
-            var result = scope.FindVariable(name); // заходим во внешние блоки
-            if (result == null)
-            {
-                // мы сейчас находимся в функции?
-                if (currentRoutine != null && currentRoutine is RoutineNameTableItem routine)
-                {
-                    // в методе?
-                    if (currentRoutine is MethodNameTableItem method)
-                    {
-                        // может это имя this метода?
-                        if (method.NameOfThis == name)
-                        {
-                            return new VariableNameTableItem { IsConstant = false, Type = currentType };
-                        }
-                    }
-                    // неважно, в функции или методе -- проверяем его параметры
-                    foreach (var param in routine.Params)
-                    {
-                        if (param.Name == name)
-                        {
-                            return new VariableNameTableItem { IsConstant = false, Type = param.TypeArg.Type };
-                        }
-                    }
-                }
-
-                if (moduleItem.Fields.ContainsKey(name) && checkDefinitions[name])
-                {
-                    return moduleItem.Fields[name];
-                }
-                // либо это процедура-функция (взять все сигнатуры) ?
-                if (moduleItem.Routines.ContainsKey(name) && checkDefinitions[name])
-                {
-                    return moduleItem.Routines[name];
-                }
-                // ну либо это другой модуль?
-                if (moduleItem.ImportedModules.Contains(name))
-                {
-                    return Table.Modules[name];
-                }
-
-                return null;
-                // иначе ничего не остается кроме как отдать пустоту
-            }
-            else
-            {
-                return result;
-            }
-        }
+        private BaseNameTableItem FindItemByName(string name) => FindItem.ByName(name, scope, currentRoutine, currentType, moduleItem, Table, checkDefinitions);
 
         public override object VisitStatementSeq([NotNull] SLangGrammarParser.StatementSeqContext context)
         {

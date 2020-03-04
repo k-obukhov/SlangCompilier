@@ -14,6 +14,7 @@ namespace SLangCompiler.FrontEnd.Tables
     /// </summary>
     public class ModuleNameTable: BaseNameTableItem
     {
+        public new string Name => ModuleData.Name;
         public ModuleData ModuleData { get; set; }
         public bool TranslatedRecently { get; set; } = false; // toDo in future
         public IList<string> ImportedModules { get; set; } = new List<string>();

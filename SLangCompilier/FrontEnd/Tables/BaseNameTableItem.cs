@@ -9,7 +9,7 @@ namespace SLangCompiler.FrontEnd.Tables
     {
         public int Line { get; set; }
         public int Column { get; set; }
-
+        public string Name { get; set; }
         public abstract SlangType ToSlangType();
     }
 }

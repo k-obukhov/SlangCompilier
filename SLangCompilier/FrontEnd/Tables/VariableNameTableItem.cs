@@ -5,7 +5,6 @@ namespace SLangCompiler.FrontEnd.Tables
     public class VariableNameTableItem: BaseNameTableItem
     {
         public bool IsConstant { get; set; }
-        public string Name { get; set; }
         public SlangType Type { get; set; }
 
         public override SlangType ToSlangType() => Type;

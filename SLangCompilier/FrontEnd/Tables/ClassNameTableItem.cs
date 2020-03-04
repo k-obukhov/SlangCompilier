@@ -9,6 +9,7 @@ namespace SLangCompiler.FrontEnd.Tables
 {
     public class ClassNameTableItem: BaseNameTableItem
     {
+        public new string Name => TypeIdent.Name;
         public AccessModifier AccessModifier { get; set; }
         public SlangCustomType TypeIdent { get; set; }
         public SlangCustomType Base { get; set; } // may be null (if TypeIdent == System.Object)

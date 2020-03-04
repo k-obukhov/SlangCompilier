@@ -7,7 +7,6 @@ namespace SLangCompiler.FrontEnd.Tables
     public class RoutineNameTableItem: BaseNameTableItem, IImportable
     {
         public ImportHeader Header { get; set; }
-        public string Name { get; set; }
         public SlangType ReturnType { get; set; }
         public IList<RoutineArgNameTableItem> Params { get; set; }
         public override SlangType ToSlangType() => IsFunction() ? new SlangFunctionType(ToSlangArgs(), ReturnType) as SlangRoutineType : new SlangProcedureType(ToSlangArgs()) as SlangRoutineType;
@@ -20,7 +19,6 @@ namespace SLangCompiler.FrontEnd.Tables
 
     public class RoutineArgNameTableItem: BaseNameTableItem
     {
-        public string Name { get; set; }
         public SlangRoutineTypeArg TypeArg { get; set; }
 
         public override SlangType ToSlangType() => TypeArg.Type;

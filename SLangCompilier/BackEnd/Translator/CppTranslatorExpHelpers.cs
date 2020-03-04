@@ -1,6 +1,8 @@
 ﻿using SLangGrammar;
 using SLangCompiler.FrontEnd.Types;
 using Antlr4.Runtime.Misc;
+using SLangCompiler.FrontEnd.Tables;
+using SLangCompiler.FrontEnd;
 
 namespace SLangCompiler.BackEnd.Translator
 {
@@ -117,8 +119,59 @@ namespace SLangCompiler.BackEnd.Translator
 
         public override object VisitDesignator([NotNull] SLangGrammarParser.DesignatorContext context)
         {
-            //todo...
+            var item = FindItemByName(context.Id().GetText());
+            if (currentRoutine is MethodNameTableItem m && item is VariableNameTableItem i && m.NameOfThis == i.Name)
+            {
+                cppText.Write("(*this)");
+            }
+            else
+            {
+                cppText.Write(item.Name);
+            }
+
+            foreach (var stmt in context.designatorStatement())
+            {
+                if (stmt.Point() != null)
+                {
+                    var nextItemName = context.Id().GetText();
+                    if (item is ModuleNameTable module)
+                    {
+                        source.TryFindModuleItemsByName(nextItemName, currentModule.Name, module.Name, out item);
+                        cppText.Write("::");
+                    }
+                    else if (item.ToSlangType() is SlangPointerType pt)
+                    {
+                        source.TryFoundClassItemsByName(nextItemName, currentType, pt.PtrType, out item);
+                        cppText.Write("->");
+                    }
+                    else if (item.ToSlangType() is SlangCustomType ct)
+                    {
+                        source.TryFoundClassItemsByName(nextItemName, currentType, ct, out item);
+                        cppText.Write(".");
+                    }
+                }
+                else if (stmt.LSBrace() != null)
+                {
+                    // array element
+                    cppText.Write('[');
+                    Visit(stmt.exp());
+                    cppText.Write(']');
+                    var res = new VariableNameTableItem { Type = (item.ToSlangType() as SlangArrayType).ArrayElementType() };
+                    item = res;
+                }
+                else if (stmt.LBrace() != null)
+                {
+                    // func call
+                    cppText.Write('(');
+                    Visit(stmt.exprList());
+                    cppText.Write(')');
+                    var res = new VariableNameTableItem { Type = (item as RoutineNameTableItem).ReturnType };
+                    item = res;
+                }
+            }
             return null;
         }
+
+        private BaseNameTableItem FindItemByName(string name) => FindItem.ByName(name, scope, currentRoutine, currentType, currentModule, source, null);
     }
 }

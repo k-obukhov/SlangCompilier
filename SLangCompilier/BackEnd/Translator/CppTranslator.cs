@@ -21,9 +21,9 @@ namespace SLangCompiler.BackEnd.Translator
         private RoutineNameTableItem currentRoutine;
         private SlangCustomType currentType;
         private bool inProgramBlock = false;
-        private string moduleName;
+        private readonly string moduleName;
 
-        private ModuleNameTable currentModule;
+        private readonly ModuleNameTable currentModule;
 
         public CppTranslator(TextWriter headerWriter, TextWriter cppWriter, SourceCodeTable src, ModuleNameTable curModule)
         {
@@ -100,6 +100,7 @@ namespace SLangCompiler.BackEnd.Translator
             InitRoutines(context.thisHeader(), context.Id().GetText());
             TranslateRoutines(context.statementSeq());
             currentRoutine = null;
+            currentType = null;
             return null;
         }
 
@@ -108,6 +109,7 @@ namespace SLangCompiler.BackEnd.Translator
             InitRoutines(context.thisHeader(), context.Id().GetText());
             TranslateRoutines(context.statementSeq());
             currentRoutine = null;
+            currentType = null;
             return null;
         }
 
@@ -260,8 +262,7 @@ namespace SLangCompiler.BackEnd.Translator
 
         public override object VisitVariableDecl([NotNull] SLangGrammarParser.VariableDeclContext context)
         {
-            var item = VisitChildren(context) as VariableNameTableItem;
-            if (item != null)
+            if (VisitChildren(context) is VariableNameTableItem item)
             {
                 TranslateDeclare(item, context.exp());
             }
