@@ -28,10 +28,7 @@ namespace SLangCompiler.FrontEnd
             {
                 // Нету наследника, берем Object из System
                 classItem.Base = Table.Modules[CompilerConstants.SystemModuleName].Classes[CompilerConstants.ObjectClassName].TypeIdent;
-                if (!moduleItem.ImportedModules.Contains(CompilerConstants.SystemModuleName))
-                {
-                    ThrowModuleNotImportedException(CompilerConstants.SystemModuleName, ModuleData.File, context.Id().Symbol);
-                }
+                CheckClassExists(CompilerConstants.SystemModuleName, CompilerConstants.ObjectClassName, context.Id().Symbol);
             }
 
             var errToken = context.Id().Symbol;

@@ -22,7 +22,7 @@ constDecl: Const scalarType Id Assign exp;
 moduleFieldDecl: AccessModifier ((Readonly)? variableDecl | constDecl) Semicolon;
 
 typeName: scalarType | arrayType;
-ptrType: Pointer (LBrace customType RBrace)?; // id -- тип
+ptrType: Pointer LBrace customType RBrace; // id -- тип
 customType: qualident;
 scalarType: simpleType | customType | ptrType;
 simpleType : SimpleType; // Встроенные типы 

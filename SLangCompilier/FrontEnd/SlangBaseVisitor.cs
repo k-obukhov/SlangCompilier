@@ -51,7 +51,7 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context)
         {
-            var customType = context.customType() != null ? Visit(context.customType()) as SlangCustomType : SlangCustomType.Object;
+            var customType = Visit(context.customType()) as SlangCustomType;
             return new SlangPointerType(customType);
         }
 
