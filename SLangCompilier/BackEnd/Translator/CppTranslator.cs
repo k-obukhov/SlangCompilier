@@ -164,6 +164,7 @@ namespace SLangCompiler.BackEnd.Translator
             var newScope = new Scope(scope);
             scope = newScope;
 
+            cppText.WriteLine();
             cppText.WriteLine('{');
             cppText.Indent++;
             foreach (var stmt in context.statement())
@@ -180,7 +181,8 @@ namespace SLangCompiler.BackEnd.Translator
         public override object VisitModuleStatementsSeq([NotNull] SLangGrammarParser.ModuleStatementsSeqContext context)
         {
             inProgramBlock = true;
-            cppText.WriteLine("int main()");
+            cppText.WriteLine($"using namespace {CompilerConstants.MainModuleName};");
+            cppText.Write("int main()");
             Visit(context.statementSeq());
             return null;
         }
