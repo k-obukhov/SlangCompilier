@@ -592,27 +592,6 @@ namespace SLangCompiler.FrontEnd
         }
 
         // declares -- check context -- current routine or start-block (need check)
-        public override object VisitVariableDecl([NotNull] SLangGrammarParser.VariableDeclContext context)
-        {
-            // maybe need checks for context
-            VariableNameTableItem variable;
-            if (context.simpleDecl() != null)
-            {
-                variable = Visit(context.simpleDecl()) as VariableNameTableItem;
-            }
-            else if (context.arrayDecl() != null)
-            {
-                variable = Visit(context.arrayDecl()) as VariableNameTableItem;
-            }
-            else
-            {
-                variable = Visit(context.ptrDecl()) as VariableNameTableItem;
-            }
-
-            CheckDeclareContext(context.exp(), variable);
-
-            return null;
-        }
 
         private void CheckDeclareContext(SLangGrammarParser.ExpContext context, VariableNameTableItem variable)
         {
@@ -659,13 +638,6 @@ namespace SLangCompiler.FrontEnd
                     ThrowCannotAssignException(variable.Type, exprRes.Type, file, variable.Line, variable.Column);
                 }
             }
-            else
-            {
-                if (variable.Type is SlangArrayType)
-                {
-                    ThrowCannotAssignArrayDeclareException(file, variable.Line, variable.Column);
-                }
-            }
         }
 
         public override object VisitConstDecl([NotNull] SLangGrammarParser.ConstDeclContext context)
@@ -684,7 +656,9 @@ namespace SLangCompiler.FrontEnd
             var name = context.Id();
             var type = context.simpleType() != null ? Visit(context.simpleType()) as SlangType : Visit(context.customType()) as SlangType;
 
-            return new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
+            var item = new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
+            CheckDeclareContext(context.exp(), item);
+            return null;
         }
 
         public override object VisitArrayDecl([NotNull] SLangGrammarParser.ArrayDeclContext context)
@@ -700,7 +674,9 @@ namespace SLangCompiler.FrontEnd
                 }
             }
 
-            return new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
+            var item = new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
+            CheckDeclareContext(null, item);
+            return null;
         }
 
         public override object VisitPtrDecl([NotNull] SLangGrammarParser.PtrDeclContext context)
@@ -708,7 +684,9 @@ namespace SLangCompiler.FrontEnd
             var name = context.Id();
             var type = Visit(context.ptrType()) as SlangType;
 
-            return new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
+            var res =  new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
+            CheckDeclareContext(context.exp(), res);
+            return null;
         }
 
         public override object VisitIfC([NotNull] SLangGrammarParser.IfCContext context)

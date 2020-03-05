@@ -83,7 +83,6 @@ namespace SLangCompiler.Exceptions
         public static void ThrowClassFieldOverrideException(string fieldName, SlangCustomType baseClass, SlangCustomType derivedClass, FileInfo fileInfo, int line, int column) => throw new CompilerException($"Trying to override field {fieldName} from base class {baseClass} in derived class {derivedClass}", fileInfo, line, column);
         public static void ThrowClassInheritanceCycleException(ClassNameTableItem classItem, FileInfo fileInfo) => throw new CompilerException($"Class {classItem.TypeIdent} is in inheritance cycle", fileInfo, classItem.Line, classItem.Column);
         public static void ThrowFieldOfClassTypeException(FileInfo file, VariableNameTableItem item) => ThrowException($"Invalid use of variable with type {item.Type} in class {item.Type}, only pointers allowed", file, item.Line, item.Column);
-        public static void ThrowCannotAssignArrayDeclareException(FileInfo file, int line, int column) => ThrowException("Assign to expression in array declare is not supported yet", file, line, column);
         public static void ThrowEntryPointMainException(FileInfo file, IToken symbol) => ThrowException($"Main module must have an entry point!", file, symbol);
     }
 }

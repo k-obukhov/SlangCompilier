@@ -42,9 +42,10 @@ namespace SLangCompiler.FrontEnd
             foreach (var fieldContext in context.typeFieldDecl())
             {
                 var item = Visit(fieldContext) as FieldNameTableItem;
-                if (fieldContext.variableDecl().exp() != null)
+                var expCtx = fieldContext.variableDecl().simpleDecl()?.exp() ?? fieldContext.variableDecl().ptrDecl()?.exp();
+                if (expCtx != null)
                 {
-                    ThrowClassFieldExprException(ModuleData.File, fieldContext.variableDecl().exp().Start);
+                    ThrowClassFieldExprException(ModuleData.File, expCtx.Start);
                 }
                 ThrowIfReservedWord(item.Name, ModuleData.File, fieldContext.variableDecl().Start);
                 if (classItem.Fields.ContainsKey(item.Name))

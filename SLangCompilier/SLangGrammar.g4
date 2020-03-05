@@ -13,11 +13,11 @@ moduleStatementsSeq: Start statementSeq End;
 moduleDeclareSeq: (functionDecl | procedureDecl | typeDecl | moduleFieldDecl)*;
 
 declare: variableDecl | constDecl;
-variableDecl: (simpleDecl | arrayDecl | ptrDecl) (Assign exp)?;
-simpleDecl: Variable (simpleType | customType) Id ;
+variableDecl: (simpleDecl | arrayDecl | ptrDecl);
+simpleDecl: Variable (simpleType | customType) Id (Assign exp)?;
 arrayDecl: arrayDeclType Id ;
 arrayDeclType: Array (LSBrace exp RSBrace)+ scalarType;
-ptrDecl: ptrType Id ;
+ptrDecl: ptrType Id (Assign exp)?;
 constDecl: Const scalarType Id Assign exp;
 moduleFieldDecl: AccessModifier ((Readonly)? variableDecl | constDecl) Semicolon;
 

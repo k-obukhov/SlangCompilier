@@ -62,6 +62,11 @@ namespace SLangCompiler
 
             var frontend = new FrontendCompiler();
 
+            frontend.CheckErrors(p);
+            Console.WriteLine($"No errors found");
+            backendCompiler.SetTable(frontend.SourceCode);
+            backendCompiler.Translate(new DirectoryInfo(inputPath));
+            /*
             try
             {
                 frontend.CheckErrors(p);
@@ -81,7 +86,7 @@ namespace SLangCompiler
                 // all others
                 Console.WriteLine($"Compiler error: {e.Message}");
                 throw;
-            }
+            } */
         }
 
     }

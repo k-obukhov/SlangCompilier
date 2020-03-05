@@ -2,6 +2,7 @@
 using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
 using SLangGrammar;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,7 @@ using System.Linq;
 
 namespace SLangCompiler.BackEnd.Translator
 {
-    public partial class CppTranslator : SLangGrammarBaseVisitor<object>
+    public partial class CppTranslator : SLangGrammarBaseVisitor<object>, IDisposable
     {
         private readonly IndentedTextWriter headerText;
         private readonly IndentedTextWriter cppText;
@@ -32,6 +33,14 @@ namespace SLangCompiler.BackEnd.Translator
             moduleName = currentModule.ModuleData.Name;
 
             scope = new Scope();
+        }
+
+        public void Dispose()
+        {
+            headerText.InnerWriter?.Dispose();
+            cppText.InnerWriter?.Dispose();
+            headerText?.Dispose();
+            cppText?.Dispose();
         }
 
         public override object VisitStart([NotNull] SLangGrammarParser.StartContext context)
@@ -60,6 +69,10 @@ namespace SLangCompiler.BackEnd.Translator
 
             headerText.WriteLine();
             headerText.WriteLine($"#endif");
+
+            // end write
+            headerText.Flush();
+            cppText.Flush();
 
             return null;
         }
@@ -180,14 +193,29 @@ namespace SLangCompiler.BackEnd.Translator
             return null;
         }
 
+        public override object VisitDeclare([NotNull] SLangGrammarParser.DeclareContext context)
+        {
+            return base.VisitDeclare(context);
+        }
+
         // declares
         public override object VisitSimpleDecl([NotNull] SLangGrammarParser.SimpleDeclContext context)
         {
-            var type = Visit(context.simpleType()) as SlangType;
+            SlangType type;
+            if (context.simpleType() != null)
+            {
+                type = Visit(context.simpleType()) as SlangType;
+            }
+            else
+            {
+                type = Visit(context.customType()) as SlangType;
+            }
+
             var nameToken = context.Id().Symbol;
             var res = new VariableNameTableItem { Type = type, IsConstant = false, Column = nameToken.Column, Line = nameToken.Line, Name = nameToken.Text };
             PutVariableIfInBlock(res);
-            return res;
+            TranslateDeclare(res, context.exp());
+            return null;
         }
 
         public override object VisitArrayDecl([NotNull] SLangGrammarParser.ArrayDeclContext context)
@@ -245,7 +273,8 @@ namespace SLangCompiler.BackEnd.Translator
             var nameToken = context.Id().Symbol;
             var res = new VariableNameTableItem { Type = type, IsConstant = false, Column = nameToken.Column, Line = nameToken.Line, Name = nameToken.Text };
             PutVariableIfInBlock(res);
-            return res;
+            TranslateDeclare(res, context.exp());
+            return null;
         }
 
         public override object VisitConstDecl([NotNull] SLangGrammarParser.ConstDeclContext context)
@@ -255,15 +284,6 @@ namespace SLangCompiler.BackEnd.Translator
             var item = new VariableNameTableItem { Type = type, IsConstant = false, Column = nameToken.Column, Line = nameToken.Line, Name = nameToken.Text };
             PutVariableIfInBlock(item);
             TranslateDeclare(item, context.exp());
-            return null;
-        }
-
-        public override object VisitVariableDecl([NotNull] SLangGrammarParser.VariableDeclContext context)
-        {
-            if (VisitChildren(context) is VariableNameTableItem item)
-            {
-                TranslateDeclare(item, context.exp());
-            }
             return null;
         }
 
@@ -288,7 +308,7 @@ namespace SLangCompiler.BackEnd.Translator
             {
                 writer.Write($"const ");
             }
-            writer.WriteLine($"{GetStringFromType(item.Type)} {item.Name} ");
+            writer.Write($"{GetStringFromType(item.Type)} {item.Name}");
         }
 
         public void TranslateCustomType(string typeName)

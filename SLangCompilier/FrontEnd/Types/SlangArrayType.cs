@@ -18,7 +18,7 @@ namespace SLangCompiler.FrontEnd.Types
 
         public SlangType ArrayElementType()
         {
-            SlangType result = null;
+            SlangType result;
             if (Dimension > 1)
             {
                 result = new SlangArrayType(Type, Dimension - 1);

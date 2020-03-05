@@ -19,7 +19,7 @@ namespace SLangCompiler.BackEnd.Translator
 
         public override void Translate(DirectoryInfo pathToProject)
         {
-            var genPath = pathToProject.CreateSubdirectory("/gen/cpp");
+            var genPath = pathToProject.CreateSubdirectory("gen");
             // remove existing files
             foreach (var file in genPath.EnumerateFiles())
             {

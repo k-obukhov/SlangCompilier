@@ -156,7 +156,18 @@ namespace SLangCompiler.BackEnd.Translator
                     cppText.Write('[');
                     Visit(stmt.exp());
                     cppText.Write(']');
-                    var res = new VariableNameTableItem { Type = (item.ToSlangType() as SlangArrayType).ArrayElementType() };
+
+                    SlangType resType;
+                    if (item.ToSlangType() is SlangArrayType at)
+                    {
+                        resType = at.ArrayElementType();
+                    }
+                    else
+                    {
+                        resType = SlangSimpleType.Character;
+                    }
+
+                    var res = new VariableNameTableItem { Type = resType };
                     item = res;
                 }
                 else if (stmt.LBrace() != null)
