@@ -35,7 +35,7 @@ namespace SLangCompiler.FrontEnd
                         // может это имя this метода?
                         if (method.NameOfThis == name)
                         {
-                            return new VariableNameTableItem { IsConstant = false, Type = currentType };
+                            return new VariableNameTableItem { IsConstant = false, Type = currentType, Name = name };
                         }
                     }
                     // неважно, в функции или методе -- проверяем его параметры
@@ -43,7 +43,7 @@ namespace SLangCompiler.FrontEnd
                     {
                         if (param.Name == name)
                         {
-                            return new VariableNameTableItem { IsConstant = false, Type = param.TypeArg.Type };
+                            return new VariableNameTableItem { IsConstant = false, Type = param.TypeArg.Type, Name = name };
                         }
                     }
                 }
