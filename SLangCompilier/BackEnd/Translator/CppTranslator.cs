@@ -336,7 +336,7 @@ namespace SLangCompiler.BackEnd.Translator
             headerText.Indent--;
 
             headerText.Indent--;
-            headerText.WriteLine("}");
+            headerText.WriteLine("};");
         }
 
         private void TranslateClassData(ClassNameTableItem typeData, AccessModifier modifier)
@@ -385,7 +385,7 @@ namespace SLangCompiler.BackEnd.Translator
                 writer.Write(GetStringFromType(arg.TypeArg.Type));
                 if (arg.TypeArg.Modifier == ParamModifier.Ref)
                 {
-                    headerText.Write('&');
+                    writer.Write('&');
                 }
                 writer.Write($" {arg.Name}");
                 if (arg != args.Last())

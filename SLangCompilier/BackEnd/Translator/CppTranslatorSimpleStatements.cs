@@ -35,7 +35,7 @@ namespace SLangCompiler.BackEnd.Translator
 
         public override object VisitInput([NotNull] SLangGrammarParser.InputContext context)
         {
-            cppText.Write("cin");
+            cppText.Write("std::cin");
             for (int i = 0; i < context.designator().Length; ++i)
             {
                 cppText.Write(" >> ");
@@ -46,7 +46,7 @@ namespace SLangCompiler.BackEnd.Translator
 
         public override object VisitOutput([NotNull] SLangGrammarParser.OutputContext context)
         {
-            cppText.Write("cout");
+            cppText.Write("std::cout");
             for (int i = 0; i < context.exp().Length; ++i)
             {
                 cppText.Write(" << ");
