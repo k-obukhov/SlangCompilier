@@ -62,12 +62,6 @@ namespace SLangCompiler
 
         }
 
-        public Compiler(string inputPath)
-        {
-            this.inputPath = inputPath;
-        }
-
-
         public void Translate()
         {
             var p = new ProjectManager();
