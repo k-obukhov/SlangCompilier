@@ -245,7 +245,8 @@ namespace SLangCompiler.BackEnd.Translator
                 {
                     cppText.Write(", ");
                     cppText.Write(GetVectorTypeStart(dimensionCount));
-                    Visit(context.arrayDeclType().scalarType());
+                    var arrType = Visit(context.arrayDeclType().scalarType()) as SlangType;
+                    cppText.Write(GetStringFromType(arrType));
                     cppText.Write(GetVectorTypeEnd(dimensionCount));
                 }
 
