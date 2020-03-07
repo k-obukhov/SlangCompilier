@@ -27,7 +27,7 @@ namespace SLangCompiler
                 var destCodeFolder = args.Length == 1 ? throw new Exception("Output path is not set") : args[1];
                 var lang = args.Length < 3 ? defaultLang : args[2];
 
-                compiler = new CompilerBuilder().SetInputPath(sourceCodeFolder).SetCompiler(GetBackendById(lang)).Build();
+                compiler = new CompilerBuilder().SetInputPath(sourceCodeFolder).SetOutputPath(destCodeFolder).SetCompiler(GetBackendById(lang)).Build();
             }
             catch (Exception e)
             {
