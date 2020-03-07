@@ -17,13 +17,18 @@ namespace SLangCompiler.BackEnd.Translator
 
         }
 
-        public override void Translate(DirectoryInfo pathToProject)
+        public override void Translate(DirectoryInfo genPath)
         {
-            var genPath = pathToProject.CreateSubdirectory("gen");
+            Directory.CreateDirectory(genPath.FullName);
             // remove existing files
             foreach (var file in genPath.EnumerateFiles())
             {
                 file.Delete();
+            }
+            // and dirs
+            foreach (DirectoryInfo dir in genPath.GetDirectories())
+            {
+                dir.Delete(true);
             }
             foreach (var key in table.Modules.Keys)
             {
@@ -33,7 +38,7 @@ namespace SLangCompiler.BackEnd.Translator
                 var parser = new SLangGrammarParser(commonTokenStream);
                 parser.AddErrorListener(new SLangErrorListener(table.Modules[key].ModuleData));
 
-                var translatorVisitor = new CppTranslator(new StreamWriter($"{genPath}/{key}.h"), new StreamWriter($"{genPath}/{key}.cpp"), table, table.Modules[key]);
+                var translatorVisitor = new CppTranslator(new StreamWriter($"{genPath}/{key}.h"), new StreamWriter($"{genPath}/{key}.cpp"), table, table.Modules[key], genPath);
                 translatorVisitor.Visit(parser.start());
             }
         }

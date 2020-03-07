@@ -21,16 +21,18 @@ namespace SLangCompiler.BackEnd.Translator
         private SlangCustomType currentType;
         private bool inProgramBlock = false;
         private readonly string moduleName;
+        private readonly DirectoryInfo directoryGen;
 
         private readonly ModuleNameTable currentModule;
 
-        public CppTranslator(TextWriter headerWriter, TextWriter cppWriter, SourceCodeTable src, ModuleNameTable curModule)
+        public CppTranslator(TextWriter headerWriter, TextWriter cppWriter, SourceCodeTable src, ModuleNameTable curModule, DirectoryInfo directoryGen)
         {
             headerText = new IndentedTextWriter(headerWriter);
             cppText = new IndentedTextWriter(cppWriter);
             source = src;
             currentModule = curModule;
             moduleName = currentModule.ModuleData.Name;
+            this.directoryGen = directoryGen;
 
             scope = new Scope();
         }
@@ -54,13 +56,26 @@ namespace SLangCompiler.BackEnd.Translator
             headerText.WriteLine("#include <memory>");
             headerText.WriteLine("#include <string>");
 
+            var importedFiles = new List<string>();
             foreach (var key in currentModule.Routines.Keys)
             {
                 if (currentModule.Routines[key].Header != null)
                 {
-                    headerText.WriteLine($"#include \"{currentModule.Routines[key].Header.File}.h\"");
+                    if (!importedFiles.Contains(currentModule.Routines[key].Header.File))
+                    {
+                        importedFiles.Add(currentModule.Routines[key].Header.File);
+                    }
                 }
             }
+            foreach (var file in importedFiles)
+            {
+                headerText.WriteLine($"#include {file}");
+                var sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
+                var destPath = Path.Combine(directoryGen.FullName, file);
+                Directory.CreateDirectory(destPath);
+                File.Copy(sourcePath, destPath, true);
+            }
+            
 
             // cpp includes
             cppText.WriteLine($"#include \"{moduleName}.h\"");

@@ -10,11 +10,18 @@ namespace SLangCompiler
     public class CompilerBuilder
     {
         readonly Compiler compiler = new Compiler();
-        public CompilerBuilder SetPath(string path)
+        public CompilerBuilder SetInputPath(string path)
         {
-            compiler.SetPath(path);
+            compiler.SetInputPath(path);
             return this;
         }
+        
+        public CompilerBuilder SetOutputPath(string path)
+        {
+            compiler.SetOutputPath(path);
+            return this;
+        }
+
         public CompilerBuilder SetCompiler(BackendCompiler backend)
         {
             compiler.SetBackend(backend);
@@ -32,11 +39,17 @@ namespace SLangCompiler
         /// Input path (SL code)
         /// </summary>
         private string inputPath;
+        private string outputPath;
         BackendCompiler backendCompiler;
 
-        public void SetPath(string path)
+        public void SetInputPath(string path)
         {
             inputPath = path;
+        }
+
+        public void SetOutputPath(string path)
+        {
+            outputPath = path;
         }
 
         public void SetBackend(BackendCompiler compiler)
@@ -62,31 +75,26 @@ namespace SLangCompiler
 
             var frontend = new FrontendCompiler();
 
-            frontend.CheckErrors(p);
-            Console.WriteLine($"No errors found");
-            backendCompiler.SetTable(frontend.SourceCode);
-            backendCompiler.Translate(new DirectoryInfo(inputPath));
-            /*
             try
             {
                 frontend.CheckErrors(p);
-                Console.WriteLine($"No errors found");
-                backendCompiler.Translate(new DirectoryInfo(inputPath));
+                Console.WriteLine($"No syntax errors found, backend compiler starts");
+                backendCompiler.SetTable(frontend.SourceCode);
+                backendCompiler.Translate(new DirectoryInfo(outputPath));
             }
             catch (CompilerException e)
             {
-                Console.WriteLine($"{e.ModuleFile.Name}, [{e.Line}, {e.Column}]: {e.Message}");
+                Console.Error.WriteLine($"{e.ModuleFile.Name}, [{e.Line}, {e.Column}]: {e.Message}");
             }
             catch (IOException e)
             {
-                Console.WriteLine($"IOError: {e.Message}");
+                Console.Error.WriteLine($"IOError: {e.Message}");
             }
             catch (Exception e)
             {
                 // all others
-                Console.WriteLine($"Compiler error: {e.Message}");
-                throw;
-            } */
+                Console.Error.WriteLine($"Compiler error: {e.Message}");
+            } 
         }
 
     }

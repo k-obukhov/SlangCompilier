@@ -23,7 +23,7 @@ namespace SLangCompiler
         /// <summary>
         /// Path to SL standard modules!
         /// </summary>
-        public static string LibPath => Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName, "Lib");
+        public static string LibPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Lib");
         /// <summary>
         /// slang file mask
         /// </summary>

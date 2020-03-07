@@ -117,6 +117,20 @@ namespace SLangCompiler.BackEnd.Translator
             return null;
         }
 
+        private string GetNameForImportable(BaseNameTableItem item)
+        {
+            string res;
+            if (item is IImportable importable && importable.Header != null)
+            {
+                res = importable.Header.Ident;
+            }
+            else
+            {
+                res = item.Name;
+            }
+            return res;
+        }
+
         public override object VisitDesignator([NotNull] SLangGrammarParser.DesignatorContext context)
         {
             var item = FindItemByName(context.Id().GetText());
@@ -126,8 +140,9 @@ namespace SLangCompiler.BackEnd.Translator
             }
             else
             {
-                cppText.Write(item.Name);
+                cppText.Write(GetNameForImportable(item));
             }
+
 
             foreach (var stmt in context.designatorStatement())
             {
@@ -149,6 +164,7 @@ namespace SLangCompiler.BackEnd.Translator
                         source.TryFoundClassItemsByName(nextItemName, currentType, ct, out item);
                         cppText.Write(".");
                     }
+                    cppText.Write(GetNameForImportable(item));
                 }
                 else if (stmt.LSBrace() != null)
                 {

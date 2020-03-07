@@ -94,7 +94,6 @@ namespace SLangCompiler.FrontEnd
             }
             var isReadonly = context.Readonly() == null;
 
-
             if (moduleItem.Fields.ContainsKey(data.Name))
             {
                 ThrowIfVariableExistsException(data.Name, ModuleData.File, data.Line, data.Column);

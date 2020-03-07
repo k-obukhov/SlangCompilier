@@ -84,6 +84,8 @@ namespace SLangCompiler.FrontEnd
             }
         }
 
+        public override object VisitImportHead([NotNull] SLangGrammarParser.ImportHeadContext context) => new ImportHeader(context?.StringLiteral()[0].GetText(), context?.StringLiteral()[1].GetText());
+
         public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
         {
             string moduleName = "", typeName = "";
