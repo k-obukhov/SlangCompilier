@@ -15,5 +15,5 @@
   - File to generated source
   - Language tag (default value - cpp, another language may be added in future)
 
-Works with ANTLR4 / C#7 / .Net Core 2.2
+Works with ANTLR4 / C#7 / .Net Core 3.1
 Enjoy!
