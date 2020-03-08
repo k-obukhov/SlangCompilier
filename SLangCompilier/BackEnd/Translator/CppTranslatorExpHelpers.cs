@@ -122,7 +122,7 @@ namespace SLangCompiler.BackEnd.Translator
             string res;
             if (item is IImportable importable && importable.Header != null)
             {
-                res = importable.Header.Ident;
+                res = importable.Header.Ident.Replace("\"", "");
             }
             else
             {
@@ -134,15 +134,19 @@ namespace SLangCompiler.BackEnd.Translator
         public override object VisitDesignator([NotNull] SLangGrammarParser.DesignatorContext context)
         {
             var item = FindItemByName(context.Id().GetText());
-            if (currentRoutine is MethodNameTableItem m && item is VariableNameTableItem i && m.NameOfThis == i.Name)
-            {
-                cppText.Write("(*this)");
-            }
-            else
-            {
-                cppText.Write(GetNameForImportable(item));
-            }
+            var moduleName = item is ModuleNameTable tmpModule ? tmpModule.Name : null;
 
+            if (moduleName == null) // не имя модуля
+            {
+                if (currentRoutine is MethodNameTableItem m && item is VariableNameTableItem i && m.NameOfThis == i.Name)
+                {
+                    cppText.Write("(*this)");
+                }
+                else
+                {
+                    cppText.Write(GetNameForImportable(item));
+                }
+            }
 
             foreach (var stmt in context.designatorStatement())
             {
@@ -152,19 +156,30 @@ namespace SLangCompiler.BackEnd.Translator
                     if (item is ModuleNameTable module)
                     {
                         source.TryFindModuleItemsByName(nextItemName, currentModule.Name, module.Name, out item);
-                        cppText.Write("::");
+                        if (item is IImportable importable && importable.Header != null)
+                        {
+                            cppText.WriteLine(GetNameForImportable(item));
+                        }
+                        else
+                        {
+                            cppText.Write(moduleName);
+                            cppText.Write("::");
+                            cppText.WriteLine(item.Name);
+                        }
                     }
                     else if (item.ToSlangType() is SlangPointerType pt)
                     {
                         source.TryFoundClassItemsByName(nextItemName, currentType, pt.PtrType, out item);
                         cppText.Write("->");
+                        cppText.Write(GetNameForImportable(item));
                     }
                     else if (item.ToSlangType() is SlangCustomType ct)
                     {
                         source.TryFoundClassItemsByName(nextItemName, currentType, ct, out item);
                         cppText.Write(".");
+                        cppText.Write(GetNameForImportable(item));
                     }
-                    cppText.Write(GetNameForImportable(item));
+                    
                 }
                 else if (stmt.LSBrace() != null)
                 {
