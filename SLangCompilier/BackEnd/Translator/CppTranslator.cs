@@ -70,9 +70,10 @@ namespace SLangCompiler.BackEnd.Translator
             foreach (var file in importedFiles)
             {
                 headerText.WriteLine($"#include {file}");
-                var sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
-                var destPath = Path.Combine(directoryGen.FullName, file);
-                Directory.CreateDirectory(destPath);
+                var replacedStr = file.Replace("\"", "");
+                var sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, replacedStr);
+                var destPath = Path.Combine(directoryGen.FullName, replacedStr);
+                Directory.CreateDirectory(Path.GetDirectoryName(destPath));
                 File.Copy(sourcePath, destPath, true);
             }
             
