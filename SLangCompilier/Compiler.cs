@@ -22,6 +22,12 @@ namespace SLangCompiler
             return this;
         }
 
+        public CompilerBuilder SetCompilerExecutor(CompilerExecutor exec)
+        {
+            compiler.SetCompilerExecutor(exec);
+            return this;
+        }
+
         public CompilerBuilder SetCompiler(BackendCompiler backend)
         {
             compiler.SetBackend(backend);
@@ -41,6 +47,7 @@ namespace SLangCompiler
         private string inputPath;
         private string outputPath;
         BackendCompiler backendCompiler;
+        CompilerExecutor compilerExecutor;
 
         public void SetInputPath(string path)
         {
@@ -55,6 +62,11 @@ namespace SLangCompiler
         public void SetBackend(BackendCompiler compiler)
         {
             backendCompiler = compiler;
+        }
+
+        public void SetCompilerExecutor(CompilerExecutor executor)
+        {
+            compilerExecutor = executor;
         }
 
         public Compiler()
@@ -75,6 +87,11 @@ namespace SLangCompiler
                 Console.WriteLine($"No syntax errors found, backend compiler starts");
                 backendCompiler.SetTable(frontend.SourceCode);
                 backendCompiler.Translate(new DirectoryInfo(outputPath));
+                if (compilerExecutor != null)
+                {
+                    Console.WriteLine($"Target build starts...");
+                    compilerExecutor.ExecuteCompilerCall();
+                }
             }
             catch (CompilerException e)
             {
