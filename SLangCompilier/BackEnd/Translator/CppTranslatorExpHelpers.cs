@@ -179,7 +179,7 @@ namespace SLangCompiler.BackEnd.Translator
                         cppText.Write(".");
                         cppText.Write(GetNameForImportable(item));
                     }
-                    
+
                 }
                 else if (stmt.LSBrace() != null)
                 {

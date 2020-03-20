@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace SLangCompiler.BackEnd.Executor
 {
     internal class GccCompilerExecutor : CompilerExecutor
     {
-        public GccCompilerExecutor(DirectoryInfo src, DirectoryInfo dest): base(src, dest)
+        public GccCompilerExecutor(DirectoryInfo src, DirectoryInfo dest) : base(src, dest)
         {
 
         }
@@ -20,7 +18,8 @@ namespace SLangCompiler.BackEnd.Executor
             // get all files
             var extensionsAllowed = new string[] { ".cc", ".cpp", ".cxx", ".c", ".c++", ".h", ".hpp", ".hh", ".hxx", ".h++" };
             var sourceCodeFiles = Directory.GetFiles(pathToGeneratedSource.FullName)
-            .Where(file => {
+            .Where(file =>
+            {
                 var extension = Path.GetExtension(file);
                 if (extensionsAllowed.Contains(extension))
                 {
@@ -39,7 +38,7 @@ namespace SLangCompiler.BackEnd.Executor
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.UseShellExecute = false;
-            
+
             process.Start();
             process.WaitForExit();
         }

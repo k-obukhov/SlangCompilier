@@ -79,7 +79,7 @@ namespace SLangCompiler.BackEnd.Translator
                 Directory.CreateDirectory(Path.GetDirectoryName(destPath));
                 File.Copy(sourcePath, destPath, true);
             }
-            
+
 
             // cpp includes
             cppText.WriteLine($"#include \"{moduleName}.h\"");

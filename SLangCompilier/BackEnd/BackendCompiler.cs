@@ -15,6 +15,6 @@ namespace SLangCompiler.BackEnd
             this.table = table;
         }
 
-        public abstract void Translate(System.IO.DirectoryInfo pathToProject);
+        public abstract void Translate(System.IO.DirectoryInfo pathGen);
     }
 }

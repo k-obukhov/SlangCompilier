@@ -2,7 +2,6 @@
 using SLangCompiler.BackEnd.Executor;
 using SLangCompiler.BackEnd.Translator;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace SLangCompiler
@@ -47,8 +46,8 @@ namespace SLangCompiler
                     .SetInputPath(sourceCodeFolder)
                     .SetOutputPath(destCodeFolder)
                     .SetCompiler(GetBackendById(lang))
-                    .SetCompilerExecutor(executableFolder != null 
-                        ? GetExecutorById(lang, new DirectoryInfo(destCodeFolder), new DirectoryInfo(executableFolder)) 
+                    .SetCompilerExecutor(executableFolder != null
+                        ? GetExecutorById(lang, new DirectoryInfo(destCodeFolder), new DirectoryInfo(executableFolder))
                         : null)
                     .Build();
 

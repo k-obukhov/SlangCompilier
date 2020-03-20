@@ -15,7 +15,7 @@ namespace SLangCompiler
             compiler.SetInputPath(path);
             return this;
         }
-        
+
         public CompilerBuilder SetOutputPath(string path)
         {
             compiler.SetOutputPath(path);
@@ -105,7 +105,7 @@ namespace SLangCompiler
             {
                 // all others
                 Console.Error.WriteLine($"Compiler error: {e.Message}");
-            } 
+            }
         }
 
     }

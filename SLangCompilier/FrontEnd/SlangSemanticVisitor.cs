@@ -684,7 +684,7 @@ namespace SLangCompiler.FrontEnd
             var name = context.Id();
             var type = Visit(context.ptrType()) as SlangType;
 
-            var res =  new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
+            var res = new VariableNameTableItem { IsConstant = false, Name = name.GetText(), Column = name.Symbol.Column, Line = name.Symbol.Line, Type = type };
             CheckDeclareContext(context.exp(), res);
             return null;
         }
