@@ -49,8 +49,9 @@ namespace SLangCompiler.BackEnd.Translator
             cppText.Write("std::cout");
             for (int i = 0; i < context.exp().Length; ++i)
             {
-                cppText.Write(" << ");
+                cppText.Write(" << (");
                 Visit(context.exp()[i]);
+                cppText.Write(")");
             }
             return null;
         }

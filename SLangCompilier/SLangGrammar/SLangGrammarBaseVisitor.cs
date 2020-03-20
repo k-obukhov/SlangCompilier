@@ -288,6 +288,17 @@ public partial class SLangGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<
 	public virtual Result VisitTypeFieldDecl([NotNull] SLangGrammarParser.TypeFieldDeclContext context) { return VisitChildren(context); }
 
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.emptyTypeDecl"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitEmptyTypeDecl([NotNull] SLangGrammarParser.EmptyTypeDeclContext context) { return VisitChildren(context); }
+
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.functionDecl"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>

@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime.Misc;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
+using SLangCompiler.FrontEnd.Types;
 using SLangGrammar;
 using System;
 using System.Linq;
@@ -101,10 +102,27 @@ namespace SLangCompiler.FrontEnd
             var isBase = context.Base() != null;
             var modifier = GetModifierByName(context.AccessModifier().GetText());
 
-            var classItem = new ClassNameTableItem { TypeIdent = new Types.SlangCustomType(ModuleData.Name, className), CanBeBase = isBase, Column = context.Id().Symbol.Column, Line = context.Id().Symbol.Line, AccessModifier = modifier };
+            var classItem = new ClassNameTableItem { TypeIdent = new SlangCustomType(ModuleData.Name, className), CanBeBase = isBase, Column = context.Id().Symbol.Column, Line = context.Id().Symbol.Line, AccessModifier = modifier };
             moduleTable.CheckCommonNamesConflicts(classItem.TypeIdent.Name, classItem.Line, classItem.Column);
             moduleTable.Classes[className] = classItem;
             return base.VisitTypeDecl(context);
+        }
+
+        public override object VisitEmptyTypeDecl([NotNull] SLangGrammarParser.EmptyTypeDeclContext context)
+        {
+            var classItem = new ClassNameTableItem
+            {
+                TypeIdent = new SlangCustomType(ModuleData.Name, context.Id().GetText()),
+                AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
+                Base = SlangCustomType.Object,
+                CanBeBase = false,
+                Column = context.Id().Symbol.Column,
+                Line = context.Id().Symbol.Line,
+                Header = Visit(context.importHead()) as ImportHeader
+            };
+            moduleTable.CheckCommonNamesConflicts(classItem.Name, classItem.Line, classItem.Column);
+            moduleTable.Classes[classItem.Name] = classItem;
+            return base.VisitEmptyTypeDecl(context);
         }
     }
 }

@@ -194,6 +194,13 @@ public interface ISLangGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitTypeFieldDecl([NotNull] SLangGrammarParser.TypeFieldDeclContext context);
 
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="SLangGrammarParser.emptyTypeDecl"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEmptyTypeDecl([NotNull] SLangGrammarParser.EmptyTypeDeclContext context);
+
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="SLangGrammarParser.functionDecl"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

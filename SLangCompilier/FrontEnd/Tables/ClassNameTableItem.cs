@@ -7,7 +7,7 @@ using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
-    public class ClassNameTableItem : BaseNameTableItem
+    public class ClassNameTableItem : BaseNameTableItem, IImportable
     {
         public new string Name => TypeIdent.Name;
         public AccessModifier AccessModifier { get; set; }
@@ -17,6 +17,8 @@ namespace SLangCompiler.FrontEnd.Tables
 
         public Dictionary<string, FieldNameTableItem> Fields { get; set; } = new Dictionary<string, FieldNameTableItem>();
         public Dictionary<string, MethodNameTableItem> Methods { get; set; } = new Dictionary<string, MethodNameTableItem>();
+
+        public ImportHeader Header { get; set; }
 
         public bool IsAbstract() => Methods.Values.Any(m => m.IsAbstract);
 

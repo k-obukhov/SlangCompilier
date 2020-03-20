@@ -335,6 +335,19 @@ public partial class SLangGrammarBaseListener : ISLangGrammarListener {
 	public virtual void ExitTypeFieldDecl([NotNull] SLangGrammarParser.TypeFieldDeclContext context) { }
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.emptyTypeDecl"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEmptyTypeDecl([NotNull] SLangGrammarParser.EmptyTypeDeclContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.emptyTypeDecl"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEmptyTypeDecl([NotNull] SLangGrammarParser.EmptyTypeDeclContext context) { }
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.functionDecl"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

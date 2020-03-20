@@ -57,13 +57,16 @@ namespace SLangCompiler.BackEnd.Translator
             headerText.WriteLine("#include <string>");
 
             var importedFiles = new List<string>();
-            foreach (var key in currentModule.Routines.Keys)
+            IEnumerable<IImportable> importableItems = currentModule.Routines.Select(i => i.Value);
+            importableItems = importableItems.Concat(currentModule.Classes.Select(i => i.Value));
+
+            foreach (var item in importableItems)
             {
-                if (currentModule.Routines[key].Header != null)
+                if (item.Header != null)
                 {
-                    if (!importedFiles.Contains(currentModule.Routines[key].Header.File))
+                    if (!importedFiles.Contains(item.Header.File))
                     {
-                        importedFiles.Add(currentModule.Routines[key].Header.File);
+                        importedFiles.Add(item.Header.File);
                     }
                 }
             }

@@ -285,6 +285,17 @@ public interface ISLangGrammarListener : IParseTreeListener {
 	void ExitTypeFieldDecl([NotNull] SLangGrammarParser.TypeFieldDeclContext context);
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SLangGrammarParser.emptyTypeDecl"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterEmptyTypeDecl([NotNull] SLangGrammarParser.EmptyTypeDeclContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SLangGrammarParser.emptyTypeDecl"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitEmptyTypeDecl([NotNull] SLangGrammarParser.EmptyTypeDeclContext context);
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.functionDecl"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

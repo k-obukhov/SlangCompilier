@@ -10,7 +10,7 @@ start: (moduleImport)* module;
 moduleImport: Import Id;
 module: Module Id moduleDeclareSeq (moduleStatementsSeq)?;
 moduleStatementsSeq: Start statementSeq End;
-moduleDeclareSeq: (functionDecl | procedureDecl | typeDecl | moduleFieldDecl)*;
+moduleDeclareSeq: (functionDecl | procedureDecl | typeDecl | moduleFieldDecl | emptyTypeDecl)*;
 
 declare: variableDecl | constDecl;
 variableDecl: (simpleDecl | arrayDecl | ptrDecl);
@@ -33,6 +33,7 @@ arrayDimention : LSBrace RSBrace;
 typeDecl: AccessModifier (Base)? Class Id (typeInherit)? (typeFieldDecl)* End;
 typeInherit: Inherit LBrace customType RBrace;
 typeFieldDecl: AccessModifier variableDecl Semicolon;
+emptyTypeDecl: importHead AccessModifier Empty Class Id Semicolon;
 
 functionDecl: (importHead)? AccessModifier (Abstract | Override)? (thisHeader)? Function LBrace routineArgList RBrace Colon typeName Id statementSeq End;
 thisHeader: LBrace customType Id RBrace;
@@ -148,6 +149,7 @@ fragment PublicModifier: 'public';
 fragment PrivateModifier: 'private';
 
 Class: 'class';
+Empty: 'empty';
 
 Inherit: 'inherit'; // Класс наследует что-либо
 Base: 'base'; // От класса можно наследоваться 
