@@ -572,11 +572,13 @@ namespace SLangCompiler.FrontEnd
         {
             // true, если type является базовым или совпадает с expressionType
             var result = false;
-            if (Table.FindClass(type).Header != null) // импортируемому типу можно присвоить только импортируемый тип
+            var typeHeader = Table.FindClass(type).Header;
+            var expTypeHeader = Table.FindClass(expressionType).Header;
+            if (typeHeader != null & expTypeHeader != null) // импортируемому типу можно присвоить только импортируемый тип
             {
                 result = type.Equals(expressionType);
             }
-            else
+            else if (typeHeader == null && expTypeHeader == null)
             {
                 if (type.Equals(expressionType) || type.Equals(SlangCustomType.Object))
                 {
