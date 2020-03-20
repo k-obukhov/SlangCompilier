@@ -23,7 +23,7 @@ namespace SLangCompiler.FrontEnd
             Table = table;
             foreach (var key in table.Modules.Keys)
             {
-                allClasses.AddRange(table.Modules[key].Classes.Values);
+                allClasses.AddRange(table.Modules[key].Classes.Values.Where(i => i.Header == null));
             }
         }
 

@@ -572,19 +572,26 @@ namespace SLangCompiler.FrontEnd
         {
             // true, если type является базовым или совпадает с expressionType
             var result = false;
-            if (type.Equals(expressionType) || type.Equals(SlangCustomType.Object))
+            if (Table.FindClass(type).Header != null) // импортируемому типу можно присвоить только импортируемый тип
             {
-                result = true;
+                result = type.Equals(expressionType);
             }
             else
             {
-                var classItem = Table.FindClass(expressionType);
-                while (!classItem.Base.Equals(SlangCustomType.Object))
+                if (type.Equals(expressionType) || type.Equals(SlangCustomType.Object))
                 {
-                    classItem = Table.FindClass(classItem.Base);
-                    if (classItem.TypeIdent.Equals(type))
+                    result = true;
+                }
+                else
+                {
+                    var classItem = Table.FindClass(expressionType);
+                    while (!classItem.Base.Equals(SlangCustomType.Object))
                     {
-                        result = true;
+                        classItem = Table.FindClass(classItem.Base);
+                        if (classItem.TypeIdent.Equals(type))
+                        {
+                            result = true;
+                        }
                     }
                 }
             }

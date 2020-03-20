@@ -114,7 +114,7 @@ namespace SLangCompiler.FrontEnd
             {
                 TypeIdent = new SlangCustomType(ModuleData.Name, context.Id().GetText()),
                 AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
-                Base = SlangCustomType.Object,
+                Base = null,
                 CanBeBase = false,
                 Column = context.Id().Symbol.Column,
                 Line = context.Id().Symbol.Line,
