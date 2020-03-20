@@ -55,7 +55,15 @@ namespace SLangCompiler.BackEnd.Translator
             }
             else if (returnType is SlangCustomType ct)
             {
-                res = ct.ModuleName == moduleName ? ct.Name : $"{ct.ModuleName}::{ct.Name}";
+                var item = currentModule.Classes[ct.Name];
+                if (item.Header != null)
+                {
+                    res = item.Header.Ident.Replace("\"", "");
+                }
+                else
+                {
+                    res = ct.ModuleName == moduleName ? ct.Name : $"{ct.ModuleName}::{ct.Name}";
+                }
             }
             else if (returnType is SlangPointerType pt)
             {
