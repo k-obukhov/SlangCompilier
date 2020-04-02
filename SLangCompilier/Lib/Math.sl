@@ -1,6 +1,6 @@
 ﻿module Math
 	
-	public const real E = 2,7182818284;
+	public const real E = 2.7182818284;
 	public const real PI = 3.14159265359;
 
 	[file "CppLib/Math_cpp.hpp" import "Math_cpp::sin_"]
