@@ -40,7 +40,7 @@ thisHeader: LBrace customType Id RBrace;
 routineArgList: (routineArg (Comma routineArg)* | /* нет аргументов */ );
 routineArg: FunctionArgModifier typeName Id;
 procedureDecl: (importHead)? AccessModifier (Abstract | Override)? (thisHeader)? Procedure LBrace routineArgList RBrace Id statementSeq End;
-importHead: LSBrace File StringLiteral Import StringLiteral RSBrace;
+importHead: LSBrace From StringLiteral Import StringLiteral RSBrace;
 
 statementSeq: (statement)*;
 statement: simpleStatement | complexStatement;
@@ -157,7 +157,7 @@ Base: 'base'; // От класса можно наследоваться
 Abstract: 'abstract';
 Override: 'override'; // Метод переопределяется
 
-File: 'file';
+From: 'from';
 
 fragment Digit: [0-9]; // цифра
 

@@ -37,7 +37,7 @@ public partial class SLangGrammarLexer : Lexer {
 		Start=37, End=38, Function=39, Procedure=40, LBrace=41, RBrace=42, LSBrace=43, 
 		RSBrace=44, Assign=45, New=46, Nil=47, Pointer=48, Array=49, FunctionArgModifier=50, 
 		AccessModifier=51, Class=52, Empty=53, Inherit=54, Base=55, Abstract=56, 
-		Override=57, File=58, IntValue=59, RealValue=60, BoolValue=61, Id=62, 
+		Override=57, From=58, IntValue=59, RealValue=60, BoolValue=61, Id=62, 
 		StringLiteral=63, SingleCharacter=64, Comment=65, Ws=66;
 	public static string[] modeNames = {
 		"DEFAULT_MODE"
@@ -53,7 +53,7 @@ public partial class SLangGrammarLexer : Lexer {
 		"Real", "Character", "Boolean", "String", "New", "Nil", "Pointer", "Array", 
 		"FunctionArgModifier", "ArgValModifier", "ArgRefModifier", "AccessModifier", 
 		"PublicModifier", "PrivateModifier", "Class", "Empty", "Inherit", "Base", 
-		"Abstract", "Override", "File", "Digit", "IntValue", "RealValue", "BoolValue", 
+		"Abstract", "Override", "From", "Digit", "IntValue", "RealValue", "BoolValue", 
 		"Id", "StringLiteral", "SingleCharacter", "StringCharacter", "EscapeSequence", 
 		"Comment", "Ws"
 	};
@@ -73,7 +73,7 @@ public partial class SLangGrammarLexer : Lexer {
 		"'do'", "'module'", "'import'", "'start'", "'end'", "'function'", "'procedure'", 
 		"'('", "')'", "'['", "']'", "':='", "'new'", "'nil'", "'pointer'", "'array'", 
 		null, null, "'class'", "'empty'", "'inherit'", "'base'", "'abstract'", 
-		"'override'", "'file'"
+		"'override'", "'from'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "SimpleType", "AddOp", "SubOp", "MulOp", "DivOp", "ModOp", "BoolOr", 
@@ -83,7 +83,7 @@ public partial class SLangGrammarLexer : Lexer {
 		"Else", "While", "Repeat", "Elseif", "Do", "Module", "Import", "Start", 
 		"End", "Function", "Procedure", "LBrace", "RBrace", "LSBrace", "RSBrace", 
 		"Assign", "New", "Nil", "Pointer", "Array", "FunctionArgModifier", "AccessModifier", 
-		"Class", "Empty", "Inherit", "Base", "Abstract", "Override", "File", "IntValue", 
+		"Class", "Empty", "Inherit", "Base", "Abstract", "Override", "From", "IntValue", 
 		"RealValue", "BoolValue", "Id", "StringLiteral", "SingleCharacter", "Comment", 
 		"Ws"
 	};
@@ -321,7 +321,7 @@ public partial class SLangGrammarLexer : Lexer {
 		"\x2\x2\x2\x1DC\x1DD\aq\x2\x2\x1DD\x1DE\ax\x2\x2\x1DE\x1DF\ag\x2\x2\x1DF"+
 		"\x1E0\at\x2\x2\x1E0\x1E1\at\x2\x2\x1E1\x1E2\ak\x2\x2\x1E2\x1E3\a\x66\x2"+
 		"\x2\x1E3\x1E4\ag\x2\x2\x1E4\x86\x3\x2\x2\x2\x1E5\x1E6\ah\x2\x2\x1E6\x1E7"+
-		"\ak\x2\x2\x1E7\x1E8\an\x2\x2\x1E8\x1E9\ag\x2\x2\x1E9\x88\x3\x2\x2\x2\x1EA"+
+		"\at\x2\x2\x1E7\x1E8\aq\x2\x2\x1E8\x1E9\ao\x2\x2\x1E9\x88\x3\x2\x2\x2\x1EA"+
 		"\x1EB\t\x2\x2\x2\x1EB\x8A\x3\x2\x2\x2\x1EC\x1EE\x5\x89\x45\x2\x1ED\x1EC"+
 		"\x3\x2\x2\x2\x1EE\x1EF\x3\x2\x2\x2\x1EF\x1ED\x3\x2\x2\x2\x1EF\x1F0\x3"+
 		"\x2\x2\x2\x1F0\x8C\x3\x2\x2\x2\x1F1\x1F3\x5\x89\x45\x2\x1F2\x1F1\x3\x2"+

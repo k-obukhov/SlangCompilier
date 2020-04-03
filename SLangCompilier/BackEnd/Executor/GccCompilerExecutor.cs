@@ -21,11 +21,7 @@ namespace SLangCompiler.BackEnd.Executor
             .Where(file =>
             {
                 var extension = Path.GetExtension(file);
-                if (extensionsAllowed.Contains(extension))
-                {
-                    return true;
-                }
-                return false;
+                return extensionsAllowed.Contains(extension);
             });
 
             sourceCodeFiles = sourceCodeFiles.Select(str => $"\"{str}\"");
@@ -33,7 +29,6 @@ namespace SLangCompiler.BackEnd.Executor
             var process = new Process();
             process.StartInfo.FileName = "g++";
             process.StartInfo.Arguments = $" {string.Join(' ', sourceCodeFiles)} -o \"{pathToExecutable}\"";
-
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
@@ -41,6 +36,13 @@ namespace SLangCompiler.BackEnd.Executor
 
             process.Start();
             process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                var output = process.StandardOutput.ReadToEnd();
+                var err = process.StandardError.ReadToEnd();
+                throw new Exception($"Target compiler returned status code {process.ExitCode}\nOutput = {output}\nError = {err}");
+            }
         }
     }
 }

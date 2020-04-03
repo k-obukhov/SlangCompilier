@@ -11,7 +11,7 @@ using namespace std;
 namespace Random_cpp
 {
 	static random_device rd;
-	static default_random_engine gen(rd);
+	static default_random_engine gen(rd());
 
 	double rnd_()
 	{

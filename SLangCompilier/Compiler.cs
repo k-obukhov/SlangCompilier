@@ -89,8 +89,9 @@ namespace SLangCompiler
                 backendCompiler.Translate(new DirectoryInfo(outputPath));
                 if (compilerExecutor != null)
                 {
-                    Console.WriteLine($"Target build starts...");
+                    Console.WriteLine("Target build starts...");
                     compilerExecutor.ExecuteCompilerCall();
+                    Console.WriteLine("Target build successful");
                 }
             }
             catch (CompilerException e)

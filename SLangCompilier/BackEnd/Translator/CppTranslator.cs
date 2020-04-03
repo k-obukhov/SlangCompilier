@@ -161,6 +161,10 @@ namespace SLangCompiler.BackEnd.Translator
 
         private void TranslateRoutines(SLangGrammarParser.StatementSeqContext ctx)
         {
+            if (currentRoutine.Header != null)
+            {
+                return;
+            }
             if (!(currentRoutine is MethodNameTableItem))
             {
                 // write in header

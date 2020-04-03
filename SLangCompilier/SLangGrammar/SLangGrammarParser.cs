@@ -39,7 +39,7 @@ public partial class SLangGrammarParser : Parser {
 		Start=37, End=38, Function=39, Procedure=40, LBrace=41, RBrace=42, LSBrace=43, 
 		RSBrace=44, Assign=45, New=46, Nil=47, Pointer=48, Array=49, FunctionArgModifier=50, 
 		AccessModifier=51, Class=52, Empty=53, Inherit=54, Base=55, Abstract=56, 
-		Override=57, File=58, IntValue=59, RealValue=60, BoolValue=61, Id=62, 
+		Override=57, From=58, IntValue=59, RealValue=60, BoolValue=61, Id=62, 
 		StringLiteral=63, SingleCharacter=64, Comment=65, Ws=66;
 	public const int
 		RULE_start = 0, RULE_moduleImport = 1, RULE_module = 2, RULE_moduleStatementsSeq = 3, 
@@ -77,7 +77,7 @@ public partial class SLangGrammarParser : Parser {
 		"'do'", "'module'", "'import'", "'start'", "'end'", "'function'", "'procedure'", 
 		"'('", "')'", "'['", "']'", "':='", "'new'", "'nil'", "'pointer'", "'array'", 
 		null, null, "'class'", "'empty'", "'inherit'", "'base'", "'abstract'", 
-		"'override'", "'file'"
+		"'override'", "'from'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "SimpleType", "AddOp", "SubOp", "MulOp", "DivOp", "ModOp", "BoolOr", 
@@ -87,7 +87,7 @@ public partial class SLangGrammarParser : Parser {
 		"Else", "While", "Repeat", "Elseif", "Do", "Module", "Import", "Start", 
 		"End", "Function", "Procedure", "LBrace", "RBrace", "LSBrace", "RSBrace", 
 		"Assign", "New", "Nil", "Pointer", "Array", "FunctionArgModifier", "AccessModifier", 
-		"Class", "Empty", "Inherit", "Base", "Abstract", "Override", "File", "IntValue", 
+		"Class", "Empty", "Inherit", "Base", "Abstract", "Override", "From", "IntValue", 
 		"RealValue", "BoolValue", "Id", "StringLiteral", "SingleCharacter", "Comment", 
 		"Ws"
 	};
@@ -2062,7 +2062,7 @@ public partial class SLangGrammarParser : Parser {
 
 	public partial class ImportHeadContext : ParserRuleContext {
 		public ITerminalNode LSBrace() { return GetToken(SLangGrammarParser.LSBrace, 0); }
-		public ITerminalNode File() { return GetToken(SLangGrammarParser.File, 0); }
+		public ITerminalNode From() { return GetToken(SLangGrammarParser.From, 0); }
 		public ITerminalNode[] StringLiteral() { return GetTokens(SLangGrammarParser.StringLiteral); }
 		public ITerminalNode StringLiteral(int i) {
 			return GetToken(SLangGrammarParser.StringLiteral, i);
@@ -2097,7 +2097,7 @@ public partial class SLangGrammarParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 312; Match(LSBrace);
-			State = 313; Match(File);
+			State = 313; Match(From);
 			State = 314; Match(StringLiteral);
 			State = 315; Match(Import);
 			State = 316; Match(StringLiteral);
