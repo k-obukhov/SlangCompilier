@@ -49,7 +49,7 @@ namespace Files_cpp
 
 	int64_t r_int(file_stream& stream)
 	{
-	    int64_t value;
+	        int64_t value;
 		stream >> value;
 		return value;
 	}
@@ -61,7 +61,7 @@ namespace Files_cpp
 		return value;
 	}
 
-	string r_str(file_stream& stream, string value)
+	string r_str(file_stream& stream)
 	{
 		string value;
 		stream >> value;
