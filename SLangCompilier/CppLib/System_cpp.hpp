@@ -10,7 +10,7 @@ namespace System_cpp
 {
 	void pause_()
 	{
-	    cin.ignore(numeric_limits<streamsize>::max());
+		cin.sync();
 		cin.get();
 	}
 	
