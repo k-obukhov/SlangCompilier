@@ -1,7 +1,4 @@
-﻿module Math
-	
-	public const real E := 2.7182818284;
-	public const real PI := 3.14159265359;
+﻿empty module Math
 
 	[from "CppLib/Math_cpp.hpp" import "Math_cpp::sin_"]
 	public function(val real arg): real Sin

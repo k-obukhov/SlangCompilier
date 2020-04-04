@@ -152,19 +152,19 @@ namespace SLangCompiler.BackEnd.Translator
             {
                 if (stmt.Point() != null)
                 {
-                    var nextItemName = context.Id().GetText();
+                    var nextItemName = stmt.Id().GetText();
                     if (item is ModuleNameTable module)
                     {
                         source.TryFindModuleItemsByName(nextItemName, currentModule.Name, module.Name, out item);
                         if (item is IImportable importable && importable.Header != null)
                         {
-                            cppText.WriteLine(GetNameForImportable(item));
+                            cppText.Write(GetNameForImportable(item));
                         }
                         else
                         {
                             cppText.Write(moduleName);
                             cppText.Write("::");
-                            cppText.WriteLine(item.Name);
+                            cppText.Write(item.Name);
                         }
                     }
                     else if (item.ToSlangType() is SlangPointerType pt)

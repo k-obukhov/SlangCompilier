@@ -1,4 +1,4 @@
-module Random
+empty module Random
 
 	[from "CppLib/Random_cpp.hpp" import "Random_cpp::rnd_"]
 	public function(): real Rnd

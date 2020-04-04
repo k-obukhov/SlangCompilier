@@ -45,6 +45,13 @@ namespace SLangCompiler.BackEnd.Translator
             cppText?.Dispose();
         }
 
+        private IEnumerable<IImportable> GetImportables(ModuleNameTable module)
+        {
+            IEnumerable<IImportable> importableItems = module.Routines.Select(i => i.Value);
+            importableItems = importableItems.Concat(module.Classes.Select(i => i.Value));
+            return importableItems;
+        }
+
         public override object VisitStart([NotNull] SLangGrammarParser.StartContext context)
         {
             headerText.WriteLine($"#ifndef {moduleName}_H");
@@ -56,20 +63,33 @@ namespace SLangCompiler.BackEnd.Translator
             headerText.WriteLine("#include <memory>");
             headerText.WriteLine("#include <string>");
 
-            var importedFiles = new List<string>();
-            IEnumerable<IImportable> importableItems = currentModule.Routines.Select(i => i.Value);
-            importableItems = importableItems.Concat(currentModule.Classes.Select(i => i.Value));
+            var importedFiles = new HashSet<string>();
+            IEnumerable<IImportable> importableItems = GetImportables(currentModule);
 
             foreach (var item in importableItems)
             {
                 if (item.Header != null)
                 {
-                    if (!importedFiles.Contains(item.Header.File))
+                    importedFiles.Add(item.Header.File);
+                }
+            }
+
+            foreach (var module in currentModule.ImportedModules)
+            {
+                var item = source.Modules[module];
+                if (item.IsEmpty)
+                {
+                    var importables = GetImportables(item);
+                    foreach (var import in importables)
                     {
-                        importedFiles.Add(item.Header.File);
+                        if (import.Header != null)
+                        {
+                            importedFiles.Add(import.Header.File);
+                        }
                     }
                 }
             }
+
             foreach (var file in importedFiles)
             {
                 headerText.WriteLine($"#include {file}");
@@ -98,7 +118,11 @@ namespace SLangCompiler.BackEnd.Translator
 
         public override object VisitModuleImport([NotNull] SLangGrammarParser.ModuleImportContext context)
         {
-            headerText.WriteLine($"#include \"{context.Id().GetText()}.h\"");
+            var module = source.Modules[context.Id().GetText()];
+            if (!module.IsEmpty)
+            {
+                headerText.WriteLine($"#include \"{module.Name}.h\"");
+            }
             return null;
         }
 

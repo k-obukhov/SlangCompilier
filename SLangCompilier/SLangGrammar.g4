@@ -8,7 +8,7 @@ grammar SLangGrammar;
 
 start: (moduleImport)* module;
 moduleImport: Import Id;
-module: Module Id moduleDeclareSeq (moduleStatementsSeq)?;
+module: (Empty)? Module Id moduleDeclareSeq (moduleStatementsSeq)?;
 moduleStatementsSeq: Start statementSeq End;
 moduleDeclareSeq: (functionDecl | procedureDecl | typeDecl | moduleFieldDecl | emptyTypeDecl)*;
 

@@ -1,4 +1,4 @@
-module Files
+empty module Files
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::file_stream"]
 	public empty class File;
 

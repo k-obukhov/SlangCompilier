@@ -85,6 +85,11 @@ namespace SLangCompiler.FrontEnd
             {
                 ThrowEntryPointMainException(ModuleData.File, context.Id().Symbol);
             }
+            
+            if (context.Empty() != null)
+            {
+                moduleTable.IsEmpty = true;
+            }
 
             return base.VisitModule(context);
         }

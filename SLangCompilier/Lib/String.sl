@@ -1,4 +1,4 @@
-module String
+empty module String
 
 	[from "CppLib/String_cpp.hpp" import "String_cpp::str_eq_"]
 	public function(val string left, val string right): boolean Equals

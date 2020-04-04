@@ -32,6 +32,10 @@ namespace SLangCompiler.BackEnd.Translator
             }
             foreach (var key in table.Modules.Keys)
             {
+                if (table.Modules[key].IsEmpty)
+                {
+                    continue;
+                }
                 AntlrInputStream inputStream = new AntlrInputStream(table.Modules[key].ModuleData.Data);
                 SLangGrammarLexer lexer = new SLangGrammarLexer(inputStream);
                 CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);

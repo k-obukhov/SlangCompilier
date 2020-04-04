@@ -80,7 +80,7 @@ namespace SLangCompiler
             p.LoadCode(new System.IO.DirectoryInfo(inputPath));
 
             var frontend = new FrontendCompiler();
-
+            
             try
             {
                 frontend.CheckErrors(p);
@@ -108,6 +108,5 @@ namespace SLangCompiler
                 Console.Error.WriteLine($"Compiler error: {e.Message}");
             }
         }
-
     }
 }

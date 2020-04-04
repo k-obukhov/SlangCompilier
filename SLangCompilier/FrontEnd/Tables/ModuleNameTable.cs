@@ -17,6 +17,7 @@ namespace SLangCompiler.FrontEnd.Tables
         public Dictionary<string, RoutineNameTableItem> Routines { get; set; } = new Dictionary<string, RoutineNameTableItem>();
         public Dictionary<string, ModuleFieldNameTableItem> Fields { get; set; } = new Dictionary<string, ModuleFieldNameTableItem>();
         public Dictionary<string, ClassNameTableItem> Classes { get; set; } = new Dictionary<string, ClassNameTableItem>();
+        public bool IsEmpty { get; set; } = false;
 
         public override SlangType ToSlangType() => null;
 
