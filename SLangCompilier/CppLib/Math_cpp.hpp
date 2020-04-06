@@ -1,10 +1,11 @@
 #ifndef __MATH_CPP_H
 #define __MATH_CPP_H
-
 #include <cmath>
 
 namespace Math_cpp 
 {
+	static double PI_ = 3.14159265359;
+	static double E_ = 2.7182818284;
 	// todo additional checks in future for args
 	double sin_(double arg)
 	{

@@ -121,6 +121,11 @@ namespace SLangCompiler.FrontEnd
             }
 
             moduleItem.CheckCommonNamesConflicts(item.Name, item.Line, item.Column);
+            if (context.importHead() != null)
+            {
+                item.Header = Visit(context.importHead()) as ImportHeader;
+            }
+
             moduleItem.Fields[data.Name] = item;
 
             return base.VisitModuleFieldDecl(context);

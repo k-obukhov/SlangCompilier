@@ -1,5 +1,11 @@
 ﻿empty module Math
 
+	[from "CppLib/Math_cpp.hpp" import "Math_cpp::PI_"]
+	public const real PI := 0.0;
+
+	[from "CppLib/Math_cpp.hpp" import "Math_cpp::E_"]
+	public const real E := 0.0;
+
 	[from "CppLib/Math_cpp.hpp" import "Math_cpp::sin_"]
 	public function(val real arg): real Sin
 	end
