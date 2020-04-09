@@ -1,0 +1,38 @@
+{
+	"folders": [
+		{
+			"path": "ArraysDemo"
+		},
+		{
+			"path": "CoreDemo"
+		},
+		{
+			"path": "FilesDemo"
+		},
+		{
+			"path": "FunctionsDemo"
+		},
+		{
+			"path": "HelloWorld"
+		},
+		{
+			"path": "IfWhileDemo"
+		},
+		{
+			"path": "MathDemo"
+		},
+		{
+			"path": "OOPDemo"
+		},
+		{
+			"path": "PointersDemo"
+		},
+		{
+			"path": "RandomDemo"
+		},
+		{
+			"path": "StringDemo"
+		}
+	],
+	"settings": {}
+}
