@@ -34,5 +34,7 @@
 			"path": "StringDemo"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"slang.default_project": "c:\\Users\\ДНС\\source\\repos\\SLangCompilier\\SLangCompilier\\Samples\\CoreDemo"
+	}
 }
