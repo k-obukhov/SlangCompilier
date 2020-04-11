@@ -19,11 +19,11 @@ empty module Files
 	end
 
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::w_str"]
-	public procedure(ref File f, val integer value) WriteString
+	public procedure(ref File f, val string value) WriteString
 	end
 
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::w_chr"]
-	public procedure(ref File f, val integer value) WriteCharacter
+	public procedure(ref File f, val character value) WriteCharacter
 	end
 
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::w_bool"]
@@ -35,15 +35,15 @@ empty module Files
 	end
 
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::r_real"]
-	public function(ref File f): integer ReadReal
+	public function(ref File f): real ReadReal
 	end
 
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::r_str"]
-	public function(ref File f): integer ReadString
+	public function(ref File f): string ReadString
 	end
 
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::r_chr"]
-	public function(ref File f): integer ReadCharacter
+	public function(ref File f): character ReadCharacter
 	end
 
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::r_bool"]

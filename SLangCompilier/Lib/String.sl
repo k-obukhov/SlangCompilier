@@ -37,5 +37,5 @@ empty module String
 	end
 	
 	[from "CppLib/String_cpp.hpp" import "String_cpp::str_rtos_"]
-	public function(val integer arg): string RealToString
+	public function(val real arg): string RealToString
 	end

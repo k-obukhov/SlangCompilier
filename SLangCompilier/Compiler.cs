@@ -74,25 +74,30 @@ namespace SLangCompiler
 
         }
 
-        public void Translate()
+        private void Process()
         {
             var p = new ProjectManager();
             p.LoadCode(new System.IO.DirectoryInfo(inputPath));
 
             var frontend = new FrontendCompiler();
-            
+            Console.WriteLine("Syntax checks starts...");
+            frontend.CheckErrors(p);
+            Console.WriteLine("No syntax errors found, backend compiler starts");
+            backendCompiler.SetTable(frontend.SourceCode);
+            backendCompiler.Translate(new DirectoryInfo(outputPath));
+            if (compilerExecutor != null)
+            {
+                Console.WriteLine("Target build starts...");
+                compilerExecutor.ExecuteCompilerCall();
+                Console.WriteLine("Target build successful");
+            }
+        }
+
+        public void Translate()
+        {
             try
             {
-                frontend.CheckErrors(p);
-                Console.WriteLine($"No syntax errors found, backend compiler starts");
-                backendCompiler.SetTable(frontend.SourceCode);
-                backendCompiler.Translate(new DirectoryInfo(outputPath));
-                if (compilerExecutor != null)
-                {
-                    Console.WriteLine("Target build starts...");
-                    compilerExecutor.ExecuteCompilerCall();
-                    Console.WriteLine("Target build successful");
-                }
+                Process();
             }
             catch (CompilerException e)
             {

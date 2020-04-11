@@ -55,7 +55,7 @@ namespace SLangCompiler.BackEnd.Translator
             }
             else if (returnType is SlangCustomType ct)
             {
-                var item = currentModule.Classes[ct.Name];
+                var item = source.FindClass(ct);
                 if (item.Header != null)
                 {
                     res = item.Header.Ident.Replace("\"", "");

@@ -13,7 +13,7 @@ namespace Files_cpp
 	file_stream open(string path)
 	{
 		file_stream fs;
-		fs.open(path);
+		fs.open(path, std::fstream::in | std::fstream::out | std::fstream::app);
 		return fs;
 	}
 
