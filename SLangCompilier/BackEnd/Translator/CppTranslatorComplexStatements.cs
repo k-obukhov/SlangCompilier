@@ -52,7 +52,7 @@ namespace SLangCompiler.BackEnd.Translator
             Visit(context.statementSeq());
             cppText.Write("while (");
             Visit(context.exp());
-            cppText.Write(")");
+            cppText.Write(");");
 
             return null;
         }

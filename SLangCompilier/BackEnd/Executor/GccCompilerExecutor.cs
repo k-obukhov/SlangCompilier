@@ -29,20 +29,13 @@ namespace SLangCompiler.BackEnd.Executor
             var process = new Process();
             process.StartInfo.FileName = "g++";
             process.StartInfo.Arguments = $" {string.Join(' ', sourceCodeFiles)} -o \"{pathToExecutable}\"";
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.UseShellExecute = false;
-
+            process.ErrorDataReceived += (s, e) => throw new Exception($"Target compiler returned error = {e.Data}");
+            
             process.Start();
+            process.BeginErrorReadLine();
             process.WaitForExit();
-
-            if (process.ExitCode != 0)
-            {
-                var output = process.StandardOutput.ReadToEnd();
-                var err = process.StandardError.ReadToEnd();
-                throw new Exception($"Target compiler returned status code {process.ExitCode}\nOutput = {output}\nError = {err}");
-            }
         }
     }
 }

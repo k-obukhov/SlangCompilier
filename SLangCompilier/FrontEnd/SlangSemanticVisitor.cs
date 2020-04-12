@@ -677,7 +677,7 @@ namespace SLangCompiler.FrontEnd
             foreach (var exp in context.arrayDeclType().exp())
             {
                 var res = Visit(exp) as ExpressionResult;
-                if (!res.ExpressionType.Equals(SlangSimpleType.Int))
+                if (!res.Type.Equals(SlangSimpleType.Int))
                 {
                     ThrowArrayElementException(file, exp.Start);
                 }
