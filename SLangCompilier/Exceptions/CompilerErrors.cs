@@ -84,5 +84,6 @@ namespace SLangCompiler.Exceptions
         public static void ThrowClassInheritanceCycleException(ClassNameTableItem classItem, FileInfo fileInfo) => throw new CompilerException($"Class {classItem.TypeIdent} is in inheritance cycle", fileInfo, classItem.Line, classItem.Column);
         public static void ThrowFieldOfClassTypeException(FileInfo file, VariableNameTableItem item) => ThrowException($"Invalid use of variable with type {item.Type} in class {item.Type}, only pointers allowed", file, item.Line, item.Column);
         public static void ThrowEntryPointMainException(FileInfo file, IToken symbol) => ThrowException($"Main module must have an entry point!", file, symbol);
+        public static void ThrowClassItemNotFoundException(string msg, SlangCustomType typeIdent, FileInfo file, int line, int column) => ThrowException($"Item with name {msg} was not found in class {typeIdent}", file, line, column);
     }
 }

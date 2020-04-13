@@ -433,6 +433,10 @@ namespace SLangCompiler.FrontEnd
                         {
                             item = foundItem;
                         }
+                        else
+                        {
+                            ThrowClassItemNotFoundException(node.GetText(), typeIdent, file, node.Symbol.Line, node.Symbol.Column);
+                        }
                     }
                     else if (item is ModuleNameTable module)
                     {
@@ -546,6 +550,7 @@ namespace SLangCompiler.FrontEnd
             resultType = item.ToSlangType();
             return new ExpressionResult(resultType, valueType);
         }
+
         private bool CanAssignToType(SlangType type, SlangType expressionType)
         {
             bool result;
