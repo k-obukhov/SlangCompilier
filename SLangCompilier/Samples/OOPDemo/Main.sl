@@ -41,7 +41,7 @@ start
     output d.myMethod(); // myMethod was inherited from Base class, because it's marked as public
     //variable AbstractDemo g; // Error!
     //variable AlsoAbstract a; // Error!
-    let d.myPrivateField := 0; // Error!
+    //let d.myPrivateField := 0; // Error!
     variable NotAbstract n;
     call n.Demo();
 end
