@@ -108,7 +108,8 @@ namespace SLangCompiler.BackEnd.Translator
             }
             else if (context.newC() != null)
             {
-                cppText.Write($"new({GetStringFromType(Visit(context.newC().customType()) as SlangCustomType)})");
+                var t = Visit(context.newC().customType()) as SlangCustomType;
+                cppText.Write($"std::shared_ptr<{GetStringFromType(t)}>(new({GetStringFromType(t)}))");
             }
             else if (context.Nil() != null)
             {
