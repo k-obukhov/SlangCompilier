@@ -1,7 +1,15 @@
 import Files
 module Main
 start
-    variable Files.File myFile := Files.Open("myFile.txt");
+    /*
+		options
+		r, w, a, +
+		r -- чтение
+		w - запись с удалением старого содержимого файла
+		a - запись с добавлением в конец файла
+		+ - чтение и запись
+	*/
+    variable Files.File myFile := Files.Open("myFile.txt", 'w');
 
     // write
     call Files.WriteInteger(myFile, 1234);
@@ -16,7 +24,7 @@ start
     call Files.Close(myFile);
 
     // read
-    let myFile := Files.Open("myFile.txt");
+    let myFile := Files.Open("myFile.txt", 'r');
     output Files.ReadInteger(myFile), '\n';
     output Files.ReadReal(myFile), '\n';
     output Files.ReadString(myFile), '\n';

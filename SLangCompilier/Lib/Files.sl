@@ -1,9 +1,10 @@
 empty module Files
+
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::file_stream"]
 	public empty class File;
 
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::open"]
-	public function(val string path): File Open
+	public function(val string path, val character options): File Open
 	end
 
 	[from "CppLib/Files_cpp.hpp" import "Files_cpp::close"]

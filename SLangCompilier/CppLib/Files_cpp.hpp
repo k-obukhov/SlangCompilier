@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <string>
+#include <exception>
 
 using namespace std;
 
@@ -10,10 +11,36 @@ namespace Files_cpp
 {
 	using file_stream = fstream;
 
-	file_stream open(string path)
+	file_stream open(string path, char f_options)
 	{
+		/*
+		options
+		r, w, a, +
+		r -- read 
+		w - write + trunc
+		a - write + app
+		+ - read + write
+		*/
+
 		file_stream fs;
-		fs.open(path, std::fstream::in | std::fstream::out | std::fstream::app);
+		auto options = std::fstream::in;
+		switch (f_options)
+		{
+			case 'r':
+				options = std::fstream::in;
+				break;
+			case 'w':
+				options = std::fstream::out | std::fstream::trunc;
+				break;
+			case 'a':
+				options = std::fstream::out | std::fstream::app;
+				break;
+			case '+':
+				options = std::fstream::in | std::fstream::out;
+			default:
+				throw std::invalid_argument("invalid options for file open");
+		}
+        fs.open(path, options);
 		return fs;
 	}
 
