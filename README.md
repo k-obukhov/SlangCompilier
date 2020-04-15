@@ -11,10 +11,10 @@
 
 # Usage
 - Console app needs 4 args:
-  - File to Slang project
-  - File to generated source
-  - Language tag (default value - cpp, another languages may be added in future)
-  - Path to executable file (may be not set)
+  - Path to Slang project
+  - Path to generated source
+  - Language tag (default value - "cpp", another languages may be added in future)
+  - Path to output executable file (may be not set)
 
 Works with ANTLR4 / C#7 / .Net Core 3.1
 Enjoy!
