@@ -392,6 +392,10 @@ namespace SLangCompiler.FrontEnd
                     {
                         valueType = ExpressionValueType.Value;
                     }
+                    if (var is ModuleFieldNameTableItem field && field.IsReadonly)
+                    {
+                        valueType = ExpressionValueType.Value;
+                    }
                 }
             }
             else

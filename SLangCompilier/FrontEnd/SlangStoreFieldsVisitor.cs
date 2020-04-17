@@ -92,7 +92,7 @@ namespace SLangCompiler.FrontEnd
                 data = Visit(context.constDecl()) as VariableNameTableItem;
                 ThrowIfReservedWord(data.Name, ModuleData.File, context.constDecl().Start);
             }
-            var isReadonly = context.Readonly() == null;
+            var isReadonly = context.Readonly() != null;
 
             if (moduleItem.Fields.ContainsKey(data.Name))
             {

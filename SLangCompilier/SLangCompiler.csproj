@@ -71,6 +71,15 @@
     <None Update="Samples\FunctionsDemo\Main.sl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Samples\FunctionsMultimoduleDemo\.gitignore">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\FunctionsMultimoduleDemo\Example.sl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\FunctionsMultimoduleDemo\Main.sl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Samples\HelloWorld\.gitignore">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

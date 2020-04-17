@@ -12,3 +12,7 @@ end
 public procedure(ref integer temp) refPass 
     let temp := temp + 1;
 end
+
+public const integer myConst := 42;
+public variable integer myField := myConst;
+public readonly variable string moduleName := "Example";
