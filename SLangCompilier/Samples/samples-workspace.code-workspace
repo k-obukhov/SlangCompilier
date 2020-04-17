@@ -1,6 +1,9 @@
 {
 	"folders": [
 		{
+			"path": "FunctionsMultimoduleDemo"
+		},
+		{
 			"path": "ArraysDemo"
 		},
 		{
@@ -35,6 +38,6 @@
 		}
 	],
 	"settings": {
-		"slang.default_project": "c:\\Users\\ДНС\\source\\repos\\SLangCompilier\\SLangCompilier\\Samples\\FilesDemo"
+		"slang.default_project": "c:\\Users\\ДНС\\source\\repos\\SLangCompilier\\SLangCompilier\\Samples\\FunctionsMultimoduleDemo"
 	}
 }
