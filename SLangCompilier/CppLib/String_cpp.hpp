@@ -7,6 +7,11 @@ using namespace std;
 
 namespace String_cpp
 {
+	int64_t str_len(string arg)
+	{
+		return arg.length();
+	}
+
 	bool str_eq_(string left, string right)
 	{
 	    return left == right;

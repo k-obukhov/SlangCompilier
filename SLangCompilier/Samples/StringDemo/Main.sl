@@ -14,6 +14,7 @@ start
     variable string temp := String.AddChar(first, ' ');
     variable string res := String.Concat(temp, second);
     output '\n', res, '\n';
+    output "Length = ", String.Length(res), '\n';
 
     variable integer myInt := 5;
     variable real myReal := 456.345;

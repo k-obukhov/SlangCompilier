@@ -38,6 +38,6 @@
 		}
 	],
 	"settings": {
-		"slang.default_project": "c:\\Users\\ДНС\\source\\repos\\SLangCompilier\\SLangCompilier\\Samples\\FunctionsMultimoduleDemo"
+		"slang.default_project": "c:\\Users\\ДНС\\source\\repos\\SLangCompilier\\SLangCompilier\\Samples\\HelloWorld"
 	}
 }
