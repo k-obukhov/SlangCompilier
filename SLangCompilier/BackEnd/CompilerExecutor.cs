@@ -7,6 +7,11 @@ namespace SLangCompiler.BackEnd
         protected DirectoryInfo pathToGeneratedSource;
         protected DirectoryInfo pathToExecutable;
 
+        public CompilerExecutor(string pathToSrc, string pathToExec)
+        {
+            pathToGeneratedSource = new DirectoryInfo(pathToSrc);
+            pathToExecutable = new DirectoryInfo(pathToExec);
+        }
         public CompilerExecutor(DirectoryInfo pathToSrc, DirectoryInfo pathToExec)
         {
             pathToGeneratedSource = pathToSrc;

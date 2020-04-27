@@ -10,26 +10,13 @@ namespace SLangCompiler
     {
         const string cppLang = "cpp";
 
-        static BackendCompiler GetBackendById(string id)
+        static (BackendCompiler b, CompilerExecutor e) GetBackendById(string id, string sourcePath, string execPath)
         {
-            switch (id)
+            return id switch
             {
-                case cppLang:
-                    return new CppBackendCompiler();
-                default:
-                    throw new Exception($"Invalid language tag: {id}");
-            }
-        }
-
-        static CompilerExecutor GetExecutorById(string id, DirectoryInfo sourcePath, DirectoryInfo execPath)
-        {
-            switch (id)
-            {
-                case cppLang:
-                    return new GccCompilerExecutor(sourcePath, execPath);
-                default:
-                    throw new Exception($"Invalid language tag: {id}");
-            }
+                cppLang => (new CppBackendCompiler(), execPath != null ? new GccCompilerExecutor(sourcePath, execPath) : null),
+                _ => throw new Exception($"Invalid language tag: {id}"),
+            };
         }
 
         static void Main(string[] args)
@@ -43,13 +30,13 @@ namespace SLangCompiler
                 var destCodeFolder = args.Length == 1 ? throw new Exception("Output path is not set") : args[1];
                 var lang = args.Length < 3 ? defaultLang : args[2];
                 var executableFolder = args.Length < 4 ? null : args[3];
-
+                var (b, e) = GetBackendById(lang, destCodeFolder, executableFolder);
                 Compiler compiler = new CompilerBuilder()
                     .SetInputPath(sourceCodeFolder)
                     .SetOutputPath(destCodeFolder)
-                    .SetCompiler(GetBackendById(lang))
+                    .SetBackend(b)
                     .SetCompilerExecutor(executableFolder != null
-                        ? GetExecutorById(lang, new DirectoryInfo(destCodeFolder), new DirectoryInfo(executableFolder))
+                        ? e
                         : null)
                     .Build();
 

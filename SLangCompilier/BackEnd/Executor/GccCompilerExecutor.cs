@@ -7,6 +7,10 @@ namespace SLangCompiler.BackEnd.Executor
 {
     internal class GccCompilerExecutor : CompilerExecutor
     {
+        public GccCompilerExecutor(string src, string dest) : base(src, dest)
+        {
+
+        }
         public GccCompilerExecutor(DirectoryInfo src, DirectoryInfo dest) : base(src, dest)
         {
 

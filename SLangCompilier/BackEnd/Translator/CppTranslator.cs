@@ -404,7 +404,7 @@ namespace SLangCompiler.BackEnd.Translator
 
         private void TranslateClassFieldDecl(VariableNameTableItem field)
         {
-            headerText.Write($"{GetStringFromType(field.Type)} {field.Name};");
+            headerText.WriteLine($"{GetStringFromType(field.Type)} {field.Name};");
         }
 
         private void TranslateMethodDecl(MethodNameTableItem method)

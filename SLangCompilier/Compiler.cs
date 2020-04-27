@@ -28,7 +28,7 @@ namespace SLangCompiler
             return this;
         }
 
-        public CompilerBuilder SetCompiler(BackendCompiler backend)
+        public CompilerBuilder SetBackend(BackendCompiler backend)
         {
             compiler.SetBackend(backend);
             return this;
