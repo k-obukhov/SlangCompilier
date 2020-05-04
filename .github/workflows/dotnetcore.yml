@@ -20,9 +20,3 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-      
-  on_release:
-      runs-on: ubuntu-latest
-      steps:
-        - name: GitHub Releases
-          uses: fnkr/github-action-ghr@v1.3 
