@@ -20,7 +20,8 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Get zip
       run: |
-        zip --junk-paths -r slang /home/runner/work/SlangCompilier/SlangCompilier/SLangCompilier/bin/Release/netcoreapp3.1
+        pwd
+        zip -r slang /home/runner/work/SlangCompilier/SlangCompilier/SLangCompilier/bin/Release/netcoreapp3.1
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
