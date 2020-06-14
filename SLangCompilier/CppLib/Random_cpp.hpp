@@ -25,10 +25,10 @@ namespace Random_cpp
 		return dis(gen);
 	}
 
-	double rnd_int_(int first, int second)
+	int64_t rnd_int_(int64_t first, int64_t second)
 	{
 		assert(first < second);
-		uniform_int_distribution<> dis(first, second);
+		uniform_int_distribution<int64_t> dis(first, second);
 		return dis(gen);
 	}
 }

@@ -77,22 +77,22 @@ namespace Math_cpp
 		return sqrt(arg);
 	}
 
-	int ceil_(double arg)
+	int64_t ceil_(double arg)
 	{
 		return ceil(arg);
 	}
 
-	int floor_(double arg)
+	int64_t floor_(double arg)
 	{
 		return floor(arg);
 	}
 
-	int round_(double arg)
+	int64_t round_(double arg)
 	{
 		return round(arg);
 	}
 
-	int abs_(int arg)
+	int64_t abs_(int64_t arg)
 	{
 		return abs(arg);
 	}

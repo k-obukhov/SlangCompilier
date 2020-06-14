@@ -14,22 +14,22 @@ namespace System_cpp
 		cin.get();
 	}
 	
-	double toreal_(int arg)
+	double toreal_(int64_t arg)
 	{
 		return static_cast<double>(arg);
 	}
 
-	int toint_(double arg)
+	int64_t toint_(double arg)
 	{
-		return static_cast<int>(arg);
+		return static_cast<int64_t>(arg);
 	}
 
-	int ord_(char arg)
+	int64_t ord_(char arg)
 	{
-		return static_cast<int>(arg);
+		return static_cast<int64_t>(arg);
 	}
 
-	char chr_(int arg)
+	char chr_(int64_t arg)
 	{
 		return static_cast<char>(arg);
 	}

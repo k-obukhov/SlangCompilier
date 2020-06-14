@@ -37,8 +37,8 @@ namespace SLangCompiler.BackEnd.Translator
             var res = "";
             var simpleTypes = new Dictionary<string, string>
             {
-                { CompilerConstants.IntegerType, "int" },
-                { CompilerConstants.RealType, "float" },
+                { CompilerConstants.IntegerType, "int64_t" },
+                { CompilerConstants.RealType, "double" },
                 { CompilerConstants.CharacterType, "char" },
                 { CompilerConstants.BooleanType, "bool" },
                 { CompilerConstants.StringType, "std::string" }
