@@ -44,7 +44,7 @@ namespace SLangCompiler
                     .SetInputPath(opts.PathToProject)
                     .SetOutputPath(opts.PathToGenerated)
                     .SetBackend(b)
-                    .SetCompilerExecutor(string.IsNullOrEmpty(opts.PathToExecutable)
+                    .SetCompilerExecutor(!string.IsNullOrEmpty(opts.PathToExecutable)
                         ? e
                         : null)
                     .Build();
@@ -59,10 +59,6 @@ namespace SLangCompiler
 
         static void HandleParseError(IEnumerable<Error> errs)
         {
-            foreach(var err in errs)
-            {
-                Console.Error.WriteLine(err.ToString());
-            }
         }
 
         static void Main(string[] args)
