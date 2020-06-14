@@ -392,10 +392,6 @@ namespace SLangCompiler.FrontEnd
                     {
                         valueType = ExpressionValueType.Value;
                     }
-                    if (var is ModuleFieldNameTableItem field && field.IsReadonly)
-                    {
-                        valueType = ExpressionValueType.Value;
-                    }
                 }
             }
             else
@@ -449,7 +445,7 @@ namespace SLangCompiler.FrontEnd
                             item = foundItem;
                             // если вытянули из модуля readonly-переменную и она константа или же readonly из другого модуля
                             if (item is ModuleFieldNameTableItem moduleField
-                                && (moduleField.IsConstant || (moduleField.IsReadonly && !fromCurrentModule)))
+                                && (moduleField.IsConstant))
                             {
                                 valueType = ExpressionValueType.Value; // такие вещи иожно передать только по значению
                             }

@@ -15,4 +15,3 @@ end
 
 public const integer myConst := 42;
 public variable integer myField := myConst;
-public readonly variable string moduleName := "Example";

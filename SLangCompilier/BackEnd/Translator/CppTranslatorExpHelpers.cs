@@ -163,7 +163,7 @@ namespace SLangCompiler.BackEnd.Translator
                         }
                         else
                         {
-                            cppText.Write(moduleName);
+                            cppText.Write(module.Name);
                             cppText.Write("::");
                             cppText.Write(item.Name);
                         }

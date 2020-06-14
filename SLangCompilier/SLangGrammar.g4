@@ -19,7 +19,7 @@ arrayDecl: arrayDeclType Id ;
 arrayDeclType: Array (LSBrace exp RSBrace)+ scalarType;
 ptrDecl: ptrType Id (Assign exp)?;
 constDecl: Const scalarType Id Assign exp;
-moduleFieldDecl:  (importHead)? AccessModifier ((Readonly)? variableDecl | constDecl) Semicolon;
+moduleFieldDecl:  (importHead)? AccessModifier (variableDecl | constDecl) Semicolon;
 
 typeName: scalarType | arrayType;
 ptrType: Pointer (LBrace customType RBrace)?; // id -- тип
@@ -99,7 +99,6 @@ Return: 'return';
 Input: 'input';
 Output: 'output';
 Call: 'call';
-Readonly: 'readonly';
 
 If: 'if';
 Then: 'then';

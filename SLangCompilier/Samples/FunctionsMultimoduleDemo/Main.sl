@@ -14,8 +14,6 @@ start
     let Example.myField := Example.myField + 1;
     output "After = ", Example.myField, '\n';
 
-    //let Example.moduleName := "Hello, World!"; // Compiler Error -- readonly field can be changed only in "Example" module
-
     //call Example.valuePass(arg); // Compiler Error -- procedure is private
     output arg, '\n';
     call Example.refPass(arg); // "call refPass(arg);" is the same
