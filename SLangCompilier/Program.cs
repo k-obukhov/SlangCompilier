@@ -2,7 +2,8 @@
 using SLangCompiler.BackEnd.Executor;
 using SLangCompiler.BackEnd.Translator;
 using System;
-using System.IO;
+using CommandLine;
+using System.Collections.Generic;
 
 namespace SLangCompiler
 {
@@ -19,23 +20,31 @@ namespace SLangCompiler
             };
         }
 
-        static void Main(string[] args)
+        class Options
         {
-            var defaultLang = cppLang;
+            [Option('i', "input", Required = true, HelpText = "Path to SLang project")]
+            public string PathToProject { get; set; }
+
+            [Option('o', "output", Required = true, HelpText = "Path to generated source")]
+            public string PathToGenerated { get; set; }
+
+            [Option('l', "lang", Default = cppLang, HelpText = "Language id (default value - cpp)")]
+            public string LanguageId { get; set; }
+
+            [Option('p', "program", Required = false, HelpText = "Path to program (including filename!)")]
+            public string PathToExecutable { get; set; }
+        }
+
+        static void RunOptions(Options opts)
+        {
             try
             {
-                //var folder = @"";
-                //args = new string[] { folder, System.IO.Path.Combine(folder, "gen"), defaultLang, System.IO.Path.Combine(folder, "bin", "program.out") };
-                var sourceCodeFolder = args.Length == 0 ? throw new Exception("Input path is not set") : args[0];
-                var destCodeFolder = args.Length == 1 ? throw new Exception("Output path is not set") : args[1];
-                var lang = args.Length < 3 ? defaultLang : args[2];
-                var executableFolder = args.Length < 4 ? null : args[3];
-                var (b, e) = GetBackendById(lang, destCodeFolder, executableFolder);
+                var (b, e) = GetBackendById(opts.LanguageId, opts.PathToGenerated, opts.PathToExecutable);
                 Compiler compiler = new CompilerBuilder()
-                    .SetInputPath(sourceCodeFolder)
-                    .SetOutputPath(destCodeFolder)
+                    .SetInputPath(opts.PathToProject)
+                    .SetOutputPath(opts.PathToGenerated)
                     .SetBackend(b)
-                    .SetCompilerExecutor(executableFolder != null
+                    .SetCompilerExecutor(string.IsNullOrEmpty(opts.PathToExecutable)
                         ? e
                         : null)
                     .Build();
@@ -46,6 +55,21 @@ namespace SLangCompiler
             {
                 Console.WriteLine($"Invalid cl parameters: Error {e}");
             }
+        }
+
+        static void HandleParseError(IEnumerable<Error> errs)
+        {
+            foreach(var err in errs)
+            {
+                Console.Error.WriteLine(err.ToString());
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(RunOptions)
+                .WithNotParsed(HandleParseError);
         }
     }
 }
