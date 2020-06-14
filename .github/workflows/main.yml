@@ -1,0 +1,44 @@
+name: Handle Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  generate:
+    name: Create release-artifacts
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Get zip
+      run: |
+        zip -r slang /home/runner/work/SlangCompilier/SlangCompilier/SLangCompilier/bin/Release/netcoreapp3.1
+        sha512sum slang.zip > checksum.txt
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: slang.zip
+    - name: Attach to release (archive)
+      uses: svenstaro/upload-release-action@v1-release
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: slang.zip
+        asset_name: slang.zip
+        tag: ${{ github.ref }}
+        overwrite: true
+    - name: Attach to release (checksum)
+      uses: svenstaro/upload-release-action@v1-release
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: checksum.txt
+        asset_name: checksum.txt
+        tag: ${{ github.ref }}
+        overwrite: true
