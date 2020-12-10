@@ -36,8 +36,5 @@
 		{
 			"path": "StringDemo"
 		}
-	],
-	"settings": {
-		"slang.default_project": "c:\\Users\\ДНС\\source\\repos\\SLangCompilier\\SLangCompilier\\Samples\\HelloWorld"
-	}
+	]
 }
