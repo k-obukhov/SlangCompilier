@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace SLangCompiler.BackEnd.Translator
 {
-    public partial class CppTranslator : SLangGrammarBaseVisitor<object>, IDisposable
+    public partial class CppTranslator : IDisposable
     {
         private readonly IndentedTextWriter headerText;
         private readonly IndentedTextWriter cppText;
@@ -19,7 +19,7 @@ namespace SLangCompiler.BackEnd.Translator
         private Scope scope;
         private RoutineNameTableItem currentRoutine;
         private SlangCustomType currentType;
-        private bool inProgramBlock = false;
+        private bool inProgramBlock;
         private readonly string moduleName;
         private readonly DirectoryInfo directoryGen;
 
@@ -39,8 +39,8 @@ namespace SLangCompiler.BackEnd.Translator
 
         public void Dispose()
         {
-            headerText.InnerWriter?.Dispose();
-            cppText.InnerWriter?.Dispose();
+            headerText.InnerWriter.Dispose();
+            cppText.InnerWriter.Dispose();
             headerText?.Dispose();
             cppText?.Dispose();
         }
@@ -94,7 +94,7 @@ namespace SLangCompiler.BackEnd.Translator
             {
                 headerText.WriteLine($"#include {file}");
                 var replacedStr = file.Replace("\"", "");
-                var sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, replacedStr);
+                var sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? throw new InvalidOperationException("Source code path is not set"), replacedStr);
                 var destPath = Path.Combine(directoryGen.FullName, replacedStr);
                 Directory.CreateDirectory(Path.GetDirectoryName(destPath));
                 File.Copy(sourcePath, destPath, true);
@@ -107,7 +107,7 @@ namespace SLangCompiler.BackEnd.Translator
             base.VisitStart(context);
 
             headerText.WriteLine();
-            headerText.WriteLine($"#endif");
+            headerText.WriteLine("#endif");
 
             // end write
             headerText.Flush();
@@ -356,7 +356,7 @@ namespace SLangCompiler.BackEnd.Translator
             // module var
             if (item.IsConstant)
             {
-                writer.Write($"const ");
+                writer.Write("const ");
             }
             writer.Write($"{GetStringFromType(item.Type)} {item.Name}");
         }
@@ -373,12 +373,12 @@ namespace SLangCompiler.BackEnd.Translator
             headerText.WriteLine("{");
             headerText.Indent++;
 
-            headerText.WriteLine($"public:");
+            headerText.WriteLine("public:");
             headerText.Indent++;
             TranslateClassData(typeData, AccessModifier.Public);
             headerText.Indent--;
 
-            headerText.WriteLine($"private:");
+            headerText.WriteLine("private:");
             headerText.Indent++;
             TranslateClassData(typeData, AccessModifier.Private);
             headerText.Indent--;

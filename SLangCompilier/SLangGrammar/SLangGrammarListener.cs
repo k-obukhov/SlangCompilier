@@ -11,6 +11,12 @@
 // Generated from SLangGrammar.g4 by ANTLR 4.6.5
 
 // Unreachable code detected
+
+using System;
+using System.CodeDom.Compiler;
+using Antlr4.Runtime.Misc;
+using Antlr4.Runtime.Tree;
+
 #pragma warning disable 0162
 // The variable '...' is assigned but its value is never used
 #pragma warning disable 0219
@@ -20,16 +26,12 @@
 #pragma warning disable 419
 
 namespace SLangGrammar {
-using Antlr4.Runtime.Misc;
-using IParseTreeListener = Antlr4.Runtime.Tree.IParseTreeListener;
-using IToken = Antlr4.Runtime.IToken;
-
-/// <summary>
+    /// <summary>
 /// This interface defines a complete listener for a parse tree produced by
 /// <see cref="SLangGrammarParser"/>.
 /// </summary>
-[System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.6.5")]
-[System.CLSCompliant(false)]
+[GeneratedCode("ANTLR", "4.6.5")]
+[CLSCompliant(false)]
 public interface ISLangGrammarListener : IParseTreeListener {
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="SLangGrammarParser.start"/>.

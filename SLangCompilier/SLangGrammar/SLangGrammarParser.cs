@@ -11,6 +11,14 @@
 // Generated from SLangGrammar.g4 by ANTLR 4.6.5
 
 // Unreachable code detected
+
+using System;
+using System.CodeDom.Compiler;
+using Antlr4.Runtime;
+using Antlr4.Runtime.Atn;
+using Antlr4.Runtime.Misc;
+using Antlr4.Runtime.Tree;
+
 #pragma warning disable 0162
 // The variable '...' is assigned but its value is never used
 #pragma warning disable 0219
@@ -20,15 +28,8 @@
 #pragma warning disable 419
 
 namespace SLangGrammar {
-using Antlr4.Runtime;
-using Antlr4.Runtime.Atn;
-using Antlr4.Runtime.Misc;
-using Antlr4.Runtime.Tree;
-using System.Collections.Generic;
-using DFA = Antlr4.Runtime.Dfa.DFA;
-
-[System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.6.5")]
-[System.CLSCompliant(false)]
+    [GeneratedCode("ANTLR", "4.6.5")]
+[CLSCompliant(false)]
 public partial class SLangGrammarParser : Parser {
 	public const int
 		SimpleType=1, AddOp=2, SubOp=3, MulOp=4, DivOp=5, ModOp=6, BoolOr=7, BoolAnd=8, 
@@ -93,7 +94,7 @@ public partial class SLangGrammarParser : Parser {
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
-	[System.Obsolete("Use Vocabulary instead.")]
+	[Obsolete("Use Vocabulary instead.")]
 	public static readonly string[] tokenNames = GenerateTokenNames(DefaultVocabulary, _SymbolicNames.Length);
 
 	private static string[] GenerateTokenNames(IVocabulary vocabulary, int length) {
@@ -112,7 +113,7 @@ public partial class SLangGrammarParser : Parser {
 		return tokenNames;
 	}
 
-	[System.Obsolete("Use IRecognizer.Vocabulary instead.")]
+	[Obsolete("Use IRecognizer.Vocabulary instead.")]
 	public override string[] TokenNames
 	{
 		get
@@ -2164,7 +2165,7 @@ public partial class SLangGrammarParser : Parser {
 			State = 325;
 			_errHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(_input,28,_ctx);
-			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.InvalidAltNumber ) {
+			while ( _alt!=2 && _alt!=ATN.InvalidAltNumber ) {
 				if ( _alt==1 ) {
 					{
 					{

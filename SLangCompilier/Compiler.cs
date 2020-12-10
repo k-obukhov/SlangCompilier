@@ -69,15 +69,10 @@ namespace SLangCompiler
             compilerExecutor = executor;
         }
 
-        public Compiler()
-        {
-
-        }
-
         private void Process()
         {
             var p = new ProjectManager();
-            p.LoadCode(new System.IO.DirectoryInfo(inputPath));
+            p.LoadCode(new DirectoryInfo(inputPath));
 
             var frontend = new FrontendCompiler();
             Console.WriteLine("Syntax checks starts...");

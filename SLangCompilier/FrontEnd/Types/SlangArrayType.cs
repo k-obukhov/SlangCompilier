@@ -40,7 +40,7 @@ namespace SLangCompiler.FrontEnd.Types
             {
                 sb.Append("[]");
             }
-            sb.Append($" {Type.ToString()}");
+            sb.Append($" {Type}");
             return sb.ToString();
         }
     }

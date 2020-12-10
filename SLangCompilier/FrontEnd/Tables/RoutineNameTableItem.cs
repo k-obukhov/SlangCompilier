@@ -1,6 +1,6 @@
-﻿using SLangCompiler.FrontEnd.Types;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using SLangCompiler.FrontEnd.Types;
 
 namespace SLangCompiler.FrontEnd.Tables
 {
@@ -9,7 +9,7 @@ namespace SLangCompiler.FrontEnd.Tables
         public ImportHeader Header { get; set; }
         public SlangType ReturnType { get; set; }
         public IList<RoutineArgNameTableItem> Params { get; set; }
-        public override SlangType ToSlangType() => IsFunction() ? new SlangFunctionType(ToSlangArgs(), ReturnType) as SlangRoutineType : new SlangProcedureType(ToSlangArgs()) as SlangRoutineType;
+        public override SlangType ToSlangType() => IsFunction() ? new SlangFunctionType(ToSlangArgs(), ReturnType) : new SlangProcedureType(ToSlangArgs()) as SlangRoutineType;
         private IList<SlangRoutineTypeArg> ToSlangArgs() => Params.Select(p => p.TypeArg).ToList();
         public AccessModifier AccessModifier { get; set; }
 

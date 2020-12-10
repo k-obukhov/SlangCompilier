@@ -31,14 +31,7 @@ namespace SLangCompiler.BackEnd.Translator
         public override object VisitPtrType([NotNull] SLangGrammarParser.PtrTypeContext context)
         {
             SlangCustomType customType;
-            if (context.customType() != null)
-            {
-                customType = GetCustomTypeContext(context.customType());
-            }
-            else
-            {
-                customType = SlangCustomType.Object;
-            };
+            customType = context.customType() != null ? GetCustomTypeContext(context.customType()) : SlangCustomType.Object;
             return new SlangPointerType(customType);
         }
 

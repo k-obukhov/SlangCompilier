@@ -5,25 +5,25 @@ using System.Linq;
 
 namespace SLangCompiler.BackEnd.Translator
 {
-    public partial class CppTranslator : SLangGrammarBaseVisitor<object>
+    public partial class CppTranslator
     {
         private SlangCustomType GetCustomTypeContext(SLangGrammarParser.CustomTypeContext context)
         {
-            string moduleName = "", typeName = "";
+            string nameOfModule = "", typeName = "";
             var ids = context.qualident().Id().Select(x => x.GetText()).ToArray();
 
             if (ids.Count() == 1)
             {
-                moduleName = this.moduleName;
+                nameOfModule = moduleName;
                 typeName = ids[0];
             }
             else if (ids.Count() == 2)
             {
-                moduleName = ids[0];
+                nameOfModule = ids[0];
                 typeName = ids[1];
 
             }
-            return new SlangCustomType(moduleName, typeName);
+            return new SlangCustomType(nameOfModule, typeName);
         }
 
         // helpers
@@ -74,12 +74,6 @@ namespace SLangCompiler.BackEnd.Translator
                 res = "void";
             }
             return res;
-        }
-
-        private void WriteAll(string text)
-        {
-            headerText.Write(text);
-            cppText.Write(text);
         }
 
         private void WriteLineAll(string text)

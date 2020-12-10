@@ -3,7 +3,6 @@ using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
 using SLangGrammar;
-using System;
 using System.Linq;
 using static SLangCompiler.Exceptions.CompilerErrors;
 
@@ -40,7 +39,7 @@ namespace SLangCompiler.FrontEnd
         public void CheckModuleNames([NotNull] SLangGrammarParser.StartContext context)
         {
             var moduleNames = context.moduleImport().Select(i => i.Id());
-            var modules = context.moduleImport();
+            context.moduleImport();
 
             foreach (var module in moduleNames)
             {
@@ -85,7 +84,7 @@ namespace SLangCompiler.FrontEnd
             {
                 ThrowEntryPointMainException(ModuleData.File, context.Id().Symbol);
             }
-            
+
             if (context.Empty() != null)
             {
                 moduleTable.IsEmpty = true;

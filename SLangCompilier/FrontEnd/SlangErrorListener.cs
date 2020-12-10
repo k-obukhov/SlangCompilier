@@ -2,7 +2,6 @@
 using Antlr4.Runtime.Misc;
 using SLangCompiler.Exceptions;
 using SLangCompiler.FileServices;
-using System;
 
 namespace SLangCompiler.FrontEnd
 {

@@ -1,5 +1,5 @@
-﻿using SLangCompiler.FrontEnd.Types;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using SLangCompiler.FrontEnd.Types;
 
 namespace SLangCompiler.FrontEnd.Tables
 {

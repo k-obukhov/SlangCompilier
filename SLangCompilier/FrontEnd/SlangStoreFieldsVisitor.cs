@@ -33,7 +33,7 @@ namespace SLangCompiler.FrontEnd
 
             var errToken = context.Id().Symbol;
 
-            if (!Table.Modules[classItem.Base.ModuleName].Classes[classItem.Base.Name].CanBeBase)
+            if (classItem.Base != null && !Table.Modules[classItem.Base.ModuleName].Classes[classItem.Base.Name].CanBeBase)
             {
                 ThrowClassNotMarkedAsBaseException(classItem.Base, ModuleData.File, errToken);
             }
@@ -47,33 +47,40 @@ namespace SLangCompiler.FrontEnd
                 {
                     ThrowClassFieldExprException(ModuleData.File, expCtx.Start);
                 }
-                ThrowIfReservedWord(item.Name, ModuleData.File, fieldContext.variableDecl().Start);
-                if (classItem.Fields.ContainsKey(item.Name))
-                {
-                    ThrowClassFieldAlreadyDefinedException(item.Name, context.Id().GetText(), ModuleData.File, fieldContext.variableDecl().Start);
-                }
 
-                // check level of access
-                if (item.Type is SlangCustomType || item.Type is SlangPointerType)
+                if (item != null)
                 {
-                    ClassNameTableItem usedType = null;
-                    if (item.Type is SlangCustomType t)
+                    ThrowIfReservedWord(item.Name, ModuleData.File, fieldContext.variableDecl().Start);
+                    if (classItem.Fields.ContainsKey(item.Name))
                     {
-                        usedType = Table.FindClass(t);
-                    }
-                    else if (item.Type is SlangPointerType pt)
-                    {
-                        usedType = Table.FindClass(pt.PtrType);
+                        ThrowClassFieldAlreadyDefinedException(item.Name, context.Id().GetText(), ModuleData.File,
+                            fieldContext.variableDecl().Start);
                     }
 
-                    // если поле класса публично, а тип поля приватный, но при этом тип поля не тип класса
-                    if (item.AccessModifier == AccessModifier.Public && usedType.AccessModifier == AccessModifier.Private && (usedType.TypeIdent != classItem.TypeIdent))
+                    // check level of access
+                    if (item.Type is SlangCustomType || item.Type is SlangPointerType)
                     {
-                        ThrowLevelAccessibilityForFieldsException(fieldContext.variableDecl().Start, ModuleData.File, usedType.TypeIdent.ToString(), item.Name);
+                        ClassNameTableItem usedType = null;
+                        if (item.Type is SlangCustomType t)
+                        {
+                            usedType = Table.FindClass(t);
+                        }
+                        else if (item.Type is SlangPointerType pt)
+                        {
+                            usedType = Table.FindClass(pt.PtrType);
+                        }
+
+                        // если поле класса публично, а тип поля приватный, но при этом тип поля не тип класса
+                        if (usedType != null && item.AccessModifier == AccessModifier.Public && usedType.AccessModifier == AccessModifier.Private && (!usedType.TypeIdent.Equals(classItem.TypeIdent)))
+                        {
+                            ThrowLevelAccessibilityForFieldsException(fieldContext.variableDecl().Start,
+                                ModuleData.File, usedType.TypeIdent.ToString(), item.Name);
+                        }
                     }
+
+                    classItem.CheckFieldConflicts(ModuleData, item);
+                    classItem.Fields.Add(item.Name, item);
                 }
-                classItem.CheckFieldConflicts(ModuleData, item);
-                classItem.Fields.Add(item.Name, item);
             }
 
             return base.VisitTypeDecl(context);
@@ -85,46 +92,49 @@ namespace SLangCompiler.FrontEnd
             if (context.variableDecl() != null)
             {
                 data = Visit(context.variableDecl()) as VariableNameTableItem;
-                ThrowIfReservedWord(data.Name, ModuleData.File, context.variableDecl().Start);
+                if (data != null) ThrowIfReservedWord(data.Name, ModuleData.File, context.variableDecl().Start);
             }
             else
             {
                 data = Visit(context.constDecl()) as VariableNameTableItem;
-                ThrowIfReservedWord(data.Name, ModuleData.File, context.constDecl().Start);
+                if (data != null) ThrowIfReservedWord(data.Name, ModuleData.File, context.constDecl().Start);
             }
 
-            if (moduleItem.Fields.ContainsKey(data.Name))
+            if (data != null && moduleItem.Fields.ContainsKey(data.Name))
             {
                 ThrowIfVariableExistsException(data.Name, ModuleData.File, data.Line, data.Column);
             }
 
-            var item = new ModuleFieldNameTableItem
+            if (data != null)
             {
-                AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
-                IsConstant = data.IsConstant,
-                Column = data.Column,
-                Line = data.Line,
-                Name = data.Name,
-                Type = data.Type
-            };
-
-            if (item.Type is SlangCustomType t)
-            {
-                var typeOfItem = Table.FindClass(t);
-                // если поле класса публично, а тип поля приватный, но при этом тип поля не тип класса
-                if (item.AccessModifier == AccessModifier.Public && typeOfItem.AccessModifier == AccessModifier.Private)
+                var item = new ModuleFieldNameTableItem
                 {
-                    ThrowLevelAccessibilityForFieldsException(context.Start, ModuleData.File, t.ToString(), item.Name);
+                    AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
+                    IsConstant = data.IsConstant,
+                    Column = data.Column,
+                    Line = data.Line,
+                    Name = data.Name,
+                    Type = data.Type
+                };
+
+                if (item.Type is SlangCustomType t)
+                {
+                    var typeOfItem = Table.FindClass(t);
+                    // если поле класса публично, а тип поля приватный, но при этом тип поля не тип класса
+                    if (item.AccessModifier == AccessModifier.Public && typeOfItem.AccessModifier == AccessModifier.Private)
+                    {
+                        ThrowLevelAccessibilityForFieldsException(context.Start, ModuleData.File, t.ToString(), item.Name);
+                    }
                 }
-            }
 
-            moduleItem.CheckCommonNamesConflicts(item.Name, item.Line, item.Column);
-            if (context.importHead() != null)
-            {
-                item.Header = Visit(context.importHead()) as ImportHeader;
-            }
+                moduleItem.CheckCommonNamesConflicts(item.Name, item.Line, item.Column);
+                if (context.importHead() != null)
+                {
+                    item.Header = Visit(context.importHead()) as ImportHeader;
+                }
 
-            moduleItem.Fields[data.Name] = item;
+                moduleItem.Fields[data.Name] = item;
+            }
 
             return base.VisitModuleFieldDecl(context);
         }
@@ -137,16 +147,20 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitTypeFieldDecl([NotNull] SLangGrammarParser.TypeFieldDeclContext context)
         {
-            var item = Visit(context.variableDecl()) as VariableNameTableItem;
-            return new FieldNameTableItem
+            if (Visit(context.variableDecl()) is VariableNameTableItem item)
             {
-                AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
-                Column = item.Column,
-                IsConstant = item.IsConstant,
-                Line = item.Line,
-                Name = item.Name,
-                Type = item.Type
-            };
+                return new FieldNameTableItem
+                {
+                    AccessModifier = GetModifierByName(context.AccessModifier().GetText()),
+                    Column = item.Column,
+                    IsConstant = item.IsConstant,
+                    Line = item.Line,
+                    Name = item.Name,
+                    Type = item.Type
+                };
+            }
+
+            return null;
         }
 
         public override object VisitVariableDecl([NotNull] SLangGrammarParser.VariableDeclContext context)
@@ -155,14 +169,13 @@ namespace SLangCompiler.FrontEnd
             {
                 return Visit(context.arrayDecl());
             }
-            else if (context.simpleDecl() != null)
+
+            if (context.simpleDecl() != null)
             {
                 return Visit(context.simpleDecl());
             }
-            else
-            {
-                return Visit(context.ptrDecl());
-            }
+
+            return Visit(context.ptrDecl());
         }
         // var -> scalar
         public override object VisitSimpleDecl([NotNull] SLangGrammarParser.SimpleDeclContext context)
@@ -200,9 +213,13 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
         {
-            var classItem = base.VisitCustomType(context) as SlangCustomType;
-            CheckClassExists(classItem.ModuleName, classItem.Name, context.qualident().Id().First().Symbol);
-            return classItem;
+            if (base.VisitCustomType(context) is SlangCustomType classItem)
+            {
+                CheckClassExists(classItem.ModuleName, classItem.Name, context.qualident().Id().First().Symbol);
+                return classItem;
+            }
+
+            return null;
         }
     }
 }

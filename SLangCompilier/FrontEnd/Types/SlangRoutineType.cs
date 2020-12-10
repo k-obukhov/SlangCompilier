@@ -24,6 +24,7 @@ namespace SLangCompiler.FrontEnd.Types
         }
 
         public override bool Equals(object obj) => obj is SlangRoutineTypeArg arg && (arg.Type.Equals(Type)) && (arg.Modifier == Modifier);
+        // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
         public override int GetHashCode() => base.GetHashCode();
 
         public override string ToString() => $"{Modifier} {Type}";

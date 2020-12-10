@@ -6,7 +6,7 @@ using SLangGrammar;
 
 namespace SLangCompiler.BackEnd.Translator
 {
-    public partial class CppTranslator : SLangGrammarBaseVisitor<object>
+    public partial class CppTranslator
     {
         public override object VisitExprList([NotNull] SLangGrammarParser.ExprListContext context)
         {

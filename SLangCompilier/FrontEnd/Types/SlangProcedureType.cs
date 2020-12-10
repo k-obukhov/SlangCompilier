@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -18,7 +17,7 @@ namespace SLangCompiler.FrontEnd.Types
             StringBuilder sb = new StringBuilder();
             sb.Append("procedure (");
             sb.Append(string.Join(", ", (from arg in Args select arg.ToString()).ToArray()));
-            sb.Append($")");
+            sb.Append(")");
             return sb.ToString();
         }
     }

@@ -5,14 +5,9 @@ namespace SLangCompiler.FrontEnd.Tables
     // Base scope class logic
     public class Scope
     {
-        public Scope Outer { get; set; } = null;
+        public Scope Outer { get; set; }
 
-        public Dictionary<string, VariableNameTableItem> Names { get; set; } = new Dictionary<string, VariableNameTableItem>();
-
-        public Scope(Dictionary<string, VariableNameTableItem> names)
-        {
-            Names = names;
-        }
+        public Dictionary<string, VariableNameTableItem> Names { get; set; }
 
         public Scope(Scope outer)
         {
@@ -30,9 +25,6 @@ namespace SLangCompiler.FrontEnd.Tables
         {
             Names = new Dictionary<string, VariableNameTableItem>();
         }
-
-        public bool VariableExists(string name) => FindVariable(name) != null;
-
 
         public void PutVariable(VariableNameTableItem item)
         {
@@ -59,10 +51,8 @@ namespace SLangCompiler.FrontEnd.Tables
                         res = outer.Names[name];
                         break;
                     }
-                    else
-                    {
-                        outer = outer.Outer;
-                    }
+
+                    outer = outer.Outer;
                 }
             }
             return res;

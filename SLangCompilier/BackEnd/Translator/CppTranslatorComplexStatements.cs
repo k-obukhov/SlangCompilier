@@ -5,7 +5,7 @@ using System.Linq;
 namespace SLangCompiler.BackEnd.Translator
 {
     // if, while, do-while
-    public partial class CppTranslator : SLangGrammarBaseVisitor<object>
+    public partial class CppTranslator
     {
         public override object VisitIfC([NotNull] SLangGrammarParser.IfCContext context)
         {

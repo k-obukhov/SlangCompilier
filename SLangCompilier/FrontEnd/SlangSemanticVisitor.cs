@@ -4,11 +4,9 @@ using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
 using SLangGrammar;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
 using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd
@@ -20,14 +18,14 @@ namespace SLangCompiler.FrontEnd
             RoutineNameTableItem currentRoutine,
             SlangCustomType currentType,
             ModuleNameTable moduleItem,
-            SourceCodeTable Table,
+            SourceCodeTable table,
             Dictionary<string, bool> checkDefinitions)
         {
             var result = scope.FindVariable(name); // заходим во внешние блоки
             if (result == null)
             {
                 // мы сейчас находимся в функции?
-                if (currentRoutine != null && currentRoutine is RoutineNameTableItem routine)
+                if (currentRoutine != null && currentRoutine is { } routine)
                 {
                     // в методе?
                     if (currentRoutine is MethodNameTableItem method)
@@ -60,23 +58,21 @@ namespace SLangCompiler.FrontEnd
                 // ну либо это другой модуль?
                 if (moduleItem.ImportedModules.Contains(name) || name == moduleItem.ModuleData.Name)
                 {
-                    return Table.Modules[name];
+                    return table.Modules[name];
                 }
 
                 return null;
                 // иначе ничего не остается кроме как отдать пустоту
             }
-            else
-            {
-                return result;
-            }
+
+            return result;
         }
     }
     public class SlangSemanticVisitor : SlangBaseVisitor
     {
         private readonly ModuleNameTable moduleItem;
         private RoutineNameTableItem currentRoutine;
-        private bool inProgramBlock = false;
+        private bool inProgramBlock;
         private Scope scope;
         private SlangCustomType currentType;
         private readonly FileInfo file;
@@ -121,7 +117,7 @@ namespace SLangCompiler.FrontEnd
 
             var result = Visit(context.statementSeq()) as StatementResult;
             // функция, которая не импортируется извне и не является абстрактным методом?
-            if (!result.Returning && currentRoutine.Header == null && !(currentRoutine is MethodNameTableItem method && method.IsAbstract))
+            if (result != null && !result.Returning && currentRoutine.Header == null && !(currentRoutine is MethodNameTableItem method && method.IsAbstract))
             {
                 ThrowNotAllCodePathException(file, context.statementSeq().Start);
             }
@@ -221,8 +217,8 @@ namespace SLangCompiler.FrontEnd
 
             if (context.exp() != null)
             {
-                var leftResultType = (Visit(context.simpleExpr()) as ExpressionResult).Type;
-                var rightResultType = (Visit(context.exp()) as ExpressionResult).Type;
+                var leftResultType = (Visit(context.simpleExpr()) as ExpressionResult)?.Type;
+                var rightResultType = (Visit(context.exp()) as ExpressionResult)?.Type;
                 var allowedTypes = new[] { SlangSimpleType.Int, SlangSimpleType.Real, SlangSimpleType.Boolean, SlangSimpleType.Character };
                 var relOp = context.BoolEq() ?? context.BoolNeq() ?? context.BoolG() ?? context.BoolGeq() ?? context.BoolL() ?? context.BoolLeq();
 
@@ -232,10 +228,8 @@ namespace SLangCompiler.FrontEnd
                 {
                     return new ExpressionResult(SlangSimpleType.Boolean, ExpressionValueType.Value);
                 }
-                else
-                {
-                    ThrowInvalidTypesForBinaryOperationException(relOp.Symbol, file, leftResultType, rightResultType);
-                }
+
+                ThrowInvalidTypesForBinaryOperationException(relOp.Symbol, file, leftResultType, rightResultType);
 
             }
             return Visit(context.simpleExpr()) as ExpressionResult;
@@ -245,8 +239,8 @@ namespace SLangCompiler.FrontEnd
         {
             if (context.simpleExpr() != null)
             {
-                var leftResultType = (Visit(context.term()) as ExpressionResult).Type;
-                var rightResultType = (Visit(context.simpleExpr()) as ExpressionResult).Type;
+                var leftResultType = (Visit(context.term()) as ExpressionResult)?.Type;
+                var rightResultType = (Visit(context.simpleExpr()) as ExpressionResult)?.Type;
                 var opToken = context.AddOp() ?? context.SubOp() ?? context.BoolOr();
 
 
@@ -255,14 +249,13 @@ namespace SLangCompiler.FrontEnd
                 {
                     return new ExpressionResult(leftResultType, ExpressionValueType.Value);
                 }
-                else if (context.BoolOr() != null && (leftResultType is SlangSimpleType ltB && rightResultType is SlangSimpleType rtB && ltB.Equals(rtB) && ltB.Equals(SlangSimpleType.Boolean)))
+
+                if (context.BoolOr() != null && (leftResultType is SlangSimpleType ltB && rightResultType is SlangSimpleType rtB && ltB.Equals(rtB) && ltB.Equals(SlangSimpleType.Boolean)))
                 {
                     return new ExpressionResult(leftResultType, ExpressionValueType.Value);
                 }
-                else
-                {
-                    ThrowInvalidTypesForBinaryOperationException(opToken.Symbol, file, leftResultType, rightResultType);
-                }
+
+                ThrowInvalidTypesForBinaryOperationException(opToken.Symbol, file, leftResultType, rightResultType);
             }
             return Visit(context.term()) as ExpressionResult;
         }
@@ -271,22 +264,21 @@ namespace SLangCompiler.FrontEnd
         {
             if (context.term() != null)
             {
-                var leftResultType = (Visit(context.signedFactor()) as ExpressionResult).Type;
-                var rightResultType = (Visit(context.term()) as ExpressionResult).Type;
+                var leftResultType = (Visit(context.signedFactor()) as ExpressionResult)?.Type;
+                var rightResultType = (Visit(context.term()) as ExpressionResult)?.Type;
                 var opToken = context.MulOp() ?? context.DivOp() ?? context.BoolAnd();
                 var allowedTypes = new[] { SlangSimpleType.Int, SlangSimpleType.Real };
                 if (leftResultType is SlangSimpleType lt && rightResultType is SlangSimpleType rt && lt.Equals(rt) && allowedTypes.Contains(lt))
                 {
                     return new ExpressionResult(leftResultType, ExpressionValueType.Value);
                 }
-                else if (context.BoolAnd() != null && (leftResultType is SlangSimpleType ltB && rightResultType is SlangSimpleType rtB && ltB.Equals(rtB) && ltB.Equals(SlangSimpleType.Boolean)))
+
+                if (context.BoolAnd() != null && (leftResultType is SlangSimpleType ltB && rightResultType is SlangSimpleType rtB && ltB.Equals(rtB) && ltB.Equals(SlangSimpleType.Boolean)))
                 {
                     return new ExpressionResult(leftResultType, ExpressionValueType.Value);
                 }
-                else
-                {
-                    ThrowInvalidTypesForBinaryOperationException(opToken.Symbol, file, leftResultType, rightResultType);
-                }
+
+                ThrowInvalidTypesForBinaryOperationException(opToken.Symbol, file, leftResultType, rightResultType);
             }
             return Visit(context.signedFactor()) as ExpressionResult;
         }
@@ -294,21 +286,25 @@ namespace SLangCompiler.FrontEnd
         public override object VisitSignedFactor([NotNull] SLangGrammarParser.SignedFactorContext context)
         {
             var exprRes = (Visit(context.factor()) as ExpressionResult);
-            var type = exprRes.Type;
-            var signToken = context.AddOp() ?? context.SubOp();
+            if (exprRes != null)
+            {
+                var type = exprRes.Type;
+                var signToken = context.AddOp() ?? context.SubOp();
 
-            if (signToken != null)
-            {
-                if (type is SlangSimpleType t && (t.Equals(SlangSimpleType.Real) || t.Equals(SlangSimpleType.Int)))
+                if (signToken != null)
                 {
-                    return new ExpressionResult(type, ExpressionValueType.Value);
+                    if (type is SlangSimpleType t && (t.Equals(SlangSimpleType.Real) || t.Equals(SlangSimpleType.Int)))
+                    {
+                        return new ExpressionResult(type, ExpressionValueType.Value);
+                    }
+                    ThrowInvalidTypesForUnaryOperationException(signToken, file, type);
                 }
-                ThrowInvalidTypesForUnaryOperationException(signToken, file, type);
+                else
+                {
+                    return new ExpressionResult(type, exprRes.ExpressionType);
+                }
             }
-            else
-            {
-                return new ExpressionResult(type, exprRes.ExpressionType);
-            }
+
             return null;
         }
 
@@ -318,33 +314,36 @@ namespace SLangCompiler.FrontEnd
             {
                 return new ExpressionResult(SlangSimpleType.Int, ExpressionValueType.Value);
             }
-            else if (context.RealValue() != null)
+
+            if (context.RealValue() != null)
             {
                 return new ExpressionResult(SlangSimpleType.Real, ExpressionValueType.Value);
             }
-            else if (context.BoolValue() != null)
+
+            if (context.BoolValue() != null)
             {
                 return new ExpressionResult(SlangSimpleType.Boolean, ExpressionValueType.Value);
             }
-            else if (context.SingleCharacter() != null)
+
+            if (context.SingleCharacter() != null)
             {
                 return new ExpressionResult(SlangSimpleType.Character, ExpressionValueType.Value);
             }
-            else if (context.StringLiteral() != null)
+
+            if (context.StringLiteral() != null)
             {
                 return new ExpressionResult(SlangSimpleType.String, ExpressionValueType.Value);
             }
-            else if (context.BoolNot() != null)
+
+            if (context.BoolNot() != null)
             {
-                var type = (Visit(context.factor()) as ExpressionResult).Type;
+                var type = (Visit(context.factor()) as ExpressionResult)?.Type;
                 if (type is SlangSimpleType && type.Equals(SlangSimpleType.Boolean))
                 {
                     return new ExpressionResult(SlangSimpleType.Boolean, ExpressionValueType.Value);
                 }
-                else
-                {
-                    ThrowInvalidTypesForUnaryOperationException(context.BoolNot(), file, type);
-                }
+
+                ThrowInvalidTypesForUnaryOperationException(context.BoolNot(), file, type);
             }
             else if (context.exp() != null)
             {
@@ -647,7 +646,7 @@ namespace SLangCompiler.FrontEnd
             if (context != null)
             {
                 var exprRes = Visit(context) as ExpressionResult;
-                if (!CanAssignToType(variable.Type, exprRes.Type))
+                if (exprRes != null && !CanAssignToType(variable.Type, exprRes.Type))
                 {
                     ThrowCannotAssignException(variable.Type, exprRes.Type, file, variable.Line, variable.Column);
                 }
@@ -682,7 +681,7 @@ namespace SLangCompiler.FrontEnd
             foreach (var exp in context.arrayDeclType().exp())
             {
                 var res = Visit(exp) as ExpressionResult;
-                if (!res.Type.Equals(SlangSimpleType.Int))
+                if (res != null && !res.Type.Equals(SlangSimpleType.Int))
                 {
                     ThrowArrayElementException(file, exp.Start);
                 }
@@ -713,7 +712,7 @@ namespace SLangCompiler.FrontEnd
             foreach (var statementSeq in context.statementSeq())
             {
                 var res = Visit(statementSeq) as StatementResult;
-                if (!res.Returning)
+                if (res != null && !res.Returning)
                 {
                     result = false;
                 }
@@ -728,7 +727,7 @@ namespace SLangCompiler.FrontEnd
         private void CheckExpIsBoolean(SLangGrammarParser.ExpContext exp)
         {
             var res = Visit(exp) as ExpressionResult;
-            if (!res.Type.Equals(SlangSimpleType.Boolean))
+            if (res != null && !res.Type.Equals(SlangSimpleType.Boolean))
             {
                 ThrowCannotAssignException(SlangSimpleType.Boolean, res.Type, file, exp.Start.Line, exp.Start.Column);
             }
@@ -751,7 +750,7 @@ namespace SLangCompiler.FrontEnd
         public override object VisitCall([NotNull] SLangGrammarParser.CallContext context)
         {
             var exprRes = Visit(context.designator()) as ExpressionResult;
-            if (exprRes.ExpressionType != ExpressionValueType.Nothing)
+            if (exprRes != null && exprRes.ExpressionType != ExpressionValueType.Nothing)
             {
                 ThrowCallException(file, context.designator().Start);
             }
@@ -776,7 +775,7 @@ namespace SLangCompiler.FrontEnd
             if (context.exp() != null)
             {
                 var res = Visit(context.exp()) as ExpressionResult;
-                if (!CanAssignToType(currentRoutine.ReturnType, res.Type))
+                if (res != null && !CanAssignToType(currentRoutine.ReturnType, res.Type))
                 {
                     ThrowCannotAssignException(currentRoutine.ReturnType, res.Type, file, context.exp().Start.Line, context.exp().Start.Column);
                 }
@@ -789,7 +788,7 @@ namespace SLangCompiler.FrontEnd
             foreach (var exp in context.designator())
             {
                 var res = Visit(exp) as ExpressionResult;
-                if (!(res.ExpressionType == ExpressionValueType.Variable && res.Type is SlangSimpleType))
+                if (res != null && !(res.ExpressionType == ExpressionValueType.Variable && res.Type is SlangSimpleType))
                 {
                     ThrowInputTypeException(file, exp.Start);
                 }
@@ -802,7 +801,7 @@ namespace SLangCompiler.FrontEnd
             foreach (var exp in context.exp())
             {
                 var res = Visit(exp) as ExpressionResult;
-                if (!(res.Type is SlangSimpleType))
+                if (res != null && !(res.Type is SlangSimpleType))
                 {
                     ThrowOutputTypeException(file, exp.Start);
                 }
@@ -815,11 +814,11 @@ namespace SLangCompiler.FrontEnd
             var itemType = Visit(context.designator()) as ExpressionResult;
             var exprType = Visit(context.exp()) as ExpressionResult;
 
-            if (itemType.ExpressionType != ExpressionValueType.Variable)
+            if (itemType != null && itemType.ExpressionType != ExpressionValueType.Variable)
             {
                 ThrowLetForValueException(file, context.designator().Start);
             }
-            if (!CanAssignToType(itemType.Type, exprType.Type))
+            if (exprType != null && itemType != null && !CanAssignToType(itemType.Type, exprType.Type))
             {
                 ThrowCannotAssignException(itemType.Type, exprType.Type, file, context.exp().Start.Line, context.exp().Start.Column);
             }
@@ -829,16 +828,21 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
         {
-            var classItem = base.VisitCustomType(context) as SlangCustomType;
-            CheckClassExists(classItem.ModuleName, classItem.Name, context.qualident().Id().First().Symbol);
-            if (classItem.ModuleName == ModuleData.Name)
+            if (base.VisitCustomType(context) is SlangCustomType classItem)
             {
-                if (checkDefinitions[classItem.Name] == false)
+                CheckClassExists(classItem.ModuleName, classItem.Name, context.qualident().Id().First().Symbol);
+                if (classItem.ModuleName == ModuleData.Name)
                 {
-                    ThrowInvalidUseIncompleteTypeException(classItem, file, context.Start);
+                    if (checkDefinitions[classItem.Name] == false)
+                    {
+                        ThrowInvalidUseIncompleteTypeException(classItem, file, context.Start);
+                    }
                 }
+
+                return classItem;
             }
-            return classItem;
+
+            return null;
         }
     }
 }

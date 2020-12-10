@@ -4,6 +4,7 @@ using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
 using SLangGrammar;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static SLangCompiler.Exceptions.CompilerErrors;
@@ -37,7 +38,7 @@ namespace SLangCompiler.FrontEnd
             }
             return usedType;
         }
-        private void CheckLevelAccessForRoutines(RoutineNameTableItem routine, Antlr4.Runtime.Tree.ITerminalNode routineToken, string routineName)
+        private void CheckLevelAccessForRoutines(RoutineNameTableItem routine, ITerminalNode routineToken, string routineName)
         {
             foreach (var item in routine.Params)
             {
@@ -66,7 +67,7 @@ namespace SLangCompiler.FrontEnd
             }
         }
 
-        private void CheckLevelAccessForMethods(MethodNameTableItem method, Antlr4.Runtime.Tree.ITerminalNode routineToken, SlangCustomType classIdent)
+        private void CheckLevelAccessForMethods(MethodNameTableItem method, ITerminalNode routineToken, SlangCustomType classIdent)
         {
             foreach (var item in method.Params)
             {
@@ -75,7 +76,7 @@ namespace SLangCompiler.FrontEnd
                 {
                     var customType = GetUserType(typeArg);
                     var classItem = Table.Modules[customType.ModuleName].Classes[customType.Name];
-                    if (classItem.AccessModifier == AccessModifier.Private && customType != classIdent)
+                    if (classItem.AccessModifier == AccessModifier.Private && !customType.Equals(classIdent))
                     {
                         ThrowLevelAccessibilityForRoutineException(routineToken, ModuleData.File, customType.ToString(), method.Name);
                     }
@@ -101,10 +102,10 @@ namespace SLangCompiler.FrontEnd
             return base.VisitFunctionDecl(context);
         }
 
-        private void ValidateContext(SLangGrammarParser.ThisHeaderContext thisHeader, ITerminalNode Id, SLangGrammarParser.ImportHeadContext importHead, ITerminalNode accessModifier, ITerminalNode abstractToken, ITerminalNode overrideToken, SLangGrammarParser.RoutineArgListContext routineArgList, SLangGrammarParser.TypeNameContext typeName, SLangGrammarParser.StatementSeqContext statementSeq)
+        private void ValidateContext(SLangGrammarParser.ThisHeaderContext thisHeader, ITerminalNode id, SLangGrammarParser.ImportHeadContext importHead, ITerminalNode accessModifier, ITerminalNode abstractToken, ITerminalNode overrideToken, SLangGrammarParser.RoutineArgListContext routineArgList, SLangGrammarParser.TypeNameContext typeName, SLangGrammarParser.StatementSeqContext statementSeq)
         {
             var isMethod = thisHeader != null;
-            var symbol = Id.Symbol;
+            var symbol = id.Symbol;
 
             string nameOfThis = string.Empty;
             if (isMethod)
@@ -113,10 +114,10 @@ namespace SLangCompiler.FrontEnd
                 ThrowIfReservedWord(nameOfThis, ModuleData.File, thisHeader.Id().Symbol);
                 if (importHead != null)
                 {
-                    ThrowImportHeaderMethodsException(ModuleData.File, Id);
+                    ThrowImportHeaderMethodsException(ModuleData.File, id);
                 }
             }
-            var name = Id.GetText();
+            var name = id.GetText();
             ThrowIfReservedWord(name, ModuleData.File, symbol);
             var args = Visit(routineArgList) as List<RoutineArgNameTableItem>;
             ImportHeader header = null;
@@ -138,21 +139,20 @@ namespace SLangCompiler.FrontEnd
 
             if (header != null && statementSeq.statement().Length != 0)
             {
-                ThrowImportHeaderException(ModuleData.File, Id);
+                ThrowImportHeaderException(ModuleData.File, id);
             }
 
             if (isMethod)
             {
-                var methodTypeIdent = Visit(thisHeader) as SlangCustomType;
-                if (methodTypeIdent.ModuleName != ModuleData.Name)
+                if (Visit(thisHeader) is SlangCustomType methodTypeIdent && methodTypeIdent.ModuleName != ModuleData.Name)
                 {
-                    ThrowModuleFromOtherClassModuleException(Id, ModuleData.File);
+                    ThrowModuleFromOtherClassModuleException(id, ModuleData.File);
                 }
                 if (isAbstract)
                 {
-                    ThrowIfAbstractMethodPrivate(modifier, ModuleData.File, Id);
+                    ThrowIfAbstractMethodPrivate(modifier, ModuleData.File, id);
                 }
-                if (args.Any(a => a.Name == nameOfThis))
+                if ((args ?? throw new InvalidOperationException(nameof(args))).Any(a => a.Name == nameOfThis))
                 {
                     ThrowConfictsThisException(thisHeader.Id(), ModuleData.File);
                 }
@@ -161,12 +161,12 @@ namespace SLangCompiler.FrontEnd
 
                 if (foundClass.Methods.ContainsKey(name))
                 {
-                    ThrowMethodSignatureExistsException(classData, Id, ModuleData.File);
+                    ThrowMethodSignatureExistsException(classData, id, ModuleData.File);
                 }
 
                 if (isAbstract && statementSeq.statement().Length != 0)
                 {
-                    ThrowAbstractEmptyException(Id, ModuleData.File);
+                    ThrowAbstractEmptyException(id, ModuleData.File);
                 }
 
                 var method = new MethodNameTableItem
@@ -184,7 +184,7 @@ namespace SLangCompiler.FrontEnd
                 };
                 if (modifier == AccessModifier.Public)
                 {
-                    CheckLevelAccessForMethods(method, Id, classData);
+                    CheckLevelAccessForMethods(method, id, classData);
                 }
 
                 foundClass.CheckRoutineConflicts(moduleItem.ModuleData, method);
@@ -194,7 +194,7 @@ namespace SLangCompiler.FrontEnd
             {
                 if (moduleItem.Routines.ContainsKey(name))
                 {
-                    ThrowRoutineExistsException(Id, ModuleData.File);
+                    ThrowRoutineExistsException(id, ModuleData.File);
                 }
 
                 var routine = new RoutineNameTableItem
@@ -210,7 +210,7 @@ namespace SLangCompiler.FrontEnd
 
                 if (modifier == AccessModifier.Public)
                 {
-                    CheckLevelAccessForRoutines(routine, Id, name);
+                    CheckLevelAccessForRoutines(routine, id, name);
                 }
 
                 moduleItem.CheckCommonNamesConflicts(routine.Name, routine.Line, routine.Column);
@@ -258,9 +258,13 @@ namespace SLangCompiler.FrontEnd
 
         public override object VisitCustomType([NotNull] SLangGrammarParser.CustomTypeContext context)
         {
-            var classItem = base.VisitCustomType(context) as SlangCustomType;
-            CheckClassExists(classItem.ModuleName, classItem.Name, context.qualident().Id().First().Symbol);
-            return classItem;
+            if (base.VisitCustomType(context) is SlangCustomType classItem)
+            {
+                CheckClassExists(classItem.ModuleName, classItem.Name, context.qualident().Id().First().Symbol);
+                return classItem;
+            }
+
+            return null;
         }
     }
 }

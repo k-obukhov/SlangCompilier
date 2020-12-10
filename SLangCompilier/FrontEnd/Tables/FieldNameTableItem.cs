@@ -12,7 +12,7 @@ namespace SLangCompiler.FrontEnd.Tables
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using SLangCompiler.FileServices;
-using SLangCompiler.FrontEnd.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SLangCompiler.FileServices;
+using SLangCompiler.FrontEnd.Types;
 using static SLangCompiler.Exceptions.CompilerErrors;
 
 namespace SLangCompiler.FrontEnd.Tables
@@ -42,21 +42,8 @@ namespace SLangCompiler.FrontEnd.Tables
 
         internal IEnumerable<object> GetItems(AccessModifier modifier)
         {
-            var res = new List<object>();
-            foreach (var key in Methods.Keys)
-            {
-                if (Methods[key].AccessModifier == modifier && !Methods[key].IsDerived)
-                {
-                    res.Add(Methods[key] as object);
-                }
-            }
-            foreach (var key in Fields.Keys)
-            {
-                if (Fields[key].AccessModifier == modifier && !Fields[key].IsDerived)
-                {
-                    res.Add(Fields[key] as object);
-                }
-            }
+            var res = (from key in Methods.Keys where Methods[key].AccessModifier == modifier && !Methods[key].IsDerived select Methods[key] as object).ToList();
+            res.AddRange(from key in Fields.Keys where Fields[key].AccessModifier == modifier && !Fields[key].IsDerived select Fields[key] as object);
             return res;
         }
     }
@@ -70,7 +57,7 @@ namespace SLangCompiler.FrontEnd.Tables
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
     }
 

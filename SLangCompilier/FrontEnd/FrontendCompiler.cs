@@ -1,8 +1,8 @@
-﻿using Antlr4.Runtime;
+﻿using System.Linq;
+using Antlr4.Runtime;
 using SLangCompiler.FileServices;
 using SLangCompiler.FrontEnd.Tables;
 using SLangGrammar;
-using System.Linq;
 
 namespace SLangCompiler.FrontEnd
 {
@@ -30,7 +30,7 @@ namespace SLangCompiler.FrontEnd
             var modules = projectManager.FileModules;
 
 
-            modules.Keys.ToList().ForEach((key) =>
+            modules.Keys.ToList().ForEach(key =>
             {
                 SLangGrammarParser parser = GenerateParser(modules[key].Data);
                 SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
@@ -41,7 +41,7 @@ namespace SLangCompiler.FrontEnd
                 storeStepVisitor.Visit(parser.start());
             });
 
-            modules.Keys.ToList().ForEach((key) =>
+            modules.Keys.ToList().ForEach(key =>
             {
                 SLangGrammarParser parser = GenerateParser(modules[key].Data);
                 SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
@@ -52,7 +52,7 @@ namespace SLangCompiler.FrontEnd
                 storeStepFieldsVisitor.Visit(parser.start());
             });
 
-            modules.Keys.ToList().ForEach((key) =>
+            modules.Keys.ToList().ForEach(key =>
             {
                 SLangGrammarParser parser = GenerateParser(modules[key].Data);
                 SLangErrorListener errorListener = new SLangErrorListener(modules[key]);
@@ -66,7 +66,7 @@ namespace SLangCompiler.FrontEnd
             var classChecker = new ClassesValidator(SourceCode);
             classChecker.Check();
 
-            modules.Keys.ToList().ForEach((key) =>
+            modules.Keys.ToList().ForEach(key =>
             {
                 SLangGrammarParser parser = GenerateParser(modules[key].Data);
                 SLangErrorListener errorListener = new SLangErrorListener(modules[key]);

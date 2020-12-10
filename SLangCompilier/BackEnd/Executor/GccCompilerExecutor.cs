@@ -18,10 +18,10 @@ namespace SLangCompiler.BackEnd.Executor
         public override void ExecuteCompilerCall()
         {
             // create outputDir
-            Directory.CreateDirectory(Path.GetDirectoryName(pathToExecutable.FullName));
+            Directory.CreateDirectory(Path.GetDirectoryName(PathToExecutable.FullName));
             // get all files
-            var extensionsAllowed = new string[] { ".cc", ".cpp", ".cxx", ".c", ".c++", ".h", ".hpp", ".hh", ".hxx", ".h++" };
-            var sourceCodeFiles = Directory.GetFiles(pathToGeneratedSource.FullName)
+            var extensionsAllowed = new[] { ".cc", ".cpp", ".cxx", ".c", ".c++", ".h", ".hpp", ".hh", ".hxx", ".h++" };
+            var sourceCodeFiles = Directory.GetFiles(PathToGeneratedSource.FullName)
             .Where(file =>
             {
                 var extension = Path.GetExtension(file);
@@ -30,13 +30,18 @@ namespace SLangCompiler.BackEnd.Executor
 
             sourceCodeFiles = sourceCodeFiles.Select(str => $"\"{str}\"");
 
-            var process = new Process();
-            process.StartInfo.FileName = "g++";
-            process.StartInfo.Arguments = $" {string.Join(' ', sourceCodeFiles)} -o \"{pathToExecutable}\"";
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.UseShellExecute = false;
+            var process = new Process
+            {
+                StartInfo =
+                {
+                    FileName = "g++",
+                    Arguments = $" {string.Join(' ', sourceCodeFiles)} -o \"{PathToExecutable}\"",
+                    RedirectStandardError = true,
+                    UseShellExecute = false
+                }
+            };
             process.ErrorDataReceived += (s, e) => throw new Exception($"Target compiler returned error = {e.Data}");
-            
+
             process.Start();
             process.BeginErrorReadLine();
             process.WaitForExit();

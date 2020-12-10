@@ -4,7 +4,7 @@ using SLangGrammar;
 namespace SLangCompiler.BackEnd.Translator
 {
     // return, call, input, output, let,
-    public partial class CppTranslator : SLangGrammarBaseVisitor<object>
+    public partial class CppTranslator
     {
 
         public override object VisitStatement([NotNull] SLangGrammarParser.StatementContext context)

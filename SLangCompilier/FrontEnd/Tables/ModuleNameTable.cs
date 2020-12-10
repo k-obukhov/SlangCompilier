@@ -12,7 +12,6 @@ namespace SLangCompiler.FrontEnd.Tables
     {
         public new string Name => ModuleData.Name;
         public ModuleData ModuleData { get; set; }
-        public bool TranslatedRecently { get; set; } = false; // toDo in future
         public IList<string> ImportedModules { get; set; } = new List<string>();
         public Dictionary<string, RoutineNameTableItem> Routines { get; set; } = new Dictionary<string, RoutineNameTableItem>();
         public Dictionary<string, ModuleFieldNameTableItem> Fields { get; set; } = new Dictionary<string, ModuleFieldNameTableItem>();

@@ -1,6 +1,5 @@
 ﻿using SLangCompiler.FrontEnd.Tables;
 using SLangCompiler.FrontEnd.Types;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -52,9 +51,12 @@ namespace SLangCompiler.FrontEnd
                         var field = derivedClass.Fields[item.Key];
                         ThrowClassFieldOverrideException(item.Key, baseClass.TypeIdent, derivedClass.TypeIdent, GetFileOfClass(derivedClass.TypeIdent), field.Line, field.Column);
                     }
-                    var cloneField = item.Value.Clone() as FieldNameTableItem;
-                    cloneField.IsDerived = true;
-                    derivedClass.Fields.Add(item.Key, cloneField);
+
+                    if (item.Value.Clone() is FieldNameTableItem cloneField)
+                    {
+                        cloneField.IsDerived = true;
+                        derivedClass.Fields.Add(item.Key, cloneField);
+                    }
                 }
             }
             // check methods
@@ -79,16 +81,19 @@ namespace SLangCompiler.FrontEnd
                 {
                     if (!derivedClass.Methods.Values.Any(i => i.Name == item.Name && i.Params.SequenceEqual(item.Params)))
                     {
-                        var copy = item.Clone() as MethodNameTableItem;
-                        copy.IsDerived = true;
+                        if (item.Clone() is MethodNameTableItem copy)
+                        {
+                            copy.IsDerived = true;
 
-                        if (!derivedClass.Methods.ContainsKey(copy.Name))
-                        {
-                            derivedClass.Methods.Add(copy.Name, copy);
-                        }
-                        else
-                        {
-                            ThrowConflictMethodException(GetFileOfClass(derivedClass.TypeIdent), derivedClass.TypeIdent.ToString(), derivedClass.Line, derivedClass.Column);
+                            if (!derivedClass.Methods.ContainsKey(copy.Name))
+                            {
+                                derivedClass.Methods.Add(copy.Name, copy);
+                            }
+                            else
+                            {
+                                ThrowConflictMethodException(GetFileOfClass(derivedClass.TypeIdent),
+                                    derivedClass.TypeIdent.ToString(), derivedClass.Line, derivedClass.Column);
+                            }
                         }
                     }
                     else
@@ -105,22 +110,22 @@ namespace SLangCompiler.FrontEnd
 
         public void Check()
         {
-            var dictID = new Dictionary<string, int>();
+            var dictId = new Dictionary<string, int>();
             var visited = new bool[allClasses.Count()];
             var listAdj = new List<List<int>>();
 
             for (int i = 0; i < allClasses.Count(); ++i)
             {
                 listAdj.Add(new List<int>());
-                dictID[allClasses[i].TypeIdent.ToString()] = i;
+                dictId[allClasses[i].TypeIdent.ToString()] = i;
             }
 
             for (int i = 0; i < allClasses.Count(); ++i)
             {
                 if (!allClasses[i].TypeIdent.Equals(SlangCustomType.Object))
                 {
-                    int classId = dictID[allClasses[i].TypeIdent.ToString()];
-                    int baseClassId = dictID[allClasses[i].Base.ToString()];
+                    int classId = dictId[allClasses[i].TypeIdent.ToString()];
+                    int baseClassId = dictId[allClasses[i].Base.ToString()];
 
                     //listAdj[classId].Add(baseClassId);
                     listAdj[baseClassId].Add(classId);
@@ -153,7 +158,7 @@ namespace SLangCompiler.FrontEnd
             {
                 foreach (var key in classItem.Fields.Keys)
                 {
-                    if (classItem.Methods.Values.Any((method) => method.Name == key))
+                    if (classItem.Methods.Values.Any(method => method.Name == key))
                     {
                         ThrowConflictNameException(GetFileOfClass(classItem.TypeIdent), classItem.Line, classItem.Column);
                     }

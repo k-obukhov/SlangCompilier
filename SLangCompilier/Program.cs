@@ -1,8 +1,8 @@
-﻿using SLangCompiler.BackEnd;
+﻿using CommandLine;
+using SLangCompiler.BackEnd;
 using SLangCompiler.BackEnd.Executor;
 using SLangCompiler.BackEnd.Translator;
 using System;
-using CommandLine;
 using System.Collections.Generic;
 
 namespace SLangCompiler
